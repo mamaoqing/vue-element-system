@@ -13,4 +13,24 @@ module.exports = {
     //         }
     //     }
     // }
+
+    devServer:{
+    port:8080,
+        open:true,
+        https:false,
+        overlay: {
+        warnings: true,
+            errors: true
+    },
+    proxy: {
+        '/api': {
+            target: 'http://localhost:9000/', //对应自己的接口
+                changeOrigin: true,
+                ws: true,
+                pathRewrite: {
+                '^/api': '/api'
+            }
+        }
+    }
+}
 }

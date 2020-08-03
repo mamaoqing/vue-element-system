@@ -12,7 +12,7 @@
                     <el-input
                         type="password"
                         placeholder="password"
-                        v-model="param.password"
+                        v-model="param.passwd"
                         @keyup.enter.native="submitForm()"
                     >
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
@@ -28,26 +28,48 @@
 </template>
 
 <script>
+import axios from 'axios'
+import store from '../../utils/store'
 export default {
     data: function() {
         return {
             param: {
                 username: 'admin',
-                password: '123123',
+                passwd: '123456',
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-                password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+                passwd: [{ required: true, message: '请输入密码', trigger: 'blur' }],
             },
         };
     },
     methods: {
         submitForm() {
+
             this.$refs.login.validate(valid => {
                 if (valid) {
-                    this.$message.success('登录成功');
-                    localStorage.setItem('ms_username', this.param.username);
-                    this.$router.push('/');
+                    const params = new URLSearchParams();
+                    params.append('username', this.param.username);
+                    params.append('passwd', this.param.passwd);
+                    axios.post("/api/login/login",params).then((res=>{
+                        this.$message.success('登录成功');
+                        let data = res.data.data;
+                        console.log(data);
+                        //根据store中set_token方法将token保存至localStorage/sessionStorage中，data["Authentication-Token"]，获取token的value值
+                        store.commit('set_token', data);
+
+                        if (store.state.token) {
+                            localStorage.setItem('ms_username', this.param.username);
+                            this.$router.push('/')
+                        } else {
+                            this.$message.error("登陆失败，用户名或密码不正确");
+                            // this.$router.replace('/login');
+                        }
+
+                    }));
+                    // this.$message.success('登录成功');
+                    // localStorage.setItem('ms_username', this.param.username);
+                    // this.$router.push('/');
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
