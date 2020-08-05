@@ -7,26 +7,67 @@
         </div>
         <div class="logo">后台管理系统</div>
         <div class="nav">
-            <ul class="menuList">
-                <li>
-                    <router-link to='/receipt'>综合查询</router-link>
+            <!--<ul class="menuList">
+                <li v-for="menu in menus">
+                    <router-link to='/receipt'>{{menu.name}}</router-link>
                 </li>
-                <li>
-                    <router-link to='/aaa'>资源管理</router-link>
-                </li>
-                <li>
-                    <router-link to='/aaa'>收费管理</router-link>
-                </li>
-                <li>
-                    <router-link to='/aaa'>社区管理</router-link>
-                </li>
-                <li>
-                    <router-link to='/aaa'>分区管理</router-link>
-                </li>
-                <li>
-                    <router-link to='/aaa'>楼宇管理</router-link>
-                </li>
-            </ul>
+            </ul>-->
+            <!--<div class="nav">
+                &lt;!&ndash;<ul class="menuList">
+                    <li v-for="menu in menus">
+                        <router-link to='/receipt'>{{menu.name}}</router-link>
+                    </li>
+                </ul>&ndash;&gt;
+                &lt;!&ndash;<menuList :list="menus"></menuList>&ndash;&gt;
+
+            </div>-->
+            <el-menu
+                    class="nav-el-menu"
+                    :default-active="onRoutes"
+                    :collapse="collapse"
+                    background-color="#324157"
+                    text-color="#bfcbd9"
+                    active-text-color="#20a0ff"
+                    mode="horizontal"
+                    unique-opened
+                    router
+            >
+                <template v-for="item in items">
+                    <template v-if="item.subs">
+                        <el-submenu :index="item.index" :key="item.index">
+                            <template slot="title">
+                                <i :class="item.icon"></i>
+                                <span slot="title">{{ item.title }}</span>
+                            </template>
+                            <template v-for="subItem in item.subs">
+                                <el-submenu
+                                        v-if="subItem.subs"
+                                        :index="subItem.index"
+                                        :key="subItem.index"
+                                >
+                                    <template slot="title">{{ subItem.title }}</template>
+                                    <el-menu-item
+                                            v-for="(threeItem,i) in subItem.subs"
+                                            :key="i"
+                                            :index="threeItem.index"
+                                    >{{ threeItem.title }}</el-menu-item>
+                                </el-submenu>
+                                <el-menu-item
+                                        v-else
+                                        :index="subItem.index"
+                                        :key="subItem.index"
+                                >{{ subItem.title }}</el-menu-item>
+                            </template>
+                        </el-submenu>
+                    </template>
+                    <template v-else>
+                        <el-menu-item :index="item.index" :key="item.index">
+                            <i :class="item.icon"></i>
+                            <span slot="title">{{ item.title }}</span>
+                        </el-menu-item>
+                    </template>
+                </template>
+            </el-menu>
         </div>
         <div class="header-right">
             <div class="header-user-con">
@@ -72,29 +113,154 @@
 </template>
 <script>
     import bus from '../common/bus';
-
+    import Axios from 'axios';
+    import menuList from "../common/menu";
     export default {
         data() {
             return {
                 collapse: false,
                 fullscreen: false,
                 name: 'linxin',
-                message: 2
+                message: 2,
+                menus: null,
+                items: [
+                    {
+                        icon: 'el-icon-lx-home',
+                        index: 'dashboard',
+                        title: '系统首页'
+                    },
+                    {
+                        icon: 'el-icon-lx-cascades',
+                        index: 'table',
+                        title: '基础表格'
+                    },
+                    {
+                        icon: 'el-icon-lx-copy',
+                        index: 'tabs',
+                        title: 'tab选项卡'
+                    },
+                    {
+                        icon: 'el-icon-lx-calendar',
+                        index: '3',
+                        title: '表单相关',
+                        subs: [
+                            {
+                                index: 'form',
+                                title: '基本表单'
+                            },
+                            {
+                                index: '3-2',
+                                title: '三级菜单',
+                                subs: [
+                                    {
+                                        index: 'editor',
+                                        title: '富文本编辑器'
+                                    },
+                                    {
+                                        index: 'markdown',
+                                        title: 'markdown编辑器'
+                                    }
+                                ]
+                            },
+                            {
+                                index: 'upload',
+                                title: '文件上传'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-emoji',
+                        index: 'icon',
+                        title: '自定义图标'
+                    },
+                    {
+                        icon: 'el-icon-pie-chart',
+                        index: 'charts',
+                        title: 'schart图表'
+                    },
+                    {
+                        icon: 'el-icon-rank',
+                        index: '6',
+                        title: '拖拽组件',
+                        subs: [
+                            {
+                                index: 'drag',
+                                title: '拖拽列表'
+                            },
+                            {
+                                index: 'dialog',
+                                title: '拖拽弹框'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-global',
+                        index: 'i18n',
+                        title: '国际化功能'
+                    },
+                    {
+                        icon: 'el-icon-lx-warn',
+                        index: '7',
+                        title: '错误处理',
+                        subs: [
+                            {
+                                index: 'permission',
+                                title: '权限测试'
+                            },
+                            {
+                                index: '404',
+                                title: '404页面'
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-lx-redpacket_fill',
+                        index: '/donate',
+                        title: '支持作者'
+                    }
+                ]
             };
         },
+        components: { menuList },
         computed: {
             username() {
                 let username = localStorage.getItem('ms_username');
                 return username ? username : this.name;
+            },
+            onRoutes() {
+                return this.$route.path.replace('/', '');
             }
+        },
+        created() {
+            this.getMenuList();
+            // 通过 Event Bus 进行组件间通信，来折叠侧边栏
+            bus.$on('collapse', msg => {
+                this.collapse = msg;
+                bus.$emit('collapse-content', msg);
+            });
         },
         methods: {
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 if (command == 'loginout') {
                     localStorage.removeItem('ms_username');
+                    localStorage.removeItem('token');
                     this.$router.push('/login');
                 }
+            },
+            // 根据角色权限显示不同页面
+            getMenuList() {
+                let that = this;
+                // 取出登录成功存入缓存中的角色id
+                Axios.get('/api/sMenu/get')
+                    .then(function(res) {
+                        that.menus = res.data.data
+                        console.log(res.data.data)
+                        // that.items = res.data.data;
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                    });
             },
             // 侧边栏折叠
             collapseChage() {
@@ -166,19 +332,6 @@
         background-color: #242f42;
     }
 
-    .nav li {
-        list-style-type: none;
-        width: 100px;
-        margin: 0 10px;
-        float: left;
-        color: #d04c77;
-    }
-
-    .nav li a {
-
-        color: #bfcbd9;
-    }
-
     .header-right {
         float: right;
         padding-right: 50px;
@@ -243,5 +396,22 @@
 
     .el-dropdown-menu__item {
         text-align: center;
+    }
+    .nav {
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 70px;
+        bottom: 0;
+        overflow-y: scroll;
+    }
+    .nav::-webkit-scrollbar {
+        width: 0;
+    }
+    .nav-el-menu:not(.el-menu--collapse) {
+        width: 250px;
+    }
+    .nav > ul {
+        height: 100%;
     }
 </style>

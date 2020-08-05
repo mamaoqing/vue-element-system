@@ -9,7 +9,8 @@ import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
 import './assets/css/icon.css';
 import './components/common/directives';
 import 'babel-polyfill';
-
+import Axios from 'axios';
+Axios.defaults.headers.common['Authentication-Token'] = localStorage.token;
 Vue.config.productionTip = false;
 Vue.use(VueI18n);
 Vue.use(ElementUI, {
@@ -46,3 +47,37 @@ new Vue({
     i18n,
     render: h => h(App)
 }).$mount('#app');
+
+// 添加请求拦截器
+Axios.interceptors.request.use(config => {
+// 在发送请求之前做些什么
+//判断是否存在token，如果存在将每个页面header都添加token
+    if (localStorage.token) {
+        config.headers.common['Authentication-Token'] = localStorage.token
+    }
+
+    return config;
+}, error => {
+// 对请求错误做些什么
+    return Promise.reject(error);
+});
+// http response 拦截器
+Axios.interceptors.response.use(
+    response => {
+
+        return response;
+    },
+    error => {
+
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    this.$store.commit('del_token');
+                    router.replace({
+                        path: '/login',
+                        query: {redirect: router.currentRoute.fullPath}//登录成功后跳入浏览的当前页面
+                    })
+            }
+        }
+        return Promise.reject(error.response.data)
+    });

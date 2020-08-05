@@ -24,11 +24,14 @@ module.exports = {
     },
     proxy: {
         '/api': {
-            target: 'http://localhost:9000/', //对应自己的接口
+            target: 'http://192.168.0.105:9000/', //对应自己的接口
                 changeOrigin: true,
                 ws: true,
+                write:{
+                    encode : true
+                },
                 pathRewrite: {
-                '^/api': '/api'
+                '^/api': '/sdzy'
             }
         }
     }

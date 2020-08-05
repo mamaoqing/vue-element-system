@@ -7,6 +7,7 @@
             background-color="#324157"
             text-color="#bfcbd9"
             active-text-color="#20a0ff"
+
             unique-opened
             router
         >
@@ -58,7 +59,7 @@ export default {
             items: [
                 {
                     icon: 'el-icon-lx-home',
-                    index: 'dashboard',
+                    index: '',
                     title: '系统首页'
                 },
                 {
@@ -149,6 +150,11 @@ export default {
                     icon: 'el-icon-lx-redpacket_fill',
                     index: '/donate',
                     title: '支持作者'
+                },
+                {
+                    icon: 'el-icon-lx-home',
+                    index: '/company',
+                    title: '公司列表'
                 }
             ]
         };
