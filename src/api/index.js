@@ -61,10 +61,24 @@ export const updateLinkData = query => {
 };
 
 export const addLinkData = query => {
-
+    console.log(query)
     return request({
-        url: '/api/sCompany/insertCompany',
+        url: '/api/sCompLink/insertCompLink',
         method: 'post',
         data: query
+    });
+};
+
+export const getProvinceDict = query => {
+    return request({
+        url: '/api/rProvince/get',
+        method: 'get'
+    });
+};
+
+export const getCityDict = query => {
+    return request({
+        url: '/api/rProvince/get',
+        method: 'get'
     });
 };

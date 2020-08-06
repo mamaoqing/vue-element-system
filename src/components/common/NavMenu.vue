@@ -1,24 +1,23 @@
 <template>
     <div class="navMenu">
-
-        <template v-for="navMenu in list">
+        <template v-for="navMenu in navMenus">
             <!-- 最后一级菜单 -->
-            <el-menu-item v-if="!navMenu.childs&&navMenu.entity"
-                          :key="navMenu.entity.id" :data="navMenu" :index="navMenu.entity.name"
+            <el-menu-item v-if="navMenu.chirldMenuList.length==0"
+                          :key="navMenu.id" :data="navMenu" :index="navMenu.url"
             >
-                <i :class="navMenu.entity.icon"></i>
-                <span slot="title">{{navMenu.entity.alias}}</span>
+                <i :class="navMenu.icon"></i>
+                <span slot="title">{{navMenu.name}}</span>
             </el-menu-item>
 
             <!-- 此菜单下还有子菜单 -->
-            <el-submenu v-if="navMenu.childs&&navMenu.entity"
-                        :key="navMenu.entity.id" :data="navMenu" :index="navMenu.entity.name">
+            <el-submenu v-if="navMenu.chirldMenuList.length!=0"
+                        :key="navMenu.id" :data="navMenu" :index="navMenu.id.toString()">
                 <template slot="title">
-                    <i :class="navMenu.entity.icon"></i>
-                    <span> {{navMenu.entity.alias}}</span>
+                    <i :class="navMenu.icon"></i>
+                    <span> {{navMenu.name}}</span>
                 </template>
                 <!-- 递归 -->
-                <NavMenu :list="navMenu.childs"></NavMenu>
+                <NavMenu :navMenus="navMenu.chirldMenuList"></NavMenu>
             </el-submenu>
         </template>
 
@@ -26,16 +25,42 @@
 </template>
 
 <script>
-    // export default {
-    //     name: 'NavMenu',
-    //     props: { list : Array },
-    //     data() {
-    //         return {}
-    //     },
-    //     methods: {}
-    // }
-
+    export default {
+        name: 'NavMenu',
+        props: {
+            navMenus: Array
+        },
+        data() {
+            return {};
+        },
+        methods: {}
+    };
 </script>
 
 <style>
+    /* 水平样式 */
+    .el-menu--horizontal>div>.el-submenu {
+        float: left;
+    }
+    /* 一级菜单的样式 */
+    .el-menu--horizontal>div>.el-menu-item {
+        float: left;
+        height: 75px;
+        line-height: 75px;
+        margin: 0;
+        color: #909399;
+    }
+    /* 解决下图1 下拉三角图标 */
+    .el-menu--horizontal>div>.el-submenu .el-submenu__icon-arrow {
+        position: static;
+        vertical-align: middle;
+        margin-left: 8px;
+        margin-top: -3px;
+    }
+    /* 解决下图2 无下拉菜单时 不对齐问题 */
+    .el-menu--horizontal>div>.el-submenu .el-submenu__title {
+        height: 75px;
+        line-height: 75px;
+        color: #909399;
+    }
 </style>
