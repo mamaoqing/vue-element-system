@@ -16,8 +16,18 @@ export default new Router({
             children: [
                 {
                     path: '/dashboard',
-                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/org.vue'),
                     meta: { title: '系统首页' }
+                },
+                {
+                    path: '/周杰伦',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/org.vue'),
+                    meta: { title: '组织机构' }
+                },
+                {
+                    path: '/周润发',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                    meta: { title: '2222' }
                 },
                 {
                     path: '/icon',
@@ -106,6 +116,11 @@ export default new Router({
                     path: '/company',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/company.vue'),
                     meta: { title: '公司列表' }
+                },
+                {
+                    path: '/user',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/user.vue'),
+                    meta: { title: '用户列表' }
                 }
             ]
         },

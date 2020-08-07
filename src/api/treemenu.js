@@ -6,3 +6,9 @@ export const treemenu = query => {
         method: 'get'
     });
 };
+export const treeorg = query => {
+    return request({
+        url: '/api/sOrg/listOrg',
+        method: 'get'
+    });
+};

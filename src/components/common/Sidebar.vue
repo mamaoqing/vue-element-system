@@ -1,23 +1,17 @@
 <template>
     <div class="sidebar">
-        <el-menu
-                class="sidebar-el-menu"
-                :default-active="onRoutes"
-                :collapse="collapse"
-                background-color="#324157"
-                text-color="#bfcbd9"
-                active-text-color="#20a0ff"
+        <!--    :show-checkbox="true"  选择    -->
+        <el-tree :data="data" :props="defaultProps" show-checkbox @node-click="handleNodeClick"
+                 @check-change="handleCheckChange" class="trees"
+                 ref="tree"
 
-                unique-opened
-                router
-        >
-            <NavMenu :navMenus="items"></NavMenu>
-        </el-menu>
+
+        ></el-tree>
     </div>
 </template>
 
 <script>
-import tree from '../../utils/treemenu'
+    import tree from '../../utils/treemenu'
     import bus from '../common/bus';
     import {treemenu} from '../../api/treemenu';
 
@@ -28,7 +22,12 @@ import tree from '../../utils/treemenu'
         data() {
             return {
                 collapse: false,
-                items: []
+                items: [],
+                data: [],
+                defaultProps: {
+                    children: 'childList',
+                    label: 'name'
+                }
             };
         },
         computed: {
@@ -39,21 +38,27 @@ import tree from '../../utils/treemenu'
         created() {
             treemenu(this.query).then(res => {
                 console.log(res);
+                console.log(123);
                 if (res.code === 0) {
-                    var array = res.data;
-                    for (var i = 0; i < array.length; i++) {
-                        this.items.push(array[i]);
-                    }
-                    console.log(this.items);
-
+                    this.data = res.data;
                 }
             });
-            // 通过 Event Bus 进行组件间通信，来折叠侧边栏
-            bus.$on('collapse', msg => {
-
-                this.collapse = msg;
-                bus.$emit('collapse-content', msg);
-            });
+        },
+        methods: {
+            handleNodeClick(e) {
+                console.log(e.id);
+                console.log(e.name);
+                console.log(e.type);
+                console.log(e.parenttable);
+                console.log(e.parentid);
+            },
+            handleCheckChange () {
+                var arr = this.$refs.tree.getCheckedNodes();
+                arr.forEach(function (item,index) {
+                    console.log(item.name+"=====>" +index);
+                    console.log(111);
+                });
+            }
         }
     };
 </script>
@@ -66,6 +71,8 @@ import tree from '../../utils/treemenu'
         top: 70px;
         bottom: 0;
         overflow-y: scroll;
+        background: #324157;
+        width: 250px;
     }
 
     .sidebar::-webkit-scrollbar {
@@ -79,4 +86,26 @@ import tree from '../../utils/treemenu'
     .sidebar > ul {
         height: 100%;
     }
+
+    .trees {
+        background: #324157;
+    }
+
+
+    .el-tree {
+        color: #ffffff;
+    }
+
+    .el-tree-node__label {
+        background: #00a854;
+        font-size: 18px;
+    }
+
+    .el-tree-node:hover {
+        background-color: #324157;
+    }
+    .trees > .el-tree-node__content {
+        background-color: red !important;
+    }
+
 </style>
