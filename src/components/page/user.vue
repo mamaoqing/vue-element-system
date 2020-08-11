@@ -10,7 +10,8 @@
         <div class="container">
             <div class="handle-box">
                 <template>
-                    <el-select v-model="value" filterable placeholder="请选择" @change="selectComp(value)">
+                    <el-select v-model="value" @clear="clearComp" clearable filterable placeholder="请选择"
+                               @change="selectComp(value)">
                         <el-option
                                 v-for="item in options"
                                 :key="item.value"
@@ -27,8 +28,16 @@
                             :props="{ /*multiple: true,*/emitPath: false,emitPath:false,children:'childList',label: 'name',value:'id',checkStrictly:true }"
                             :clearable="true"
                             :show-all-levels="false"
-                            @change="aa"
+                            @change="changeProvinceCity"
                     ></el-cascader>
+                </template>
+                <template>
+                    <el-input @clear="clearUserName" clearable v-model="query.userName" placeholder="请输入用户名"
+                              style="width: 250px"></el-input>
+                </template>
+                <template>
+                    <el-input @clear="clearName" clearable v-model="query.name" placeholder="请输入姓名"
+                              style="width: 200px"></el-input>
                 </template>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
@@ -55,7 +64,7 @@
                 <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column label="操作" width="280" align="center">
                     <template slot-scope="scope">
                         <el-row>
                             <el-button-group>
@@ -110,6 +119,7 @@
         </div>
 
         <!-- 编辑弹出框 -->
+        <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
                 <el-form-item label="id" v-show="false">
@@ -132,6 +142,89 @@
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.userName"></el-input>
+                </el-form-item>
+                <el-form-item label="电话" prop="registeredAddr"
+                              :rules="[
+                    { required: true, message: '请输入电话', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.tel"></el-input>
+                </el-form-item>
+                <el-form-item label="类型" prop="registeredAddr"
+                              :rules="[
+                    { required: true, message: '请输入类型', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.type"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" prop="registeredAddr"
+                              :rules="[
+                    { required: true, message: '请输入状态', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.state"></el-input>
+                </el-form-item>
+
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!-- t添加弹出框 -->
+        <el-dialog :title="title" :visible.sync="addVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
+                <el-form-item label="id" v-show="false">
+                    <el-input v-model="form.id"></el-input>
+                </el-form-item>
+                <el-form-item label="公司名称" prop="compName"
+                              :rules="[
+                    { required: true, message: '请输入公司名称', trigger: 'blur' },
+                ]">
+                    <template>
+                        <el-select v-model="form.compId" filterable placeholder="请选择"
+                                   @change="selectComp1(form.compId)">
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </el-form-item>
+                <template v-if="addBaseOrg.length &gt; 0">
+                    <el-form-item label="机构名称" rop="compName"
+                                  :rules="[
+                    { required: true, message: '请输入机构名称', trigger: 'blur' },
+                ]">
+                        <el-cascader
+                                :model="form.orgId"
+                                :options="orgop"
+                                :props="{ /*multiple: true,*/emitPath: false,emitPath:false,children:'childList',label: 'name',value:'id',checkStrictly:true }"
+                                :clearable="true"
+                                :show-all-levels="false"
+                                @change="changeProvinceCity1"
+                        ></el-cascader>
+                    </el-form-item>
+                </template>
+                <el-form-item label="用户姓名">
+                    <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="用户名" prop="compAddr"
+                              :rules="[
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.userName"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="compAddr"
+                              :rules="[
+                    { required: true, message: '请输入密码', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.password"></el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="compAddr"
+                              :rules="[
+                    { required: true, message: '请再次输入密码', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.repassword"></el-input>
                 </el-form-item>
                 <el-form-item label="电话" prop="registeredAddr"
                               :rules="[
@@ -182,7 +275,7 @@
                 <template>
                     <el-checkbox-group
                             v-model="roleChecked"
-                            @change="selectRole"
+                            @change="checked=>checkRow(checked, value)"
                     >
                         <el-checkbox v-for="comm in roleChecks" :label="comm.id" :key="comm.id">{{comm.name}}
                         </el-checkbox>
@@ -190,7 +283,7 @@
                 </template>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="roleVisible = false">取 消</el-button>
+                <el-button @click="esc">取 消</el-button>
                 <el-button type="primary" @click="setUserRoles">确 定</el-button>
             </span>
         </el-dialog>
@@ -232,20 +325,26 @@
                 roleChecked: [],
                 orgop: [],
                 baseOrg: [],
+                addBaseOrg: [],
                 options: [],
                 value: '',
                 value1: '',
+                compName: '',
                 query: {
                     id: '',
                     compId: '',
+                    orgId: '',
                     abbreviation: '',
                     pageNo: 1,
-                    size: 10
+                    size: 10,
+                    userName: '',
+                    name: ''
                 },
                 tableData: [],
                 multipleSelection: [],
                 delList: [],
                 editVisible: false,
+                addVisible: false,
                 authVisible: false,
                 roleVisible: false,
                 pageTotal: 0,
@@ -266,20 +365,30 @@
             this.getData();
             this.getComp();
             this.initOrg();
+
         },
         components: {
             CitySelect
         }
         ,
         methods: {
-            aa() {
+            changeProvinceCity(value) {
+                console.log(value);
+                this.query.orgId = value;
+            },changeProvinceCity1(value) {
+                console.log(value);
+                this.form.orgId = value;
             },
             initOrg() {
                 treeorg(this.query).then(res => {
                     if (res.code === 0) {
                         this.orgop = res.data;
+                        console.log(res);
+                        console.log(this.orgop);
                     }
                 });
+                console.log(this.orgop);
+                console.log(111);
             },
 
             // 分页导航
@@ -301,7 +410,8 @@
 
             },
             handleAdd() {
-                this.editVisible = true;
+                this.getComp();
+                this.addVisible = true;
                 this.title = "新增"
                 this.form = {}
                 this.disable = false;
@@ -311,15 +421,42 @@
                 this.$set(this.query, 'pageIndex', 1);
                 this.getData();
             },
+            clearComp() {
+                this.query.compId = '';
+                this.baseOrg = [];
+            }, clearUserName() {
+                this.query.userName = '';
+
+            }, clearName() {
+                this.query.name = '';
+            },
             selectComp(value) {
+                console.log(value);
                 this.query.compId = value;
                 getOrg(this.query).then(res => {
-                    this.baseOrg = res.data;
+                    console.log(res);
+                    if (res.code === 0) {
+
+                        this.baseOrg = res.data;
+                    }
+                })
+
+            }, selectComp1(value) {
+                console.log(value);
+                this.query.compId = value;
+                getOrg(this.query).then(res => {
+                    console.log(res);
+                    if (res.code === 0) {
+
+                        this.addBaseOrg = res.data;
+                    }
                 })
 
             },
             getComp() {
+                console.log(321);
                 getComp().then(res => {
+                    console.log(res);
                     this.options = res.data;
                 });
             },
@@ -368,11 +505,11 @@
                     if (res.code === 0) {
                         this.roleChecks = res.data;
                     }
+                    this.setUserRole.roleIds = '';
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].flag === 1) {
                             this.roleChecked.push(data[i].id);
-                            this.setUserRole.roleIds += data[i].id + data
-                            ',';
+                            this.setUserRole.roleIds += data[i].id + ',';
                         }
                     }
                 });
@@ -403,6 +540,7 @@
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
                         this.editVisible = false;
+                        console.log(this.form);
                         addUser(this.form).then(res => {
                             this.$message.success(`新增成功`);
                             this.getData()
@@ -426,6 +564,7 @@
                 for (var i = 0; i < value.length; i++) {
                     this.setUserComm.commIds += value[i] + ',';
                 }
+                console.log(this.setUserComm.commIds);
             },
             // 设置用户数据权限
             setUserComms() {
@@ -436,19 +575,31 @@
             },
             // 设置用户角色
             setUserRoles() {
+                console.log(this.setUserRole.roleIds);
                 setUserRole(this.setUserRole).then(res => {
                     if (res.data) {
                         console.log("success");
+                    } else {
+                        console.log("error");
                     }
-                    console.log("error");
                     this.roleVisible = false;
                 });
-            },
-            selectRole(value) {
+            },/*
+            selectRole(item) {
+                var set = Array.from(new Set(item));
                 this.setUserRole.roleIds = '';
-                for (var i = 0; i < value.length; i++) {
-                    this.setUserRole.roleIds += value[i] + ',';
+                for (var i = 0; i < set.length; i++) {
+                    this.setUserRole.roleIds += set[i] + ',';
                 }
+            },*/
+            esc() {
+
+                this.roleVisible = false;
+            },
+            checkRow(checked, value) {
+                var data = `${checked}`;
+                this.setUserRole.roleIds = data;
+                console.log(data);
             }
         }
     };
