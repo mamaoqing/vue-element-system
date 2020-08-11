@@ -109,7 +109,7 @@ export default new Router({
                 },
                 {
                     path: '/donate',
-                    component: () => import(/* webpackChunkName: "donate" */ '../components/page/Donate.vue'),
+                    component: () => import(/* webpackChunkName: "donate" */ '../components/page/orgList.vue'),
                     meta: { title: '支持作者' }
                 },
                 {
