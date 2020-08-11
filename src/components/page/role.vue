@@ -16,15 +16,14 @@
                     @click="delAllSelection"
                 >批量删除</el-button>-->
                 <el-input v-model="query.name" placeholder="角色名称" class="handle-input mr10"></el-input>
-                <el-input v-model="query.type" placeholder="角色类型" class="handle-input mr10"></el-input>
-                <!--<template>
-                    <el-form-item label="状态">
-                        <el-select v-model="query.type" placeholder="请选择" >
-                            <el-option key="bbk" label="全局角色" value="全局角色"></el-option>
-                            <el-option key="xtc" label="物业公司角色" value="物业公司角色"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </template>-->
+                <!--<el-input v-model="query.type" placeholder="角色类型" class="handle-input mr10"></el-input>-->
+
+                <el-select v-model="query.type" placeholder="角色类型" >
+                    <el-option key="bbk" label="全局角色" value="全局角色"></el-option>
+                    <el-option key="xtc" label="物业公司角色" value="物业公司角色"></el-option>
+                </el-select>
+
+
                 <el-input v-model="query.compId" placeholder="物业公司名称" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
@@ -89,12 +88,12 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
                 <template >
                     <el-form-item label="角色名称" prop="name" >
                         <el-input v-model="form.name" ></el-input>
                     </el-form-item>
-                    <el-form-item label="状态">
+                    <el-form-item label="状态" prop="state">
                         <el-select v-model="form.state" placeholder="请选择" >
                             <el-option key="bbk" label="在用" value="在用"></el-option>
                             <el-option key="xtc" label="不在用" value="不在用"></el-option>
@@ -107,32 +106,32 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
-            <companyLink v-if="cmpVisible" ref="companyLink"></companyLink>
+            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
         </el-dialog>
     </div>
 </template>
 
 <script>
 import { addRole,deleteRole,updateRole,listRole,checkRoleMenuUser,setUserRole,listRoleNum } from '../../api/role';
-import menuEdit from './menuTree';
+import menu1 from './menuTree';
 
 export default {
     name: 'basetable',
     data() {
-        var checkname = (rule,value,callback) =>{
+        let checkname = (rule,value,callback) =>{
             if(!value){
-                return callback(new error("请输入角色名称"));
+                return callback(new Error("请输入角色名称"));
             }else{
                 return callback();
             }
         }
-        var checkstate = (rule,value,callback) =>{
+        let checkstate = (rule,value,callback) =>{
             if(!value){
-                return callback(new error("请选择状态"));
+                return callback(new Error("请选择状态"));
             }else{
                 return callback();
             }
@@ -160,10 +159,10 @@ export default {
             typeList:[],
             rules:{
                 name:[{
-                    validator:checkname,required: true
+                    validator:checkname,required: true,trigger:'blur'
                 }],
                 state:[{
-                    validator:checkstate,required: true
+                    validator:checkstate,required: true,trigger:'blur'
                 }]
             }
         };
@@ -174,7 +173,7 @@ export default {
         //this.getDict();
     },
     components:{
-        menuEdit
+        menu1
     }
     ,
     methods: {
@@ -249,7 +248,8 @@ export default {
             this.title="新增";
             this.disable=false;
             this.edit=false;
-            this.form={}
+            this.form={state:'在用'};
+            this.$refs.form.clearValidate();
         },
         // 编辑操作
         handleEdit(index, row) {
@@ -258,13 +258,14 @@ export default {
             this.editVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改"
+            this.title="修改";
+            this.$refs.form.clearValidate();
         },
         menuEdit(id){
             let linkID = id;
             this.cmpVisible = true;
             this.$nextTick(()=>{
-                //this.$refs.companyLink.dataInitialization(linkID);
+                this.$refs.menu1.dataInitialization(linkID);
             })
 
         },
@@ -278,26 +279,28 @@ export default {
 
         },
         // 保存编辑
-        saveEditOrAdd(title) {
+        saveEditOrAdd(title,form) {
             if(title==='新增'){
-                this.editVisible = false;
+                // this.editVisible = false;
+                this.$refs[form].validate((valid)=>{
 
-                if(this.form.state!=undefined&&this.form.name!=undefined){
-                    addRole(this.form).then(res => {
-                        this.$message.success(`新增成功`);
-                        this.getData()
-                    });
-                }else if(this.form.name==undefined){
-                    this.$message.error("角色名称不能为空");
+                    if(valid){
+                        addRole(this.form).then(res => {
+                            this.$message.success(`新增成功`);
+                            this.getData()
+                        });
+                    }
+                });
 
-                }else if(this.form.state==undefined){
-                    this.$message.error("状态不能为空");
-                }
             }else {
-                this.editVisible = false;
-                updateRole(this.form).then(res => {
-                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                    this.$set(this.tableData, this.idx, this.form);
+                //this.editVisible = false;
+                this.$refs[form].validate((valid)=>{
+                    if(valid){
+                        updateRole(this.form).then(res => {
+                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                            this.$set(this.tableData, this.idx, this.form);
+                        });
+                    }
                 });
             }
 
