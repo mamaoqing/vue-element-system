@@ -121,6 +121,22 @@ export default new Router({
                     path: '/user',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/user.vue'),
                     meta: { title: '用户列表' }
+                },
+                {
+                    path: '/dict',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/dict.vue'),
+                    meta: { title: '字典列表' }
+                },
+                {
+                    path: '/dictItem',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/dictItem.vue'),
+                    meta: { title: '字典项列表' }
+                }
+                ,
+                {
+                    path: '/role',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/role.vue'),
+                    meta: { title: '角色管理' }
                 }
             ]
         },
