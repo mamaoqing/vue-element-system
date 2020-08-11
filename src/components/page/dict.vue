@@ -69,16 +69,16 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
                 <!--<el-form-item label="id">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>-->
-                <el-form-item label="字典名称" >
-                    <el-input v-model="form.name" :disabled="edit"></el-input>
+                <el-form-item label="字典名称" prop="name">
+                    <el-input v-model="form.name" :disabled="edit" @blur="checkName"></el-input>
                 </el-form-item>
-                <el-form-item label="状态">
+                <el-form-item label="状态" prop="state">
                     <el-select v-model="form.state" placeholder="请选择" :disabled="edit">
-                        <el-option key="bbk" label="在用" value="在用"></el-option>
+                        <el-option key="bbk" label="在用" value="在用" ></el-option>
                         <el-option key="xtc" label="不在用" value="不在用"></el-option>
                     </el-select>
                 </el-form-item>
@@ -92,7 +92,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 联系人弹出框   -->
@@ -103,11 +103,27 @@
 </template>
 
 <script>
-import { listDict,updateDict,deleteDict,addDict } from '../../api/dict';
+import { listDict,updateDict,deleteDict,addDict,checkDictName } from '../../api/dict';
+import { checkDictItemName } from '../../api/dictItem';
 
 export default {
     name: 'basetable',
+
     data() {
+        let checkname = (rule,value,callback) =>{
+            if(!value){
+                return callback(new Error("请输入字典名称"));
+            }else{
+                return callback();
+            }
+        }
+        let checkstate = (rule,value,callback) =>{
+            if(!value){
+                return callback(new Error("请选择状态"));
+            }else{
+                return callback();
+            }
+        }
         return {
             query: {
                 name:'',
@@ -125,7 +141,15 @@ export default {
             form: {},
             idx: -1,
             title:'',
-            id: -1
+            id: -1,
+            rules:{
+                name:[{
+                    validator:checkname,required: true,trigger:'blur'
+                }],
+                state:[{
+                    validator:checkstate,required: true,trigger:'blur'
+                }]
+            }
         };
     },
     created() {
@@ -136,6 +160,17 @@ export default {
     }*/
     ,
     methods: {
+        checkName(){
+            if(this.title==='新增'&&this.form.name!=undefined){
+                console.log(this.form.name);
+                checkDictName(this.form.name).then(res => {
+                    if(res.data){
+                        this.$message.error("字典名称"+this.form.name+"重复，不可重复录入");
+                        this.form.name='';
+                    }
+                });
+            }
+        },
         // 获取 easy-mock 的模拟数据
         getData() {
             listDict(this.query).then(res => {
@@ -193,7 +228,8 @@ export default {
             this.editVisible = true;
             this.title="新增";
             this.edit=false;
-            this.form={}
+            this.form={state:'在用'}
+            this.$refs.form.clearValidate();
         },
         // 编辑操作
         handleEdit(index, row) {
@@ -203,6 +239,7 @@ export default {
             this.disable=false;
             this.edit=true;
             this.title="修改"
+            this.$refs.form.clearValidate();
         },
         //表格行点击事件
         openDetails (row) {
@@ -214,12 +251,16 @@ export default {
 
         },
         // 保存编辑
-        saveEditOrAdd(title) {
+        saveEditOrAdd(title,form) {
             if(title==='新增'){
-                this.editVisible = false;
-                addDict(this.form).then(res => {
-                    this.$message.success(`新增成功`);
-                    this.getData()
+                //this.editVisible = false;
+                this.$refs[form].validate((valid)=>{
+                    if(valid) {
+                        addDict(this.form).then(res => {
+                            this.$message.success(`新增成功`);
+                            this.getData()
+                        });
+                    }
                 });
             }else {
                 this.editVisible = false;

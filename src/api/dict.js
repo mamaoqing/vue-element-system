@@ -39,3 +39,10 @@ export const listDictAll = query => {
         params: query
     });
 };
+export const checkDictName = (name) => {
+
+    return request({
+        url: '/api/sDict/checkDictName/'+name,
+        method: 'get'
+    });
+};
