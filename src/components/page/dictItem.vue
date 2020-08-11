@@ -210,7 +210,7 @@ export default {
                 console.log(res);
 
                 //this.tableData = res.data;
-                this.pageTotal = res.data.total || 0;
+                this.pageTotal = res.data.length || 0;
             });
         },
 
