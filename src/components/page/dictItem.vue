@@ -72,11 +72,11 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
                 <template >
-                    <el-form-item label="字典类型">
+                    <el-form-item label="字典类型" prop="dictId">
                         <el-select v-model="form.dictId" placeholder="请选择" :disabled="edit">
-                            <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                            <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                         </el-select>
                     </el-form-item>
 
@@ -93,7 +93,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -108,9 +108,28 @@ export default {
     data() {
         var checkname = (rule,value,callback) =>{
             if(!value){
-                return callback(new error("请输入字典项名称"));
+                return callback(new Error("请输入字典项名称"));
             }else{
                 return callback();
+            }
+        }
+        var checkDict = (rule,value,callback) =>{
+            if(!value){
+                return callback(new Error("请选择字典类型"));
+            }else{
+                return callback();
+            }
+        }
+        var checkOrder = (rule,value,callback) =>{
+            const age= /^[0-9]*$/;
+            if(!value){
+                return callback(new Error("请输入排序序号"));
+            }else{
+                if (!age.test(value)) {
+                    return callback(new Error('排序序号只能为数字'))
+                }else{
+                    return callback();
+                }
             }
         }
         return {
@@ -135,7 +154,13 @@ export default {
             typeList:[],
             rules:{
                 name:[{
-                    validator:checkname,required: true
+                    validator:checkname,required: true,trigger:'blur'
+                }],
+                dictId:[{
+                    validator:checkDict,required: true,trigger:'blur'
+                }],
+                orderBy:[{
+                    validator:checkOrder,required: true,trigger:'blur'
                 }]
             }
         };
@@ -235,7 +260,8 @@ export default {
             this.title="新增";
             this.disable=false;
             this.edit=false;
-            this.form={}
+            this.form={};
+            this.$refs.form.clearValidate();
         },
         // 编辑操作
         handleEdit(index, row) {
@@ -244,7 +270,8 @@ export default {
             this.editVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改"
+            this.title="修改";
+            this.$refs.form.clearValidate();
         },
         //表格行点击事件
         openDetails (row) {
@@ -256,30 +283,28 @@ export default {
 
         },
         // 保存编辑
-        saveEditOrAdd(title) {
+        saveEditOrAdd(title,form) {
             if(title==='新增'){
-                this.editVisible = false;
-
-                if(this.form.dictId!=undefined&&this.form.name!=undefined&&this.form.orderBy!=undefined){
-                    addDictItem(this.form).then(res => {
-                        this.$message.success(`新增成功`);
-                        this.getData()
-                    });
-                }else if(this.form.dictId!=undefined){
-                    this.$message.error("字典类型不能为空");
-                }else if(this.form.name!=undefined){
-                    this.$message.error("字典项名称不能为空");
-                }else{
-                    this.$message.error("排序序号不能为空");
-                }
+                //this.editVisible = false;
+                this.$refs[form].validate((valid)=> {
+                    if (valid) {
+                        addDictItem(this.form).then(res => {
+                            this.$message.success(`新增成功`);
+                            this.getData()
+                        });
+                    }
+                });
             }else {
-                this.editVisible = false;
-                updateDictItem(this.form).then(res => {
-                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                    this.$set(this.tableData, this.idx, this.form);
+                //this.editVisible = false;
+                this.$refs[form].validate((valid) => {
+                    if (valid) {
+                        updateDictItem(this.form).then(res => {
+                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                            this.$set(this.tableData, this.idx, this.form);
+                        });
+                    }
                 });
             }
-
         },
         // 分页导航
         handlePageChange(val) {
