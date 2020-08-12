@@ -223,23 +223,18 @@ export default {
         handleDelete(id) {
             console.log(id);
             localStorage.getItem("ms_comp_id");
-            if(localStorage.getItem("ms_comp_id")==0){
-                // 二次确认删除
-                this.$confirm('确定要删除吗？', '提示', {
-                    type: 'warning'
+            this.$confirm('确定要删除吗？', '提示', {
+                type: 'warning'
+            })
+                .then(() => {
+                    deleteDictItem(id).then(res => {
+                        debugger
+                        console.log(res);
+                        this.$message.success(res.data);
+                        this.getData();
+                    });
                 })
-                    .then(() => {
-                        deleteDictItem(id).then(res => {
-                            console.log(res);
-                            this.$message.success('删除成功');
-                            this.getData();
-                        });
-                    })
-                    .catch(() => {});
-            }else{
-                this.$message.success('您没有权限，无法删除，请联系管理员');
-            }
-
+                .catch(() => {});
         },
         // 多选操作
         handleSelectionChange(val) {
