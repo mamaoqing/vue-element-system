@@ -9,6 +9,8 @@
             <div class="grid-content bg-purple-light">
                 <el-button type="primary" icon="el-icon-search" @click="addOrg">添加机构</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="addChildOrg">添加下级</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="deleteOrg(form.parentId)">删除机构</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="editParent(form.parentId,form.parentOrgName)">修改机构</el-button>
                 <el-table
                         :data="orgList"
                         border
@@ -27,23 +29,20 @@
                     <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                     <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
                     <el-table-column label="操作" width="160" align="center">
+
                         <template slot-scope="scope">
-                            <el-row>
-                                <el-button-group>
-
-                                    <el-button
-                                            type="text"
-                                            icon="el-icon-edit"
-                                            @click.stop
-                                            @click="deleteOrg(scope.row.id)"
-                                    >删除
-                                    </el-button>
-
-
-                                </el-button-group>
-                            </el-row>
+                            <el-button
+                                    size="mini"
+                                    type="danger"
+                                    @click="deleteOrg(scope.row.id)">删除
+                            </el-button>
+                            <el-button
+                                    size="mini"
+                                    @click="edit(scope.row)">修改
+                            </el-button>
                         </template>
                     </el-table-column>
+
                 </el-table>
             </div>
 
@@ -54,7 +53,7 @@
                                   :rules="[
                     { required: true, message: '请输入上级机构名称', trigger: 'blur' },
                 ]">
-                        <el-input v-model="form.parentOrgName"></el-input>
+                        <el-input v-model="form.parentOrgName" disabled></el-input>
                     </el-form-item>
                     <el-form-item label="机构名称" prop="compAddr"
                                   :rules="[
@@ -91,7 +90,7 @@
 
 <script>
     import {treeorg} from '../../api/treemenu';
-    import {addChildOrg, getChildOrg,deleteOrg} from '../../api/orgList';
+    import {addChildOrg, getChildOrg, deleteOrg, updateChildOrg} from '../../api/orgList';
 
     export default {
         data() {
@@ -107,13 +106,14 @@
                 title: '',
                 disable: false,
                 form: {
+                    id: '',
                     parentId: '',
                     name: '',
                     parentIdList: '',
                     parentOrgName: ''
                 },
-                ids:{
-                    id:''
+                ids: {
+                    id: ''
                 }
             };
         },
@@ -133,21 +133,18 @@
                 this.ids.id = e.id;
                 this.form.parentOrgName = e.name;
                 this.form.parentIdList = e.parentIdList + "," + e.id;
-                getChildOrg(this.ids).then(res => {
-                    console.log(res);
-                    if (0 === res.code) {
-                        this.orgList = res.data;
-                    }
-                    console.log(this.orgList);
-                });
+                this.getChildOrgList();
             },
             // 添加下级机构
             addChildOrg() {
                 this.form.name = '';
+                this.title = '添加机构';
                 this.authVisible = true;
             },
             // 添加机构
             addOrg() {
+                this.form.id = '';
+                this.title = '添加机构';
                 this.form.name = '';
                 this.addVisible = true;
                 this.form.parentIdList = 0;
@@ -155,23 +152,56 @@
             },
             // 提交保存
             submit() {
-                console.log(this.form);
-                addChildOrg(this.form).then(res => {
-                    if (0 === res.code) {
-                        this.$message.success(`添加机构成功`);
+                if (this.title === '修改机构') {
+                    updateChildOrg(this.form).then(res => {
+                        this.$message.success(`修改机构成功`);
                         this.init();
+                        this.getChildOrgList();
                         this.authVisible = false;
                         this.addVisible = false;
+                    });
+                }else{
+                    addChildOrg(this.form).then(res => {
+                        if (0 === res.code) {
+                            this.$message.success(`添加机构成功`);
+                            this.init();
+                            this.getChildOrgList();
+                            this.authVisible = false;
+                            this.addVisible = false;
+                        }
+                    });
+                }
+
+            },
+            // 修改
+            edit(row) {
+                this.title = '修改机构';
+                this.authVisible = true;
+                this.form.name = row.name;
+                this.form.id = row.id;
+            },
+            // 删除
+            deleteOrg(id) {
+                deleteOrg(id).then(res => {
+                    this.$message.success(`删除机构成功`);
+                    this.init();
+                    this.getChildOrgList();
+                });
+            },
+            getChildOrgList() {
+                getChildOrg(this.ids).then(res => {
+                    if (0 === res.code) {
+                        this.orgList = res.data;
                     }
                 });
             },
-            // 删除
-            deleteOrg(id){
-                deleteOrg(id).then(res=>{
-                    console.log(res);
-                    this.$message.success(`删除机构成功`);
-                    this.init();
-                });
+            // 修改父机构
+            editParent(id,name){
+                this.title = "修改机构";
+                this.form.parentId='';
+                this.addVisible = true;
+                this.form.name = name;
+                this.form.id = id;
             }
 
         }

@@ -66,43 +66,29 @@
                 <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
                 <el-table-column label="操作" width="280" align="center">
                     <template slot-scope="scope">
-                        <el-row>
-                            <el-button-group>
-
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-edit"
-                                        @click.stop
-                                        @click="handleEdit(scope.$index, scope.row)"
-                                >编辑
-                                </el-button>
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-delete"
-                                        class="red"
-                                        @click.stop
-                                        @click="handleDelete(scope.row.id)"
-                                >删除
-                                </el-button>
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-delete"
-                                        class="red"
-                                        @click.stop
-                                        @click="handleAuth(scope.$index, scope.row)"
-                                >权限
-                                </el-button>
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-delete"
-                                        class="red"
-                                        @click.stop
-                                        @click="userRole(scope.$index, scope.row)"
-                                >角色
-                                </el-button>
-
-                            </el-button-group>
-                        </el-row>
+                        <el-button
+                                size="mini"
+                                type="text"
+                                @click.stop
+                                @click="handleEdit(scope.$index, scope.row)">编辑
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                type="text"
+                                @click.stop
+                                @click="handleAuth(scope.$index, scope.row)">权限
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                type="text"
+                                @click.stop
+                                @click="userRole(scope.$index, scope.row)">角色
+                        </el-button>
+                        <el-button
+                                size="mini"
+                                type="danger"
+                                @click="handleDelete(scope.row.id)">删除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -373,27 +359,21 @@
         ,
         methods: {
             changeProvinceCity(value) {
-                console.log(value);
                 this.query.orgId = value;
             },changeProvinceCity1(value) {
-                console.log(value);
                 this.form.orgId = value;
             },
             initOrg() {
                 treeorg(this.query).then(res => {
                     if (res.code === 0) {
                         this.orgop = res.data;
-                        console.log(res);
-                        console.log(this.orgop);
                     }
                 });
-                console.log(this.orgop);
-                console.log(111);
             },
 
             // 分页导航
             handlePageChange(val) {
-                this.$set(this.query, 'pageIndex', val);
+                this.$set(this.query, 'pageNo', val);
                 this.getData();
             },
             // 多选操作
@@ -431,10 +411,8 @@
                 this.query.name = '';
             },
             selectComp(value) {
-                console.log(value);
                 this.query.compId = value;
                 getOrg(this.query).then(res => {
-                    console.log(res);
                     if (res.code === 0) {
 
                         this.baseOrg = res.data;
@@ -442,10 +420,8 @@
                 })
 
             }, selectComp1(value) {
-                console.log(value);
                 this.query.compId = value;
                 getOrg(this.query).then(res => {
-                    console.log(res);
                     if (res.code === 0) {
 
                         this.addBaseOrg = res.data;
@@ -454,9 +430,7 @@
 
             },
             getComp() {
-                console.log(321);
                 getComp().then(res => {
-                    console.log(res);
                     this.options = res.data;
                 });
             },
@@ -539,8 +513,7 @@
 
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
-                        this.editVisible = false;
-                        console.log(this.form);
+                        this.addVisible = false;
                         addUser(this.form).then(res => {
                             this.$message.success(`新增成功`);
                             this.getData()
@@ -564,7 +537,6 @@
                 for (var i = 0; i < value.length; i++) {
                     this.setUserComm.commIds += value[i] + ',';
                 }
-                console.log(this.setUserComm.commIds);
             },
             // 设置用户数据权限
             setUserComms() {
@@ -575,12 +547,11 @@
             },
             // 设置用户角色
             setUserRoles() {
-                console.log(this.setUserRole.roleIds);
                 setUserRole(this.setUserRole).then(res => {
                     if (res.data) {
-                        console.log("success");
+                        this.$message.success(`设置成功`);
                     } else {
-                        console.log("error");
+                        this.$message.error(`设置失败`);
                     }
                     this.roleVisible = false;
                 });
@@ -599,7 +570,6 @@
             checkRow(checked, value) {
                 var data = `${checked}`;
                 this.setUserRole.roleIds = data;
-                console.log(data);
             }
         }
     };
