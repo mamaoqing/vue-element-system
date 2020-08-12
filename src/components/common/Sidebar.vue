@@ -37,8 +37,6 @@
         },
         created() {
             treemenu(this.query).then(res => {
-                console.log(res);
-                console.log(123);
                 if (res.code === 0) {
                     this.data = res.data;
                 }
@@ -46,17 +44,15 @@
         },
         methods: {
             handleNodeClick(e) {
-                console.log(e.id);
-                console.log(e.name);
-                console.log(e.type);
-                console.log(e.parenttable);
-                console.log(e.parentid);
+                // console.log(e.id);
+                // console.log(e.name);
+                // console.log(e.type);
+                // console.log(e.parenttable);
+                // console.log(e.parentid);
             },
             handleCheckChange () {
                 var arr = this.$refs.tree.getCheckedNodes();
                 arr.forEach(function (item,index) {
-                    console.log(item.name+"=====>" +index);
-                    console.log(111);
                 });
             }
         }

@@ -103,14 +103,14 @@ export default new Router({
                     meta: { title: '404' }
                 },
                 {
-                    path: '/403',
-                    component: () => import(/* webpackChunkName: "403" */ '../components/page/403.vue'),
-                    meta: { title: '403' }
+                    path: '/menuList',
+                    component: () => import(/* webpackChunkName: "403" */ '../components/page/menuList.vue'),
+                    meta: { title: '菜单列表' }
                 },
                 {
                     path: '/donate',
                     component: () => import(/* webpackChunkName: "donate" */ '../components/page/orgList.vue'),
-                    meta: { title: '支持作者' }
+                    meta: { title: '组织机构' }
                 },
                 {
                     path: '/company',
