@@ -117,31 +117,43 @@
                 ]">
                     <el-input v-model="form.compName"></el-input>
                 </el-form-item>
-                <el-form-item label="机构名称">
-                    <el-input v-model="form.orgName"></el-input>
-                </el-form-item>
+                    <template v-if="addBaseOrg.length &gt; 0">
+                        <el-form-item label="机构名称" rop="compName"
+                                      :rules="[
+                    { required: true, message: '请输入机构名称', trigger: 'blur' },
+                ]">
+                            <el-cascader
+                                    :model="form.orgId"
+                                    :options="orgop"
+                                    :props="{ /*multiple: true,*/emitPath: false,emitPath:false,children:'childList',label: 'name',value:'id',checkStrictly:true }"
+                                    :clearable="true"
+                                    :show-all-levels="false"
+                                    @change="changeProvinceCity1"
+                            ></el-cascader>
+                        </el-form-item>
+                    </template>
                 <el-form-item label="用户姓名">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名" prop="compAddr"
+                <el-form-item label="用户名" prop="userName"
                               :rules="[
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.userName"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="registeredAddr"
+                <el-form-item label="电话" prop="tel"
                               :rules="[
                     { required: true, message: '请输入电话', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
-                <el-form-item label="类型" prop="registeredAddr"
+                <el-form-item label="类型" prop="type"
                               :rules="[
                     { required: true, message: '请输入类型', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.type"></el-input>
                 </el-form-item>
-                <el-form-item label="状态" prop="registeredAddr"
+                <el-form-item label="状态" prop="state"
                               :rules="[
                     { required: true, message: '请输入状态', trigger: 'blur' },
                 ]">
@@ -177,7 +189,7 @@
                     </template>
                 </el-form-item>
                 <template v-if="addBaseOrg.length &gt; 0">
-                    <el-form-item label="机构名称" rop="compName"
+                    <el-form-item label="机构名称" rop="orgId"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
@@ -194,37 +206,37 @@
                 <el-form-item label="用户姓名">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名" prop="compAddr"
+                <el-form-item label="用户名" prop="userName"
                               :rules="[
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.userName"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="compAddr"
+                <el-form-item label="密码" prop="password"
                               :rules="[
                     { required: true, message: '请输入密码', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.password"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="compAddr"
+                <el-form-item label="密码" prop="repassword"
                               :rules="[
                     { required: true, message: '请再次输入密码', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.repassword"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="registeredAddr"
+                <el-form-item label="电话" prop="tel"
                               :rules="[
                     { required: true, message: '请输入电话', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
-                <el-form-item label="类型" prop="registeredAddr"
+                <el-form-item label="类型" prop="type"
                               :rules="[
                     { required: true, message: '请输入类型', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.type"></el-input>
                 </el-form-item>
-                <el-form-item label="状态" prop="registeredAddr"
+                <el-form-item label="状态" prop="state"
                               :rules="[
                     { required: true, message: '请输入状态', trigger: 'blur' },
                 ]">
@@ -443,6 +455,8 @@
             },
             // 编辑操作
             handleEdit(index, row) {
+                this.selectComp(row.compId);
+                console.log(this.baseOrg);
                 this.idx = index;
                 this.form = row;
                 this.editVisible = true;
@@ -513,20 +527,24 @@
 
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
-                        this.addVisible = false;
-                        addUser(this.form).then(res => {
-                            this.$message.success(`新增成功`);
-                            this.getData()
-                        });
+                        if(valid){
+                            this.addVisible = false;
+                            addUser(this.form).then(res => {
+                                this.$message.success(`新增成功`);
+                                this.getData()
+                            });
+                        }
                     });
 
                 } else {
                     this.$refs['form'].validate(valid => {
-                        this.editVisible = false;
-                        updateUser(this.form).then(res => {
-                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                            this.$set(this.tableData, this.idx, this.form);
-                        });
+                       if(valid){
+                           this.editVisible = false;
+                           updateUser(this.form).then(res => {
+                               this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                               this.$set(this.tableData, this.idx, this.form);
+                           });
+                       }
                     });
                 }
 

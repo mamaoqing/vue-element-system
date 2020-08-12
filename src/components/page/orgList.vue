@@ -10,7 +10,9 @@
                 <el-button type="primary" icon="el-icon-search" @click="addOrg">添加机构</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="addChildOrg">添加下级</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="deleteOrg(form.parentId)">删除机构</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="editParent(form.parentId,form.parentOrgName)">修改机构</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="editParent(form.parentId,form.parentOrgName)">
+                    修改机构
+                </el-button>
                 <el-table
                         :data="orgList"
                         border
@@ -49,13 +51,13 @@
 
             <el-dialog :title="title" :visible.sync="authVisible" width="30%">
                 <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
-                    <el-form-item label="上级机构名称" prop="compAddr"
+                    <el-form-item label="上级机构名称" prop="parentOrgName"
                                   :rules="[
                     { required: true, message: '请输入上级机构名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="form.parentOrgName" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="机构名称" prop="compAddr"
+                    <el-form-item label="机构名称" prop="name"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
@@ -70,7 +72,7 @@
             <el-dialog :title="title" :visible.sync="addVisible" width="30%">
                 <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
 
-                    <el-form-item label="机构名称" prop="compAddr"
+                    <el-form-item label="机构名称" prop="name"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
@@ -153,21 +155,29 @@
             // 提交保存
             submit() {
                 if (this.title === '修改机构') {
-                    updateChildOrg(this.form).then(res => {
-                        this.$message.success(`修改机构成功`);
-                        this.init();
-                        this.getChildOrgList();
-                        this.authVisible = false;
-                        this.addVisible = false;
+                    this.$refs['form'].validate(valid => {
+                        if (valid) {
+                            updateChildOrg(this.form).then(res => {
+                                this.$message.success(`修改机构成功`);
+                                this.init();
+                                this.getChildOrgList();
+                                this.authVisible = false;
+                                this.addVisible = false;
+                            });
+                        }
                     });
-                }else{
-                    addChildOrg(this.form).then(res => {
-                        if (0 === res.code) {
-                            this.$message.success(`添加机构成功`);
-                            this.init();
-                            this.getChildOrgList();
-                            this.authVisible = false;
-                            this.addVisible = false;
+                } else {
+                    this.$refs['form'].validate(valid => {
+                        if (valid) {
+                            addChildOrg(this.form).then(res => {
+                                if (0 === res.code) {
+                                    this.$message.success(`添加机构成功`);
+                                    this.init();
+                                    this.getChildOrgList();
+                                    this.authVisible = false;
+                                    this.addVisible = false;
+                                }
+                            });
                         }
                     });
                 }
@@ -196,9 +206,9 @@
                 });
             },
             // 修改父机构
-            editParent(id,name){
+            editParent(id, name) {
                 this.title = "修改机构";
-                this.form.parentId='';
+                this.form.parentId = '';
                 this.addVisible = true;
                 this.form.name = name;
                 this.form.id = id;
