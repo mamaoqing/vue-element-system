@@ -131,12 +131,16 @@ export default new Router({
                     path: '/dictItem',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/dictItem.vue'),
                     meta: { title: '字典项列表' }
-                }
-                ,
+                },
                 {
                     path: '/role',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/role.vue'),
                     meta: { title: '角色管理' }
+                },
+                {
+                    path: '/unitModel',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/unitModel.vue'),
+                    meta: { title: '单元型号管理' }
                 }
             ]
         },
