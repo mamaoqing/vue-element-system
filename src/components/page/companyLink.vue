@@ -22,7 +22,7 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="name" label="姓名" align="center"></el-table-column>
+                <el-table-column prop="name" label="姓名"  align="center"></el-table-column>
                 <el-table-column prop="job" label="职务" align="center"></el-table-column>
                 <el-table-column prop="likes" label="爱好" align="center"></el-table-column>
                 <el-table-column prop="birthday" label="生日" align="center"></el-table-column>
@@ -129,8 +129,31 @@
                 ]">
                     <el-input v-model="form.email"></el-input>
                 </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remark"></el-input>
+                <el-form-item label="录入人">
+                    <el-input v-model="form.createdName"></el-input>
+                </el-form-item>
+                <el-form-item label="录入时间" prop="establishmentDate">
+                    <el-date-picker
+                            v-model="form.createdAt"
+                            type="datetime"
+                            placeholder="选择日期时间"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            default-time="00:00:00"
+                    />
+                </el-form-item>
+                <el-form-item label="修改人">
+                    <el-input v-model="form.modifiedName"></el-input>
+                </el-form-item>
+                <el-form-item label="修改时间" prop="establishmentDate">
+                    <el-date-picker
+                            v-model="form.modifiedAt"
+                            type="datetime"
+                            placeholder="选择日期时间"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            default-time="00:00:00"
+                    />
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -238,19 +261,23 @@
             saveEditOrAdd(title) {
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
-                        this.editVisible = false;
-                        addLinkData(this.form).then(res => {
-                            this.$message.success(`新增成功`);
-                            this.getData();
-                        });
+                        if (valid){
+                            this.editVisible = false;
+                            addLinkData(this.form).then(res => {
+                                this.$message.success(`新增成功`);
+                                this.getData();
+                            });
+                        }
                     });
                 } else {
                     this.$refs['form'].validate(valid => {
-                        this.editVisible = false;
-                        updateLinkData(this.form).then(res => {
-                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                            this.$set(this.tableData, this.idx, this.form);
-                        });
+                        if (valid){
+                            this.editVisible = false;
+                            updateLinkData(this.form).then(res => {
+                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                this.$set(this.tableData, this.idx, this.form);
+                            });
+                        }
                     });
                 }
 

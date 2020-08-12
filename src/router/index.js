@@ -121,6 +121,11 @@ export default new Router({
                     path: '/user',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/user.vue'),
                     meta: { title: '用户列表' }
+                },
+                {
+                    path: '/test',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/common/test.vue'),
+                    meta: { title: '用户列表' }
                 }
             ]
         },
