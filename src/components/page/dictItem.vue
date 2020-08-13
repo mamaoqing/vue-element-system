@@ -284,6 +284,7 @@ export default {
                 this.$refs[form].validate((valid)=> {
                     if (valid) {
                         addDictItem(this.form).then(res => {
+                            this.editVisible = false;
                             this.$message.success(`新增成功`);
                             this.getData()
                         });
@@ -295,6 +296,7 @@ export default {
                     if (valid) {
                         updateDictItem(this.form).then(res => {
                             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                            this.editVisible = false;
                             this.$set(this.tableData, this.idx, this.form);
                         });
                     }

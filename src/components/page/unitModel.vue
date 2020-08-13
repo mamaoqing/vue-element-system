@@ -65,16 +65,16 @@
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
                 <el-form-item label="名称" prop="name">
-                    <el-input v-model="form.name" :disabled="edit" ></el-input>
+                    <el-input v-model="form.name" ></el-input>
                 </el-form-item>
                 <el-form-item label="房间数" prop="roomNum">
-                    <el-input v-model="form.roomNum" :disabled="edit" ></el-input>
+                    <el-input v-model="form.roomNum"  ></el-input>
                 </el-form-item>
                 <el-form-item label="电梯数" prop="elevatorNum">
-                    <el-input v-model="form.elevatorNum" :disabled="edit" ></el-input>
+                    <el-input v-model="form.elevatorNum"  ></el-input>
                 </el-form-item>
                 <el-form-item label="序号" prop="orderBy">
-                    <el-input v-model="form.orderBy" :disabled="edit" ></el-input>
+                    <el-input v-model="form.orderBy"  ></el-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="form.remark"></el-input>
@@ -245,7 +245,7 @@ export default {
                         addUnitModel(this.form).then(res => {
                             this.editVisible = false;
                             this.$message.success(`新增成功`);
-                            this.getData()
+                            this.getData();
                         });
                     }
                 });
