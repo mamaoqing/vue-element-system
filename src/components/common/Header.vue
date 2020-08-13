@@ -111,11 +111,9 @@
                 Axios.get('/api/sMenu/get')
                     .then(function(res) {
                         that.menus = res.data.data
-                        console.log(res.data.data)
                         // that.items = res.data.data;
                     })
                     .catch(function(error) {
-                        console.log(error);
                     });
             },
             // 侧边栏折叠

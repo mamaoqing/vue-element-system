@@ -22,3 +22,11 @@ export const deleteOrg = id => {
         method: 'delete',
     });
 };
+
+export const updateChildOrg = query => {
+    return request({
+        url: '/api/sOrg/updateOrg',
+        method: 'put',
+        data: query
+    });
+};

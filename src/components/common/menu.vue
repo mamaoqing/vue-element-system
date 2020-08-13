@@ -1,11 +1,4 @@
 <template>
-    <!--<ul class="menuList">
-        <li v-for="menu in list">
-            <router-link to="/" >{{menu.name}}</router-link>
-            <meunlist v-if="menu.chirldMenuList.length" :list="menu.chirldMenuList"></meunlist>
-        </li>
-    </ul>-->
-<!--    <el-menu-item></el-menu-item>-->
     <div class="nav">
         <el-menu
                 class="nav-el-menu"
@@ -60,12 +53,6 @@
 <script>
 import bus from './bus';
 
-// export default {
-//     name: "meunlist",
-//     props: {
-//         list: Array
-//     }
-// };
 export default {
     data() {
         return {
