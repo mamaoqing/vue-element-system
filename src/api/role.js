@@ -70,3 +70,10 @@ export const setRoleMenu = query => {
         data: query
     });
 };
+export const listCompAll = query => {
+    return request({
+        url: '/api/sCompany/getListCompany',
+        method: 'get',
+        params: query
+    });
+};
