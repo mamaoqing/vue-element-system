@@ -73,22 +73,22 @@
                     <el-form-item label="父菜单id" v-show="false">
                         <el-input v-model="updateForm.id" @input="change($event)"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单名称" prop="name"
+                    <el-form-item label="菜单名称" label-width="100px" prop="name"
                                   :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="updateForm.name" @input="change($event)"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单连接">
+                    <el-form-item label="菜单连接" label-width="100px">
                         <el-input v-model="updateForm.url" @input="change($event)"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单图标">
+                    <el-form-item label="菜单图标" label-width="100px">
                         <el-input v-model="updateForm.icon" @input="change($event)"></el-input>
                     </el-form-item>
-                    <el-form-item label="类型">
+                    <el-form-item label="类型" label-width="100px">
                         <el-input v-model="updateForm.type" @input="change($event)"></el-input>
                     </el-form-item>
-                    <el-form-item label="状态">
+                    <el-form-item label="状态" label-width="100px">
                         <el-input v-model="updateForm.state" @input="change($event)"></el-input>
                     </el-form-item>
                 </template>
@@ -101,28 +101,28 @@
         <el-dialog :title="title" :visible.sync="addVisible" width="30%">
             <el-form ref="form" :model="form" label-width="80px" :disabled="disable">
                 <template>
-                    <el-form-item label="父菜单id" v-show="false">
+                    <el-form-item label="父菜单id" label-width="100px" v-show="false">
                         <el-input v-model="form.parentId"></el-input>
                     </el-form-item>
-                    <el-form-item label="父菜单名称" disabled="true" v-show="hidden" >
+                    <el-form-item label="父菜单名称"label-width="100px"  disabled="true" v-show="hidden" >
                         <el-input v-model="form.fcd"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单名称" prop="name"
+                    <el-form-item label="菜单名称" label-width="100px" prop="name"
                                   :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单连接">
+                    <el-form-item label="菜单连接" label-width="100px">
                         <el-input v-model="form.url"></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单图标">
+                    <el-form-item label="菜单图标" label-width="100px">
                         <el-input v-model="form.icon"></el-input>
                     </el-form-item>
-                    <el-form-item label="类型">
+                    <el-form-item label="类型" label-width="100px">
                         <el-input v-model="form.type"></el-input>
                     </el-form-item>
-                    <el-form-item label="状态">
+                    <el-form-item label="状态" label-width="100px">
                         <el-input v-model="form.state"></el-input>
                     </el-form-item>
                 </template>

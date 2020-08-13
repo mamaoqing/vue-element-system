@@ -98,9 +98,9 @@ export default new Router({
                     meta: { title: '权限测试', permission: true }
                 },
                 {
-                    path: '/404',
-                    component: () => import(/* webpackChunkName: "404" */ '../components/page/404.vue'),
-                    meta: { title: '404' }
+                    path: '/comm',
+                    component: () => import(/* webpackChunkName: "404" */ '../components/page/community.vue'),
+                    meta: { title: '社区管理' }
                 },
                 {
                     path: '/menuList',
