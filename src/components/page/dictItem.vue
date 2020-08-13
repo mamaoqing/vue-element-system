@@ -260,13 +260,13 @@ export default {
         },*/
         getData() {
             findDictItemList(this.query).then(res => {
-                console.log(res);
+                //console.log(res);
 
                 this.tableData = res.data;
                 //this.pageTotal = res.data.total || 0;
             });
             listDictItem(this.query).then(res => {
-                console.log(res);
+                //console.log(res);
 
                 //this.tableData = res.data;
                 this.pageTotal = res.data.length || 0;
@@ -287,8 +287,8 @@ export default {
             })
                 .then(() => {
                     deleteDictItem(id).then(res => {
-                        debugger
-                        console.log(res);
+                        //debugger
+                        //console.log(res);
                         this.$message.success(res.data);
                         this.getData();
                     });
