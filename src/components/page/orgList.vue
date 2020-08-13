@@ -7,10 +7,12 @@
         </el-col>
         <el-col :span="18">
             <div class="grid-content bg-purple-light">
-                <el-button type="primary" icon="el-icon-search" @click="addOrg">添加机构</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="addOrg">添加同级机构</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="addChildOrg">添加下级</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="deleteOrg(form.parentId)">删除机构</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="editParent(form.parentId,form.parentOrgName)">修改机构</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="editParent(form.parentId,form.parentOrgName)">
+                    修改机构
+                </el-button>
                 <el-table
                         :data="orgList"
                         border
@@ -49,32 +51,44 @@
 
             <el-dialog :title="title" :visible.sync="authVisible" width="30%">
                 <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
-                    <el-form-item label="上级机构名称" prop="compAddr"
+                    <el-form-item label="上级机构名称" label-width="100px" prop="parentOrgName"
                                   :rules="[
                     { required: true, message: '请输入上级机构名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="form.parentOrgName" disabled></el-input>
                     </el-form-item>
-                    <el-form-item label="机构名称" prop="compAddr"
+                    <el-form-item label="机构名称" label-width="100px" prop="name"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
+                    <el-form-item label="状态" label-width="100px">
+                        <el-input v-model="form.state" @input="change($event)"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" label-width="100px">
+                        <el-input v-model="form.remark" @input="change($event)"></el-input>
+                    </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
-                <el-button @click="authVisible = false">取 消</el-button>
+                <el-button @click="addVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submit">确 定</el-button>
             </span>
             </el-dialog>
             <el-dialog :title="title" :visible.sync="addVisible" width="30%">
                 <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
 
-                    <el-form-item label="机构名称" prop="compAddr"
+                    <el-form-item label="机构名称" label-width="100px" prop="name"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
                         <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态" label-width="100px">
+                        <el-input v-model="form.state" @input="change($event)"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" label-width="100px">
+                        <el-input v-model="form.remark" @input="change($event)"></el-input>
                     </el-form-item>
                 </el-form>
                 <span slot="footer" class="dialog-footer">
@@ -129,45 +143,57 @@
                 });
             },
             handleNodeClick(e) {
+                console.log(e);
                 this.form.parentId = e.id;
                 this.ids.id = e.id;
                 this.form.parentOrgName = e.name;
-                this.form.parentIdList = e.parentIdList + "," + e.id;
+                this.form.state = e.state;
+                this.form.remark = e.remark;
+                this.form.parentIdList = e.parentIdList;
                 this.getChildOrgList();
             },
             // 添加下级机构
             addChildOrg() {
                 this.form.name = '';
+                this.form.state='';
+                this.form.remark="";
                 this.title = '添加机构';
                 this.authVisible = true;
+                this.form.parentIdList = this.form.parentIdList+","+this.ids.id;
             },
             // 添加机构
             addOrg() {
-                this.form.id = '';
+                this.form = {};
+                this.form.parentIdList='0';
                 this.title = '添加机构';
-                this.form.name = '';
                 this.addVisible = true;
-                this.form.parentIdList = 0;
-                this.form.parentId = '';
             },
             // 提交保存
             submit() {
                 if (this.title === '修改机构') {
-                    updateChildOrg(this.form).then(res => {
-                        this.$message.success(`修改机构成功`);
-                        this.init();
-                        this.getChildOrgList();
-                        this.authVisible = false;
-                        this.addVisible = false;
+                    this.$refs['form'].validate(valid => {
+                        if (valid) {
+                            updateChildOrg(this.form).then(res => {
+                                this.$message.success(`修改机构成功`);
+                                this.init();
+                                this.getChildOrgList();
+                                this.authVisible = false;
+                                this.addVisible = false;
+                            });
+                        }
                     });
-                }else{
-                    addChildOrg(this.form).then(res => {
-                        if (0 === res.code) {
-                            this.$message.success(`添加机构成功`);
-                            this.init();
-                            this.getChildOrgList();
-                            this.authVisible = false;
-                            this.addVisible = false;
+                } else {
+                    this.$refs['form'].validate(valid => {
+                        if (valid) {
+                            addChildOrg(this.form).then(res => {
+                                if (0 === res.code) {
+                                    this.$message.success(`添加机构成功`);
+                                    this.init();
+                                    this.getChildOrgList();
+                                    this.authVisible = false;
+                                    this.addVisible = false;
+                                }
+                            });
                         }
                     });
                 }
@@ -182,10 +208,14 @@
             },
             // 删除
             deleteOrg(id) {
-                deleteOrg(id).then(res => {
-                    this.$message.success(`删除机构成功`);
-                    this.init();
-                    this.getChildOrgList();
+                this.$confirm('删除后该机构下的子机构也会删除，确定要删除吗？', '提示', {
+                    type: 'warning'
+                }).then(()=> {
+                    deleteOrg(id).then(res => {
+                        this.$message.success(`删除机构成功`);
+                        this.init();
+                        this.getChildOrgList();
+                    });
                 });
             },
             getChildOrgList() {
@@ -196,12 +226,15 @@
                 });
             },
             // 修改父机构
-            editParent(id,name){
+            editParent(id, name) {
                 this.title = "修改机构";
-                this.form.parentId='';
+                this.form.parentId = '';
                 this.addVisible = true;
                 this.form.name = name;
                 this.form.id = id;
+            },
+            change(e) {
+                this.$forceUpdate();
             }
 
         }

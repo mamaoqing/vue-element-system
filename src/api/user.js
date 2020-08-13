@@ -83,3 +83,12 @@ export const setUserRole = row => {
         params:row
     });
 };
+
+// 设置用户角色
+export const reSetPassword = row => {
+    return request({
+        url: '/api/sUser/reSetPasswordAdmin',
+        method: 'put',
+        params:row
+    });
+};
