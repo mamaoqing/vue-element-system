@@ -10,7 +10,7 @@
         <div class="container">
             <div class="handle-box">
                 <template>
-                    <el-select v-model="value" @clear="clearComp" clearable filterable placeholder="请选择"
+                    <el-select v-model="value" @clear="clearComp" clearable filterable placeholder="请选择物业公司"
                                @change="selectComp(value)">
                         <el-option
                                 v-for="item in options"
@@ -24,6 +24,7 @@
                 <template v-if="baseOrg.length &gt; 0">
                     <el-cascader
                             :model="value1"
+                            placeholder="请选择机构"
                             :options="orgop"
                             :props="{ /*multiple: true,*/emitPath: false,emitPath:false,children:'childList',label: 'name',value:'id',checkStrictly:true }"
                             :clearable="true"
@@ -57,36 +58,43 @@
                 <el-table-column prop="orgName" label="机构名称" align="center"></el-table-column>
                 <el-table-column prop="name" label="用户姓名" align="center"></el-table-column>
                 <el-table-column prop="userName" label="用户名" align="center"></el-table-column>
-                <el-table-column prop="tel" label="电话" align="center"></el-table-column>
+                <el-table-column prop="tel" label="电话" width="130" align="center"></el-table-column>
                 <el-table-column prop="type" label="类型" align="center"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="录入人" align="center"></el-table-column>
-                <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
+                <el-table-column prop="createdAt" label="录入时间" align="center" width="200"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
-                <el-table-column label="操作" width="280" align="center">
+                <el-table-column prop="modifiedAt" label="修改时间" align="center" width="200"></el-table-column>
+                <el-table-column label="操作" width="320" align="center">
                     <template slot-scope="scope">
                         <el-button
-                                size="mini"
                                 type="text"
+                                icon="el-icon-edit"
                                 @click.stop
                                 @click="handleEdit(scope.$index, scope.row)">编辑
                         </el-button>
                         <el-button
-                                size="mini"
                                 type="text"
+                                icon="el-icon-edit"
                                 @click.stop
                                 @click="handleAuth(scope.$index, scope.row)">权限
                         </el-button>
                         <el-button
-                                size="mini"
                                 type="text"
+                                icon="el-icon-edit"
                                 @click.stop
                                 @click="userRole(scope.$index, scope.row)">角色
                         </el-button>
                         <el-button
-                                size="mini"
-                                type="danger"
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="resetPassword(scope.$index, scope.row)">重置密码
+                        </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-delete"
+                                @click.stop
                                 @click="handleDelete(scope.row.id)">删除
                         </el-button>
                     </template>
@@ -111,37 +119,51 @@
                 <el-form-item label="id" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="公司名称" prop="compName"
+                <el-form-item label="公司名称" label-width="100px" prop="compName"
                               :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.compName"></el-input>
                 </el-form-item>
-                <el-form-item label="机构名称">
-                    <el-input v-model="form.orgName"></el-input>
-                </el-form-item>
-                <el-form-item label="用户姓名">
+                <template v-if="true">
+                    <el-form-item label="机构名称" label-width="100px" rop="compName"
+                                  :rules="[
+                    { required: true, message: '请输入机构名称', trigger: 'blur' },
+                ]">
+                        <el-cascader
+
+                                v-model="form.orgId"
+                                :model="form.ogrId"
+                                :options="orgop"
+                                :props="{ /*multiple: true,*/emitPath: false,emitPath:false,children:'childList',label: 'name',value:'id',checkStrictly:true }"
+                                :clearable="true"
+                                :show-all-levels="false"
+                                @change="changeProvinceCity1"
+                        ></el-cascader>
+                    </el-form-item>
+                </template>
+                <el-form-item label="用户姓名" label-width="100px">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名" prop="compAddr"
+                <el-form-item label="用户名" label-width="100px" prop="userName"
                               :rules="[
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.userName"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="registeredAddr"
+                <el-form-item label="电话" label-width="100px" prop="tel"
                               :rules="[
                     { required: true, message: '请输入电话', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
-                <el-form-item label="类型" prop="registeredAddr"
+                <el-form-item label="类型" label-width="100px" prop="type"
                               :rules="[
                     { required: true, message: '请输入类型', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.type"></el-input>
                 </el-form-item>
-                <el-form-item label="状态" prop="registeredAddr"
+                <el-form-item label="状态" label-width="100px" prop="state"
                               :rules="[
                     { required: true, message: '请输入状态', trigger: 'blur' },
                 ]">
@@ -150,7 +172,7 @@
 
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="editVisible = false,baseOrg=[]">取 消</el-button>
                 <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
             </span>
         </el-dialog>
@@ -160,7 +182,7 @@
                 <el-form-item label="id" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="公司名称" prop="compName"
+                <el-form-item label="公司名称" label-width="100px" prop="compName"
                               :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
@@ -177,7 +199,7 @@
                     </template>
                 </el-form-item>
                 <template v-if="addBaseOrg.length &gt; 0">
-                    <el-form-item label="机构名称" rop="compName"
+                    <el-form-item label="机构名称" label-width="100px" rop="orgId"
                                   :rules="[
                     { required: true, message: '请输入机构名称', trigger: 'blur' },
                 ]">
@@ -191,40 +213,40 @@
                         ></el-cascader>
                     </el-form-item>
                 </template>
-                <el-form-item label="用户姓名">
+                <el-form-item label="用户姓名" label-width="100px">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="用户名" prop="compAddr"
+                <el-form-item label="用户名" label-width="100px" prop="userName"
                               :rules="[
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.userName"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="compAddr"
+                <el-form-item label="密码" label-width="100px" prop="password"
                               :rules="[
                     { required: true, message: '请输入密码', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.password"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="compAddr"
+                <el-form-item label="密码" label-width="100px" prop="repassword"
                               :rules="[
                     { required: true, message: '请再次输入密码', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.repassword"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="registeredAddr"
+                <el-form-item label="电话" label-width="100px" prop="tel"
                               :rules="[
                     { required: true, message: '请输入电话', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
-                <el-form-item label="类型" prop="registeredAddr"
+                <el-form-item label="类型" label-width="100px" prop="type"
                               :rules="[
                     { required: true, message: '请输入类型', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.type"></el-input>
                 </el-form-item>
-                <el-form-item label="状态" prop="registeredAddr"
+                <el-form-item label="状态" label-width="100px" prop="state"
                               :rules="[
                     { required: true, message: '请输入状态', trigger: 'blur' },
                 ]">
@@ -253,6 +275,20 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="authVisible = false">取 消</el-button>
                 <el-button type="primary" @click="setUserComms">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="passwordV" width="30%">
+            <el-form ref="resetPassword" :model="setPassword" label-width="70px" :disabled="disable">
+                <el-form-item label="新密码" prop="password"
+                              :rules="[
+                    { required: true, message: '请输入密码', trigger: 'blur' },
+                ]">
+                    <el-input v-model="setPassword.password"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="passwordV = false">取 消</el-button>
+                <el-button type="primary" @click="passwordCommit">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 用户j角色弹出框 -->
@@ -287,7 +323,7 @@
         getUserComm,
         setUserComm,
         getUserRole,
-        setUserRole
+        setUserRole, reSetPassword
     } from '../../api/user';
     import CitySelect from '../common/CitySelect';
     import {treeorg} from '../../api/treemenu';
@@ -296,6 +332,11 @@
         name: 'basetable',
         data() {
             return {
+                setPassword: {
+                    id: '',
+                    password: '',
+                },
+                passwordV: false,
                 setUserComm: {
                     commIds: '',
                     userId: '',
@@ -327,6 +368,7 @@
                     name: ''
                 },
                 tableData: [],
+
                 multipleSelection: [],
                 delList: [],
                 editVisible: false,
@@ -360,7 +402,7 @@
         methods: {
             changeProvinceCity(value) {
                 this.query.orgId = value;
-            },changeProvinceCity1(value) {
+            }, changeProvinceCity1(value) {
                 this.form.orgId = value;
             },
             initOrg() {
@@ -443,6 +485,10 @@
             },
             // 编辑操作
             handleEdit(index, row) {
+                this.selectComp(row.compId);
+                this.form.orgId = row.orgId;
+
+
                 this.idx = index;
                 this.form = row;
                 this.editVisible = true;
@@ -513,20 +559,26 @@
 
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
-                        this.addVisible = false;
-                        addUser(this.form).then(res => {
-                            this.$message.success(`新增成功`);
-                            this.getData()
-                        });
+                        if (valid) {
+                            this.addVisible = false;
+                            addUser(this.form).then(res => {
+                                this.$message.success(`新增成功`);
+                                this.getData();
+                            });
+                        }
                     });
 
                 } else {
                     this.$refs['form'].validate(valid => {
-                        this.editVisible = false;
-                        updateUser(this.form).then(res => {
-                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                            this.$set(this.tableData, this.idx, this.form);
-                        });
+                        if (valid) {
+                            this.editVisible = false;
+                            updateUser(this.form).then(res => {
+                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                this.$set(this.tableData, this.idx, this.form);
+                                this.getData();
+                                this.baseOrg = [];
+                            });
+                        }
                     });
                 }
 
@@ -554,6 +606,25 @@
                         this.$message.error(`设置失败`);
                     }
                     this.roleVisible = false;
+                });
+            },
+            resetPassword(index, row) {
+                this.setPassword.id = row.id;
+                this.passwordV = true;
+            },
+            passwordCommit() {
+                this.$refs['resetPassword'].validate(valid => {
+                    if (valid) {
+                        reSetPassword(this.setPassword).then(res => {
+                            if (res.data) {
+                                this.$message.success(`密码重置成功！`);
+                                this.passwordV = false;
+                            }else{
+                                this.$message.error(`密码重置失败！`);
+                            }
+                            this.getData();
+                        });
+                    }
                 });
             },/*
             selectRole(item) {

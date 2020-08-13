@@ -19,12 +19,18 @@
                 <!--<el-input v-model="query.type" placeholder="角色类型" class="handle-input mr10"></el-input>-->
 
                 <el-select v-model="query.type" placeholder="角色类型" >
+                    <el-option key="qxz" label="请选择角色类型" value=""></el-option>
                     <el-option key="bbk" label="全局角色" value="全局角色"></el-option>
                     <el-option key="xtc" label="物业公司角色" value="物业公司角色"></el-option>
                 </el-select>
 
-
-                <el-input v-model="query.compId" placeholder="物业公司名称" class="handle-input mr10"></el-input>
+                <!--<el-input v-model="query.compId" placeholder="物业公司名称" class="handle-input mr10"></el-input>-->
+                <!--<el-form-item label="物业公司名称" prop="dictId">-->
+                    <el-select v-model="query.compId" placeholder="物业公司名称" :disabled="edit">
+                        <el-option key="qxz" label="请选择物业公司名称" value=""></el-option>
+                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                    </el-select>
+                <!--</el-form-item>-->
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
             </div>
@@ -109,6 +115,47 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+                <template >
+                    <el-form-item label="角色名称" prop="name" >
+                        <el-input v-model="form.name" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="角色类型" prop="name" >
+                        <el-input v-model="form.type" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="所属公司" prop="compName" >
+                        <el-input v-model="form.compName" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态" prop="state">
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="remark">
+                        <el-input v-model="form.remark"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建人" prop="createdName">
+                        <el-input v-model="form.createdName" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建日期" prop="createdAt">
+                        <el-input v-model="form.createdAt" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改人" prop="modifiedName">
+                        <el-input v-model="form.modifiedName" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改日期" prop="modifiedAt">
+                        <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
+                    </el-form-item>
+
+                </template>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+            </span>
+        </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
             <menu1 v-if="cmpVisible" ref="menu1"></menu1>
         </el-dialog>
@@ -116,8 +163,9 @@
 </template>
 
 <script>
-import { addRole,deleteRole,updateRole,listRole,checkRoleMenuUser,setUserRole,listRoleNum } from '../../api/role';
+import { addRole,deleteRole,updateRole,listRole,checkRoleMenuUser,setUserRole,listRoleNum,listCompAll } from '../../api/role';
 import menu1 from './menuTree';
+import { listDictAll } from '../../api/dict';
 
 export default {
     name: 'basetable',
@@ -148,6 +196,7 @@ export default {
             multipleSelection: [],
             delList: [],
             editVisible: false,
+            updateVisible:false,
             pageTotal: 0,
             disable:false,
             edit:false,
@@ -170,7 +219,7 @@ export default {
     },
     created() {
         this.getData();
-        //this.getDict();
+        this.getDict();
     },
     components:{
         menu1
@@ -189,7 +238,12 @@ export default {
                 console.log(this.pageTotal);
             });
         },
-
+        getDict(){
+            listCompAll(this.query).then(res => {
+                this.typeList = res.data.records;
+                console.log(this.typeList);
+            });
+        },
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
@@ -200,15 +254,15 @@ export default {
             console.log(id);
 
             checkRoleMenuUser(id).then(res => {
-                debugger
-                console.log(res);
+                //debugger
+                //console.log(res);
                 if(res.data==''){
                     this.$confirm('确定要删除吗？', '提示', {
                         type: 'warning'
                     })
                         .then(() => {
                             deleteRole(id).then(res => {
-                                console.log(res);
+                                //console.log(res);
                                 this.$message.success('删除成功');
                                 this.getData();
                             });
@@ -220,7 +274,7 @@ export default {
                     })
                         .then(() => {
                             deleteRole(id).then(res => {
-                                console.log(res);
+                                //console.log(res);
                                 this.$message.success('删除成功');
                                 this.getData();
                             });
@@ -245,7 +299,7 @@ export default {
         },
         handleAdd() {
             this.editVisible = true;
-            this.title="新增";
+            this.title="新增角色";
             this.disable=false;
             this.edit=false;
             this.form={state:'在用'};
@@ -255,10 +309,10 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
-            this.editVisible = true;
+            this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改";
+            this.title="修改角色";
             this.$refs.form.clearValidate();
         },
         menuEdit(id){
@@ -274,19 +328,20 @@ export default {
             //具体操作
             this.form = row;
             this.disable=true;
-            this.editVisible = true;
-            this.title="查看"
+            this.updateVisible = true;
+            this.title="查看角色"
 
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
-            if(title==='新增'){
+            if(title==='新增角色'){
                 // this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
 
                     if(valid){
                         addRole(this.form).then(res => {
-                            this.$message.success(`新增成功`);
+                            this.editVisible = false;
+                            this.$message.success(`新增角色成功`);
                             this.getData()
                         });
                     }
@@ -297,6 +352,7 @@ export default {
                 this.$refs[form].validate((valid)=>{
                     if(valid){
                         updateRole(this.form).then(res => {
+                            this.updateVisible = false;
                             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                             this.$set(this.tableData, this.idx, this.form);
                         });

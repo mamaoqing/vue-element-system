@@ -95,6 +95,45 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+                <!--<el-form-item label="id">
+                    <el-input v-model="form.id"></el-input>
+                </el-form-item>-->
+                <el-form-item label="字典名称" prop="name">
+                    <el-input v-model="form.name" :disabled="edit" @blur="checkName"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" prop="state">
+                    <el-select v-model="form.state" placeholder="请选择" :disabled="edit">
+                        <el-option key="bbk" label="在用" value="在用" ></el-option>
+                        <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="form.remark"></el-input>
+                </el-form-item>
+                <!--<el-form-item label="公司简称">
+                    <el-input v-model="form.abbreviation"></el-input>
+                </el-form-item>-->
+                <el-form-item label="创建人" prop="createdName">
+                    <el-input v-model="form.createdName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="创建日期" prop="createdAt">
+                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="修改人" prop="modifiedName">
+                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="修改日期" prop="modifiedAt">
+                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
+                </el-form-item>
+
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+            </span>
+        </el-dialog>
         <!-- 联系人弹出框   -->
         <!--<el-dialog  :visible.sync="cmpVisible" append-to-body>
             <companyLink v-if="cmpVisible" ref="companyLink"></companyLink>
@@ -134,6 +173,7 @@ export default {
             multipleSelection: [],
             delList: [],
             editVisible: false,
+            updateVisible:false,
             edit:false,
             pageTotal: 0,
             disable:false,
@@ -162,7 +202,7 @@ export default {
     methods: {
         checkName(){
             if(this.title==='新增'&&this.form.name!=undefined){
-                console.log(this.form.name);
+                //console.log(this.form.name);
                 checkDictName(this.form.name).then(res => {
                     if(res.data){
                         this.$message.error("字典名称"+this.form.name+"重复，不可重复录入");
@@ -174,8 +214,8 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             listDict(this.query).then(res => {
-                console.log(res);
-                debugger
+                //console.log(res);
+                //debugger
                 this.tableData = res.data.records;
                 this.pageTotal = res.data.total || 0;
             });
@@ -195,7 +235,7 @@ export default {
             })
                 .then(() => {
                     deleteDict(id).then(res => {
-                        console.log(res);
+                        //console.log(res);
                         this.$message.success('删除成功');
                         this.getData();
                     });
@@ -226,7 +266,7 @@ export default {
         },*/
         handleAdd() {
             this.editVisible = true;
-            this.title="新增";
+            this.title="新增字典";
             this.edit=false;
             this.form={state:'在用'}
             this.$refs.form.clearValidate();
@@ -235,10 +275,10 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
-            this.editVisible = true;
+            this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改"
+            this.title="修改字典"
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
@@ -246,13 +286,13 @@ export default {
             //具体操作
             this.form = row;
             this.disable=true;
-            this.editVisible = true;
-            this.title="查看"
+            this.updateVisible = true;
+            this.title="查看字典"
 
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
-            if(title==='新增'){
+            if(title==='新增字典'){
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
@@ -267,7 +307,7 @@ export default {
                 this.editVisible = false;
                 updateDict(this.form).then(res => {
                     this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                    this.editVisible = false;
+                    this.updateVisible = false;
                     this.$set(this.tableData, this.idx, this.form);
                 });
             }
