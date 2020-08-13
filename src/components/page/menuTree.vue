@@ -40,7 +40,7 @@
         methods: {
             dataInitialization(id) {
                 this.query.roleId = id;
-                console.log("@@@@@@@@@@@@@@@@@@@@@@"+this.query.roleId);
+                //console.log("@@@@@@@@@@@@@@@@@@@@@@"+this.query.roleId);
                 this.getData();
                 this.getHxData();
             },
@@ -60,8 +60,8 @@
                 console.log("------------------------"+this.query.roleId);
                 getRoleMenuByRoleId(this.query.roleId).then(res => {
                     if (res.code === 0) {
-                        debugger
-                        console.log(res.data);
+                        //debugger
+                        //console.log(res.data);
                         this.$refs.tree.setCheckedKeys(res.data);
                         //this.$refs.menuTree.setCheckedKeys([4]);
                     }
