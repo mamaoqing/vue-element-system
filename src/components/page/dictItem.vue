@@ -79,9 +79,14 @@
                             <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                         </el-select>
                     </el-form-item>
-
                     <el-form-item label="字典项名称" prop="name" >
                         <el-input v-model="form.name" @blur="abc" :disabled="edit"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态" prop="state">
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="排序序号" prop="orderBy">
                         <el-input v-model="form.orderBy"></el-input>
@@ -93,6 +98,49 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+                <template >
+                    <el-form-item label="字典类型" prop="dictId">
+                        <el-select v-model="form.dictId" placeholder="请选择" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="字典项名称" prop="name" >
+                        <el-input v-model="form.name" @blur="abc" :disabled="edit"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态" prop="state">
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="排序序号" prop="orderBy">
+                        <el-input v-model="form.orderBy"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="remark">
+                        <el-input v-model="form.remark"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建人" prop="createdName">
+                        <el-input v-model="form.createdName" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="创建日期" prop="createdAt">
+                        <el-input v-model="form.createdAt" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改人" prop="modifiedName">
+                        <el-input v-model="form.modifiedName" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="修改日期" prop="modifiedAt">
+                        <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
+                    </el-form-item>
+                </template>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateVisible = false">取 消</el-button>
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
@@ -132,6 +180,13 @@ export default {
                 }
             }
         }
+        let checkstate = (rule,value,callback) =>{
+            if(!value){
+                return callback(new Error("请选择状态"));
+            }else{
+                return callback();
+            }
+        }
         return {
             query: {
                 dictId:'',
@@ -143,6 +198,7 @@ export default {
             multipleSelection: [],
             delList: [],
             editVisible: false,
+            updateVisible:false,
             pageTotal: 0,
             disable:false,
             edit:false,
@@ -161,6 +217,9 @@ export default {
                 }],
                 orderBy:[{
                     validator:checkOrder,required: true,trigger:'blur'
+                }],
+                state:[{
+                    validator:checkstate,required: true,trigger:'blur'
                 }]
             }
         };
@@ -252,20 +311,20 @@ export default {
         },
         handleAdd() {
             this.editVisible = true;
-            this.title="新增";
+            this.title="新增字典项";
             this.disable=false;
             this.edit=false;
-            this.form={};
+            this.form={state:'在用'};
             this.$refs.form.clearValidate();
         },
         // 编辑操作
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
-            this.editVisible = true;
+            this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改";
+            this.title="修改字典项";
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
@@ -273,13 +332,13 @@ export default {
             //具体操作
             this.form = row;
             this.disable=true;
-            this.editVisible = true;
-            this.title="查看"
+            this.updateVisible = true;
+            this.title="查看字典项"
 
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
-            if(title==='新增'){
+            if(title==='新增字典项'){
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=> {
                     if (valid) {
@@ -296,7 +355,7 @@ export default {
                     if (valid) {
                         updateDictItem(this.form).then(res => {
                             this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                            this.editVisible = false;
+                            this.updateVisible = false;
                             this.$set(this.tableData, this.idx, this.form);
                         });
                     }
