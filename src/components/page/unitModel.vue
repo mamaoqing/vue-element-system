@@ -176,12 +176,12 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             listUnitModel(this.query).then(res => {
-                console.log(res);
+                //console.log(res);
                 this.pageSize=res.data.length || 0;
-                console.log(this.pageSize);
+                //console.log(this.pageSize);
                 this.tableData = res.data;
                 this.pageTotal = res.data.length || 0;
-                console.log(this.pageTotal);
+                //console.log(this.pageTotal);
             });
         },
 
@@ -199,7 +199,7 @@ export default {
             })
                 .then(() => {
                     deleteUnitModel(id).then(res => {
-                        console.log(res);
+                        //console.log(res);
                         this.$message.success('删除成功');
                         this.getData();
                     });
