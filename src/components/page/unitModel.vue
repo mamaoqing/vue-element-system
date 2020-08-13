@@ -179,7 +179,7 @@ export default {
             multipleSelection: [],
             delList: [],
             editVisible: false,
-            updateVisible:false;
+            updateVisible:false,
             edit:false,
             pageSize:0,
             pageTotal: 0,
