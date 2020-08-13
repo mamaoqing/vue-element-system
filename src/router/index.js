@@ -141,6 +141,11 @@ export default new Router({
                     path: '/unitModel',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/unitModel.vue'),
                     meta: { title: '单元型号管理' }
+                },
+                {
+                    path: '/commArea',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/commArea.vue'),
+                    meta: { title: '分区管理' }
                 }
             ]
         },
