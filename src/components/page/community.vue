@@ -10,6 +10,15 @@
         <div class="container">
             <div class="handle-box">
                 <template>
+                    <el-select v-model="compValue" @clear="clearComp" clearable filterable placeholder="请选择物业公司"
+                               @change="selectComp(compValue)">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.name"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
                     <el-input clearable v-model="query.name" placeholder="请输入社区名"
                               style="width: 200px"></el-input>
                     <el-input clearable v-model="query.province" placeholder="请输入省份"
@@ -252,17 +261,19 @@
 </template>
 <script>
     import {listCommunity,addComm,updateComm,deleteComm} from '../../api/community'
-    import {deleteUser, getComp} from "../../api/user";
+    import {deleteUser, getComp, getOrg} from "../../api/user";
     import {getCityDict} from "../../api/index";
     export default {
         data (){
             return{
+                compValue:'',
+                isAdmin:false,
                 disable:false,
                 cascaderData:[],
                 partyOrganId:[],
                 title:'',
                 options:[],
-                pageTotal:'',
+                pageTotal:0,
                 editVisible :false,
                 addVisible:false,
                 compData:[],
@@ -284,15 +295,18 @@
                 this.init();
             },
             addComm(){
+                this.partyOrganId = [];
                 this.form = {};
                 this.addVisible = true;
                 this.title = "添加社区";
             },
             editComm(index,row){
+                this.form={};
                 this.disable = false;
-                this.partyOrganId[0] = this.form.provinceId;
-                this.partyOrganId[1] = this.form.cityId;
-                this.partyOrganId[2] = this.form.districtId;
+                console.log(row.provinceId);
+                console.log(row.cityId);
+                console.log(row.districtId);
+                this.partyOrganId = [row.provinceId,row.cityId,row.districtId];
                 this.editVisible = true;
                 this.title = "修改社区";
                 this.form = row;
@@ -313,11 +327,18 @@
             init(){
                 listCommunity(this.query).then(res=>{
                     this.compData = res.data.records;
+                    this.pageTotal = res.data.total;
                 })
             },
             handlePageChange(val) {
                 this.$set(this.query, 'pageNo', val);
                 this.getData();
+            },
+            clearComp() {
+                this.query.compId = '';
+            },
+            selectComp(value) {
+                this.query.compId = value;
             },
             submit(){
                 if(this.title === '添加社区'){
