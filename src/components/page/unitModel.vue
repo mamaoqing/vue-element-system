@@ -85,6 +85,41 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+                <el-form-item label="名称" prop="name">
+                    <el-input v-model="form.name" ></el-input>
+                </el-form-item>
+                <el-form-item label="房间数" prop="roomNum">
+                    <el-input v-model="form.roomNum"  ></el-input>
+                </el-form-item>
+                <el-form-item label="电梯数" prop="elevatorNum">
+                    <el-input v-model="form.elevatorNum"  ></el-input>
+                </el-form-item>
+                <el-form-item label="序号" prop="orderBy">
+                    <el-input v-model="form.orderBy"  ></el-input>
+                </el-form-item>
+                <el-form-item label="备注" prop="remark">
+                    <el-input v-model="form.remark"></el-input>
+                </el-form-item>
+                <el-form-item label="创建人" prop="createdName">
+                    <el-input v-model="form.createdName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="创建日期" prop="createdAt">
+                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="修改人" prop="modifiedName">
+                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="修改日期" prop="modifiedAt">
+                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -144,6 +179,7 @@ export default {
             multipleSelection: [],
             delList: [],
             editVisible: false,
+            updateVisible:false;
             edit:false,
             pageSize:0,
             pageTotal: 0,
@@ -212,7 +248,7 @@ export default {
         },
         handleAdd() {
             this.editVisible = true;
-            this.title="新增";
+            this.title="新增单元型号";
             this.edit=false;
             this.form={state:'在用'}
             this.$refs.form.clearValidate();
@@ -221,10 +257,10 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
-            this.editVisible = true;
+            this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改"
+            this.title="修改单元型号"
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
@@ -232,13 +268,13 @@ export default {
             //具体操作
             this.form = row;
             this.disable=true;
-            this.editVisible = true;
-            this.title="查看"
+            this.updateVisible = true;
+            this.title="查看单元型号"
 
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
-            if(title==='新增'){
+            if(title==='新增单元型号'){
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
@@ -250,7 +286,7 @@ export default {
                     }
                 });
             }else {
-                this.editVisible = false;
+                this.updateVisible = false;
                 updateUnitModel(this.form).then(res => {
                     this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                     this.$set(this.tableData, this.idx, this.form);
