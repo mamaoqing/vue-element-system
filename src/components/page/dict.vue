@@ -258,6 +258,7 @@ export default {
                     if(valid) {
                         addDict(this.form).then(res => {
                             this.$message.success(`新增成功`);
+                            this.editVisible = false;
                             this.getData()
                         });
                     }
@@ -266,6 +267,7 @@ export default {
                 this.editVisible = false;
                 updateDict(this.form).then(res => {
                     this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                    this.editVisible = false;
                     this.$set(this.tableData, this.idx, this.form);
                 });
             }
