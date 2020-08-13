@@ -202,7 +202,7 @@ export default {
     methods: {
         checkName(){
             if(this.title==='新增'&&this.form.name!=undefined){
-                console.log(this.form.name);
+                //console.log(this.form.name);
                 checkDictName(this.form.name).then(res => {
                     if(res.data){
                         this.$message.error("字典名称"+this.form.name+"重复，不可重复录入");
@@ -214,8 +214,8 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             listDict(this.query).then(res => {
-                console.log(res);
-                debugger
+                //console.log(res);
+                //debugger
                 this.tableData = res.data.records;
                 this.pageTotal = res.data.total || 0;
             });
@@ -235,7 +235,7 @@ export default {
             })
                 .then(() => {
                     deleteDict(id).then(res => {
-                        console.log(res);
+                        //console.log(res);
                         this.$message.success('删除成功');
                         this.getData();
                     });
