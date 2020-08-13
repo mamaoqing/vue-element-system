@@ -254,15 +254,15 @@ export default {
             console.log(id);
 
             checkRoleMenuUser(id).then(res => {
-                debugger
-                console.log(res);
+                //debugger
+                //console.log(res);
                 if(res.data==''){
                     this.$confirm('确定要删除吗？', '提示', {
                         type: 'warning'
                     })
                         .then(() => {
                             deleteRole(id).then(res => {
-                                console.log(res);
+                                //console.log(res);
                                 this.$message.success('删除成功');
                                 this.getData();
                             });
@@ -274,7 +274,7 @@ export default {
                     })
                         .then(() => {
                             deleteRole(id).then(res => {
-                                console.log(res);
+                                //console.log(res);
                                 this.$message.success('删除成功');
                                 this.getData();
                             });
