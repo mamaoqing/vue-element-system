@@ -52,7 +52,7 @@ export default {
                     params.append('username', this.param.username);
                     params.append('passwd', this.param.passwd);
                     axios.post("/api/login/login",params).then((res=>{
-                        debugger
+                        //debugger
                         this.$message.success('登录成功');
                         let data = res.data.data;
                         console.log(data);
