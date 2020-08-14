@@ -70,7 +70,6 @@
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="compName" label="物业公司" align="center"></el-table-column>
                 <el-table-column prop="name" label="社区名称" align="center"></el-table-column>
-                <el-table-column prop="serviceType" label="服务类型" align="center"></el-table-column>
                 <el-table-column prop="usableType" label="用途类型" align="center"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center"></el-table-column>
                 <el-table-column prop="province" label="省" align="center"></el-table-column>
@@ -135,9 +134,7 @@
                 ]">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="服务类型" label-width="100px">
-                    <el-input v-model="form.serviceType"></el-input>
-                </el-form-item>
+
                 <el-form-item label="用途类型" label-width="100px">
                     <el-input v-model="form.usableType"></el-input>
                 </el-form-item>
@@ -232,9 +229,6 @@
                 ]">
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
-                <el-form-item label="服务类型" label-width="100px">
-                    <el-input v-model="form.serviceType"></el-input>
-                </el-form-item>
                 <el-form-item label="用途类型" label-width="100px">
                     <el-input v-model="form.usableType"></el-input>
                 </el-form-item>
@@ -317,9 +311,6 @@
                     { required: true, message: '请输入社区名称', trigger: 'blur' },
                 ]">
                     <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="服务类型" label-width="100px">
-                    <el-input v-model="form.serviceType"></el-input>
                 </el-form-item>
                 <el-form-item label="用途类型" label-width="100px">
                     <el-input v-model="form.usableType"></el-input>
