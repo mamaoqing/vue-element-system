@@ -73,7 +73,7 @@ export default new Router({
                 {
                     path: '/donate',
                     component: () => import(/* webpackChunkName: "donate" */ '../components/page/orgList.vue'),
-                    meta: { title: '支持作者' }
+                    meta: { title: '组织机构' }
                 },
                 {
                     path: '/company',
@@ -110,7 +110,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/commArea.vue'),
                     meta: { title: '分区管理' }
                 },
-
+                {
+                    path: '/buildings',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/building.vue'),
+                    meta: { title: '建筑管理' }
+                }
             ]
         },
         {
