@@ -136,7 +136,7 @@
                 </el-form-item>
 
                 <el-form-item label="用途类型" label-width="100px">
-                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType" ></child>
+                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"></child>
                 </el-form-item>
                 <el-form-item label="状态" label-width="100px">
                     <el-input v-model="form.state"></el-input>
@@ -207,35 +207,47 @@
         </el-dialog>
         <el-dialog :title="title" :visible.sync="editVisible" width="60%" :before-close="closeEdit">
             <el-form ref="editForm" :model="form" :disabled="disable" label-width="70px">
-                <el-form-item label="服务类型" label-width="100px" v-show="false">
-                    <el-input v-model="form.id"></el-input>
-                </el-form-item>
-                <el-form-item label="公司名称" label-width="100px">
-                    <template>
-                        <el-select v-model="form.compId" filterable placeholder="请选择"
-                                   @change="selectComp1(form.compId)" clearable disabled>
-                            <el-option
-                                    v-for="item in options"
-                                    :key="item.value"
-                                    :label="item.name"
-                                    :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </template>
-                </el-form-item>
-                <el-form-item label="社区名" label-width="100px" prop="name"
-                              :rules="[
+                <el-row>
+                    <el-form-item label="服务类型" label-width="100px" v-show="false">
+                        <el-input v-model="form.id"></el-input>
+                    </el-form-item>
+                    <el-form-item label="公司名称" label-width="100px">
+                        <template>
+                            <el-select v-model="form.compId" filterable placeholder="请选择"
+                                       @change="selectComp1(form.compId)" clearable disabled>
+                                <el-option
+                                        v-for="item in options"
+                                        :key="item.value"
+                                        :label="item.name"
+                                        :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </template>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="社区名" label-width="100px" prop="name"
+                                  :rules="[
                     { required: true, message: '请输入社区名称', trigger: 'blur' },
                 ]">
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="用途类型" label-width="100px">
-                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType" :change="useTypeChange"></child>
-                </el-form-item>
-                <el-form-item label="状态" label-width="100px">
-<!--                    <el-input v-model="form.state"></el-input>-->
-                    <child @child1="checkIn" :distId="commStateDistId" :distName="commState" :change="commStateChange"></child>
-                </el-form-item>
+                        <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="用途类型" label-width="100px">
+                            <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"
+                                   :change="useTypeChange"></child>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="状态" label-width="100px">
+                            <!--                    <el-input v-model="form.state"></el-input>-->
+                            <child @child1="checkIn" :distId="commStateDistId" :distName="commState"
+                                   :change="commStateChange"></child>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
                 <el-form-item label="省" label-width="100px">
                     <el-cascader
                             v-model="partyOrganId"
@@ -250,6 +262,8 @@
                             @change="handleChange"
                     ></el-cascader>
                 </el-form-item>
+                    </el-col>
+                </el-row>
                 <el-form-item label="详细地址" label-width="100px">
                     <el-input v-model="form.detailedAddress"></el-input>
                 </el-form-item>
@@ -399,12 +413,12 @@
         },
         data() {
             return {
-                commStateDistId:'20',
-                commState:'commState',
-                commStateChange:'',
-                useTypeChange:'',
-                useType:'usableType',
-                useTypeDistId:'7',
+                commStateDistId: '20',
+                commState: 'commState',
+                commStateChange: '',
+                useTypeChange: '',
+                useType: 'usableType',
+                useTypeDistId: '7',
                 provinceValue: "",
                 cityValue: '',
                 districtValue: '',
@@ -422,7 +436,7 @@
                 pageTotal: 0,
                 editVisible: false,
                 addVisible: false,
-                detailVisible:false,
+                detailVisible: false,
                 compData: [],
                 query: {
                     pageNo: 1,
@@ -456,7 +470,7 @@
                 this.commStateChange = row.stateId;
                 this.title = "修改社区";
                 this.form = row;
-                this.form.usableType= row.usableTypeId;
+                this.form.usableType = row.usableTypeId;
                 this.form.state = row.stateId;
             },
             deleteComm(id) {
@@ -588,15 +602,15 @@
                 this.title = '查看';
 
             },
-            checkIn(value,name){
-                if(name === 'usableType'){
+            checkIn(value, name) {
+                if (name === 'usableType') {
                     this.form.usableType = value;
                 }
-                if(name === 'commState'){
+                if (name === 'commState') {
                     this.form.state = value;
                 }
             },
-            closeEdit(){
+            closeEdit() {
                 this.editVisible = false;
                 this.init();
             }
@@ -636,14 +650,17 @@
         width: 40px;
         height: 40px;
     }
-    .el-form{
+
+    .el-form {
         overflow: hidden;
     }
-    .el-form-item{
+
+    .el-form-item {
         width: 50%;
         float: left;
     }
-    .el-table--small td{
+
+    .el-table--small td {
         padding: 1px 0;
     }
 </style>
