@@ -114,7 +114,7 @@
                 ></el-pagination>
             </div>
         </div>
-        <el-dialog :title="title" :visible.sync="addVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
                 <el-form-item label="公司名称" label-width="100px">
                     <template>
@@ -208,7 +208,7 @@
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="editVisible" width="60%">
             <el-form ref="editForm" :model="form" :disabled="disable" label-width="70px">
                 <el-form-item label="服务类型" label-width="100px" v-show="false">
                     <el-input v-model="form.id"></el-input>
@@ -294,6 +294,104 @@
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="detailVisible" width="60%">
+            <el-form ref="editForm" :model="form" :disabled="disable" label-width="70px">
+                <el-form-item label="服务类型" label-width="100px" v-show="false">
+                    <el-input v-model="form.id"></el-input>
+                </el-form-item>
+                <el-form-item label="公司名称" label-width="100px">
+                    <template>
+                        <el-select v-model="form.compId" filterable placeholder="请选择"
+                                   @change="selectComp1(form.compId)" clearable disabled>
+                            <el-option
+                                    v-for="item in options"
+                                    :key="item.value"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </el-form-item>
+                <el-form-item label="社区名" label-width="100px" prop="name"
+                              :rules="[
+                    { required: true, message: '请输入社区名称', trigger: 'blur' },
+                ]">
+                    <el-input v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item label="服务类型" label-width="100px">
+                    <el-input v-model="form.serviceType"></el-input>
+                </el-form-item>
+                <el-form-item label="用途类型" label-width="100px">
+                    <el-input v-model="form.usableType"></el-input>
+                </el-form-item>
+                <el-form-item label="状态" label-width="100px">
+                    <el-input v-model="form.state"></el-input>
+                </el-form-item>
+                <el-form-item label="省" label-width="100px">
+                    <el-cascader
+                            v-model="partyOrganId"
+                            ref="cascaderAddr"
+                            :props="{
+                                    value: 'id',
+                                    label: 'name',
+                                    children: 'childList'
+                                  }"
+                            :options="cascaderData"
+                            placeholder="请选择省市区"
+                            @change="handleChange"
+                    ></el-cascader>
+                </el-form-item>
+                <el-form-item label="详细地址" label-width="100px">
+                    <el-input v-model="form.detailedAddress"></el-input>
+                </el-form-item>
+                <el-form-item label="经度" label-width="100px">
+                    <el-input v-model="form.latitude"></el-input>
+                </el-form-item>
+                <el-form-item label="纬度" label-width="100px">
+                    <el-input v-model="form.longitude"></el-input>
+                </el-form-item>
+                <el-form-item label="地图地址" label-width="100px">
+                    <el-input v-model="form.mapAddress"></el-input>
+                </el-form-item>
+                <el-form-item label="电话" label-width="100px">
+                    <el-input v-model="form.tel"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" label-width="100px">
+                    <el-input v-model="form.email"></el-input>
+                </el-form-item>
+                <el-form-item label="建造日期" label-width="100px">
+                    <el-input v-model="form.buildedDate"></el-input>
+                </el-form-item>
+                <el-form-item label="交付日期" label-width="100px">
+                    <el-input v-model="form.deliverDate"></el-input>
+                </el-form-item>
+                <el-form-item label="社区简介" label-width="100px">
+                    <el-input v-model="form.introduction"></el-input>
+                </el-form-item>
+                <el-form-item label="社区图标" label-width="100px">
+                    <el-input v-model="form.iconPath"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" label-width="100px">
+                    <el-input v-model="form.remark"></el-input>
+                </el-form-item>
+                <el-form-item label="修改人" label-width="100px">
+                    <el-input v-model="form.modifiedName"></el-input>
+                </el-form-item>
+                <el-form-item label="修改时间" label-width="100px">
+                    <el-input v-model="form.modifiedAt"></el-input>
+                </el-form-item>
+                <el-form-item label="创建人" label-width="100px">
+                    <el-input v-model="form.createdName"></el-input>
+                </el-form-item>
+                <el-form-item label="创建时间" label-width="100px">
+                    <el-input v-model="form.createdAt"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submit()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -323,6 +421,7 @@
                 pageTotal: 0,
                 editVisible: false,
                 addVisible: false,
+                detailVisible:false,
                 compData: [],
                 query: {
                     pageNo: 1,
@@ -480,7 +579,7 @@
                 this.form = row;
                 this.partyOrganId = [row.provinceId, row.cityId, row.districtId];
                 this.disable = true;
-                this.editVisible = true;
+                this.detailVisible = true;
                 this.title = '查看';
 
             },
@@ -519,5 +618,15 @@
         margin: auto;
         width: 40px;
         height: 40px;
+    }
+    .el-form{
+        overflow: hidden;
+    }
+    .el-form-item{
+        width: 50%;
+        float: left;
+    }
+    .el-table--small td{
+        padding: 1px 0;
     }
 </style>
