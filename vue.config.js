@@ -5,7 +5,7 @@ module.exports = {
     lintOnSave: false,
     devServer: {
         port: 8900,
-        open: false,
+        open: true,
         https: false,
         overlay: {
             warnings: true,

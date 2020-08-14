@@ -21,12 +21,39 @@
                     </el-select>
                     <el-input clearable v-model="query.name" placeholder="请输入社区名"
                               style="width: 200px"></el-input>
-                    <el-input clearable v-model="query.province" placeholder="请输入省份"
-                              style="width: 200px"></el-input>
-                    <el-input clearable v-model="query.city" placeholder="请输入市"
-                              style="width: 200px"></el-input>
-                    <el-input clearable v-model="query.district" placeholder="请输入县"
-                              style="width: 200px"></el-input>
+                    <el-select v-model="provinceValue" @clear="clearProvince" clearable filterable placeholder="请选择省份"
+                               @change="selectProvince(provinceValue)">
+                        <el-option
+                                v-for="item in province"
+                                :key="item.provinceName"
+                                :label="item.provinceName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                    <template v-if="city.length &gt; 0">
+                        <el-select v-model="cityValue" @clear="clearCity" clearable filterable
+                                   placeholder="请选择市"
+                                   @change="selectCity(cityValue)">
+                            <el-option
+                                    v-for="item in city"
+                                    :key="item.cityName"
+                                    :label="item.cityName"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </template>
+                    <template v-if="district.length &gt; 0">
+                        <el-select v-model="districtValue" @clear="clearDistrict" clearable filterable
+                                   placeholder="请选择县/区"
+                                   @change="selectDistrict(districtValue)">
+                            <el-option
+                                    v-for="item in district"
+                                    :key="item.districtName"
+                                    :label="item.districtName"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </template>
                 </template>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="addComm">新增</el-button>
@@ -54,7 +81,7 @@
                 <el-table-column prop="latitude" label="纬度" align="center"></el-table-column>
                 <el-table-column prop="mapAddress" label="地图地址" align="center"></el-table-column>
                 <el-table-column prop="tel" label="电话" align="center"></el-table-column>
-                <el-table-column prop="eMail" label="邮箱" align="center"></el-table-column>
+                <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="录入人" align="center"></el-table-column>
                 <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
@@ -89,7 +116,7 @@
         </div>
         <el-dialog :title="title" :visible.sync="addVisible" width="30%">
             <el-form ref="addForm" :model="form" label-width="70px">
-                <el-form-item label="公司名称"  label-width="100px" >
+                <el-form-item label="公司名称" label-width="100px">
                     <template>
                         <el-select v-model="form.compId" filterable placeholder="请选择"
                                    @change="selectComp1(form.compId)" clearable>
@@ -148,13 +175,23 @@
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱" label-width="100px">
-                    <el-input v-model="form.eMail"></el-input>
+                    <el-input v-model="form.email"></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" label-width="100px">
-                    <el-input v-model="form.buildedDate"></el-input>
+                    <el-date-picker
+                            v-model="form.buildedDate"
+                            type="datetime"
+                            format="yyyy-MM-dd"
+                            placeholder="选择日期时间">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="交付日期" label-width="100px">
-                    <el-input v-model="form.deliverDate"></el-input>
+                    <el-date-picker
+                            v-model="form.deliverDate"
+                            type="datetime"
+                            format="yyyy-MM-dd"
+                            placeholder="选择日期时间">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="社区简介" label-width="100px">
                     <el-input v-model="form.introduction"></el-input>
@@ -176,7 +213,7 @@
                 <el-form-item label="服务类型" label-width="100px" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="公司名称"  label-width="100px" >
+                <el-form-item label="公司名称" label-width="100px">
                     <template>
                         <el-select v-model="form.compId" filterable placeholder="请选择"
                                    @change="selectComp1(form.compId)" clearable disabled>
@@ -234,7 +271,7 @@
                     <el-input v-model="form.tel"></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱" label-width="100px">
-                    <el-input v-model="form.eMail"></el-input>
+                    <el-input v-model="form.email"></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" label-width="100px">
                     <el-input v-model="form.buildedDate"></el-input>
@@ -260,28 +297,38 @@
     </div>
 </template>
 <script>
-    import {listCommunity,addComm,updateComm,deleteComm} from '../../api/community'
-    import {deleteUser, getComp, getOrg} from "../../api/user";
-    import {getCityDict} from "../../api/index";
+    import {listCommunity, addComm, updateComm, deleteComm} from '../../api/community'
+    import {getComp} from "../../api/user";
+    import {getCityDict, getProvinces} from "../../api/index";
+    import {getCityList, getDistList} from "../../api/dist"
+
     export default {
-        data (){
-            return{
-                compValue:'',
-                isAdmin:false,
-                disable:false,
-                cascaderData:[],
-                partyOrganId:[],
-                title:'',
-                options:[],
-                pageTotal:0,
-                editVisible :false,
-                addVisible:false,
-                compData:[],
-                query:{
-                    pageNo:1,
-                    size:10,
+
+        data() {
+            return {
+                provinceValue: "",
+                cityValue: '',
+                districtValue: '',
+                province: [],
+                city: [],
+                district: [],
+                compValue: '',
+                value: '',
+                isAdmin: false,
+                disable: false,
+                cascaderData: [],
+                partyOrganId: [],
+                title: '',
+                options: [],
+                pageTotal: 0,
+                editVisible: false,
+                addVisible: false,
+                compData: [],
+                query: {
+                    pageNo: 1,
+                    size: 10,
                 },
-                form:{},
+                form: {},
 
             };
         },
@@ -290,28 +337,25 @@
             this.getComp();
             this.getProvince();
         },
-        methods:{
-            handleSearch(){
+        methods: {
+            handleSearch() {
                 this.init();
             },
-            addComm(){
+            addComm() {
+                this.addVisible = true;
                 this.partyOrganId = [];
                 this.form = {};
-                this.addVisible = true;
                 this.title = "添加社区";
             },
-            editComm(index,row){
-                this.form={};
+            editComm(index, row) {
+                this.form = {};
                 this.disable = false;
-                console.log(row.provinceId);
-                console.log(row.cityId);
-                console.log(row.districtId);
-                this.partyOrganId = [row.provinceId,row.cityId,row.districtId];
+                this.partyOrganId = [row.provinceId, row.cityId, row.districtId];
                 this.editVisible = true;
                 this.title = "修改社区";
                 this.form = row;
             },
-            deleteComm(id){
+            deleteComm(id) {
                 this.$confirm('删除后，社区下的分区，角色数据权限都会删除。确定要删除吗？', '提示', {
                     type: 'warning'
                 })
@@ -324,8 +368,8 @@
                     .catch(() => {
                     });
             },
-            init(){
-                listCommunity(this.query).then(res=>{
+            init() {
+                listCommunity(this.query).then(res => {
                     this.compData = res.data.records;
                     this.pageTotal = res.data.total;
                 })
@@ -337,26 +381,60 @@
             clearComp() {
                 this.query.compId = '';
             },
+            clearProvince() {
+                this.query.provinceId = '';
+                this.query.cityId = '';
+                this.query.district = '';
+                this.city = [];
+                this.district = [];
+            },
+            clearCity() {
+                this.query.cityId = '';
+                this.query.district = '';
+                this.district = [];
+            },
+            clearDistrict() {
+                this.query.district = '';
+            },
             selectComp(value) {
                 this.query.compId = value;
             },
-            submit(){
-                if(this.title === '添加社区'){
+            selectProvince(value) {
+                this.query.provinceId = value;
+                getCityList({provinceId: value}).then(res => {
+                    if (res.code === 0) {
+                        this.city = res.data
+                    }
+                });
+
+            },
+            selectCity(value) {
+                this.query.cityId = value;
+                getDistList({cityId: value}).then(res => {
+                    if (res.code === 0) {
+                        this.district = res.data;
+                    }
+                });
+            },
+            selectDistrict(value) {
+                this.query.districtId = value;
+            },
+            submit() {
+                if (this.title === '添加社区') {
                     this.$refs['addForm'].validate(valid => {
-                        if(valid) {
-                            addComm(this.form).then(res=>{
-                                console.log(res);
+                        if (valid) {
+                            addComm(this.form).then(res => {
                                 this.$message.success(`新增成功`);
+                                this.query.compId = '';
                                 this.addVisible = false;
                                 this.init();
                             });
                         }
                     });
-                }else{
+                } else {
                     this.$refs['editForm'].validate(valid => {
-                        if(valid) {
-                            updateComm(this.form).then(res=>{
-                                console.log(res);
+                        if (valid) {
+                            updateComm(this.form).then(res => {
                                 this.$message.success(`修改成功`);
                                 this.editVisible = false;
                                 this.init();
@@ -379,20 +457,28 @@
                 this.$set(this.form, 'provinceId', val[0]);
                 this.$set(this.form, 'cityId', val[1]);
                 this.$set(this.form, 'districtId', val[2]);
-                this.$set(this.form, 'compAddr', names[0]+names[1]+names[2]);
+                this.$set(this.form, 'compAddr', names[0] + names[1] + names[2]);
                 this.$set(this.form, 'province', names[0]);
                 this.$set(this.form, 'city', names[1]);
                 this.$set(this.form, 'district', names[2]);
             },
-            getProvince(){
+            getProvince() {
+                this.provinceList();
                 getCityDict(this.query).then(res => {
                     this.cascaderData = res.data;
+                });
+
+            },
+            provinceList() {
+                getProvinces(this.query).then(res => {
+                    this.province = res.data;
                 });
             },
             //表格行点击事件
             openDetails(row) {
                 //具体操作
                 this.form = row;
+                this.partyOrganId = [row.provinceId, row.cityId, row.districtId];
                 this.disable = true;
                 this.editVisible = true;
                 this.title = '查看';
