@@ -32,7 +32,13 @@ export const listBuilding = query => {
         params: query
     });
 };
-
+export const listBuildingNum = query => {
+    return request({
+        url: '/api/rBuilding/listBuildingNum',
+        method: 'get',
+        params: query
+    });
+};
 
 export const getUserComm = compId => {
     return request({
@@ -57,6 +63,13 @@ export const getCommAreaContent = commAreaId => {
 export const getDictItemByDictId = dictId => {
     return request({
         url: '/api/sDictItem/getDictItemByDictId/'+dictId,
+        method: 'get'
+    });
+};
+
+export const checkBuildingRoomUnit = buildingId => {
+    return request({
+        url: '/api/rBuilding/checkBuildingRoomUnit/'+buildingId,
         method: 'get'
     });
 };
