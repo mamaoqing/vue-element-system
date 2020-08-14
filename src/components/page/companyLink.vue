@@ -284,7 +284,7 @@
             },
             // 分页导航
             handlePageChange(val) {
-                this.$set(this.query, 'pageIndex', val);
+                this.$set(this.query, 'pageNo', val);
                 this.getData();
             }
         }
