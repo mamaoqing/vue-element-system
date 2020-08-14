@@ -3,29 +3,17 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 公司列表
+                    <i class="el-icon-lx-cascades"></i> 分区列表
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
             <div class="handle-box">
-                <!--<el-button
-                    type="primary"
-                    icon="el-icon-delete"
-                    class="handle-del mr10"
-                    @click="delAllSelection"
-                >批量删除</el-button>-->
-                <!--<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-                    <el-option key="1" label="广东省" value="广东省"></el-option>
-                    <el-option key="2" label="湖南省" value="湖南省"></el-option>
-                </el-select>-->
-                <el-input v-model="query.name" placeholder="公司名称" class="handle-input mr10"></el-input>
-                <el-input v-model="query.abbreviation" placeholder="公司简称" class="handle-input mr10"></el-input>
-                <!--                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>-->
-                <el-input v-model="query.province" placeholder="省" class="handle-input mr10"></el-input>
-                <el-input v-model="query.city" placeholder="市" class="handle-input mr10"></el-input>
-                <el-input v-model="query.district" placeholder="区" class="handle-input mr10"></el-input>
-
+                <el-form-item label="选择器">
+                    <el-select v-model="form.region" placeholder="请选择">
+                        <el-option v-for="item in options" key="bbk" label="步步高" value="bbk"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置</el-button>
@@ -41,23 +29,14 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="name" label="公司名称" min-width="125" min-height="55" align="center"></el-table-column>
-                <el-table-column prop="abbreviation" label="公司简称" min-width="125" min-height="55" align="center"></el-table-column>
-                <el-table-column prop="establishmentDate" label="成立日期" min-width="155" min-height="55" align="center"></el-table-column>
-                <el-table-column prop="province" label="省" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="city" label="市" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="district" label="区" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="compAddr" label="公司地址" align="center" min-width="205" min-height="55"></el-table-column>
-                <el-table-column prop="registeredAddr" label="注册地址" align="center" min-width="205" min-height="55"></el-table-column>
-                <el-table-column prop="legal_person" label="法人" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="registeredCapital" label="注册资本" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="unifiedSocialCreditCode" label="统一社会信用代码" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="taxpayerIdentificationNo" label="纳税人识别号" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="registeredNo" label="工商注册号" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="compType" label="公司类型" align="center" min-width="55" min-height="55"></el-table-column>
-                <el-table-column prop="tel" label="电话" align="center" min-width="110" min-height="55"></el-table-column>
-                <el-table-column prop="eMail" label="邮箱" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="state" label="状态" align="center" min-width="55" min-height="55"></el-table-column>
+                <el-table-column prop="comp_name" label="公司名称" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="comm_name" label="社区名称" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="name" label="分区名称" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="detailed_address" label="详细地址" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="builded_date" label="建造日期" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="deliver_date" label="交付日期" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="latitude" label="经度" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="longitude" label="纬度" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75" min-height="55"></el-table-column>
@@ -105,118 +84,80 @@
                 ></el-pagination>
             </div>
         </div>
-
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="55%" >
             <el-form ref="form" :model="form" label-width="70px" :disabled="disable" :inline="true">
                 <div >
-                    <el-form-item label="id" v-show="false">
+                    <el-form-item label="id" v-show="false" >
                         <el-input v-model="form.id"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="公司名称" prop="name" label-width="150px"
+                    <el-form-item class="item" label="公司名称" label-width="150px">
+                        <el-input v-model="compName" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item class="item" label="社区名称" label-width="150px">
+                        <el-input v-model="commName" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item class="item" label="分区名称" prop="name" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请输入公司名称', trigger: 'blur' },
-                ]">
+                        { required: true, message: '请输入分区名称', trigger: 'blur' },
+                    ]">
                         <el-input v-model="form.name" ></el-input>
                     </el-form-item>
-                    <el-form-item label="公司简称" label-width="150px">
-                        <el-input v-model="form.abbreviation"></el-input>
-                    </el-form-item>
-                    <el-form-item label="成立日期" prop="establishmentDate" label-width="150px"
+                    <el-form-item class="item" label="详细地址" prop="name" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请选择成立日期', trigger: 'blur' },
+                        { required: true, message: '请输入详细地址', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="form.detailed_address" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="建造日期" prop="builded_date" label-width="150px"
+                                  :rules="[
+                    { required: true, message: '请选择建造日期', trigger: 'blur' },
                 ]">
                         <el-date-picker
-                                v-model="form.establishmentDate"
+                                v-model="form.builded_date"
                                 type="datetime"
                                 placeholder="选择日期时间"
                                 format="yyyy-MM-dd HH:mm:ss"
                                 value-format="yyyy-MM-dd HH:mm:ss"
                                 default-time="00:00:00"
                         />
-                    </el-form-item>
-                    <el-form-item label="公司地址" label-width="150px">
-                        <el-cascader
-                                v-model="partyOrganId"
-                                ref="cascaderAddr"
-                                :props="{
-                                    value: 'id',
-                                    label: 'name',
-                                    children: 'childList'
-                                  }"
-                                :options="cascaderData"
-                                placeholder="请选择省市区"
-                                @change="handleChange"
-                        ></el-cascader>
-                    </el-form-item>
+                    </el-form-item><el-form-item label="交付日期" prop="deliver_date" label-width="150px"
+                                                 :rules="[
+                    { required: true, message: '请选择交付日期', trigger: 'blur' },
+                ]">
+                    <el-date-picker
+                            v-model="form.deliver_date"
+                            type="datetime"
+                            placeholder="选择日期时间"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            default-time="00:00:00"
+                    />
+                </el-form-item>
 
-                    <el-form-item label="注册地址" prop="registeredAddr" label-width="150px"
+                    <el-form-item class="item" label="经度" prop="latitude" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请输入注册地址', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.registeredAddr"></el-input>
+                        { required: true, message: '请输入经度', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="form.latitude" ></el-input>
                     </el-form-item>
-                    <el-form-item label=" " prop="compAddr" label-width="150px"
+                    <el-form-item class="item" label="纬度" prop="name" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请输入公司地址', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.compAddr" prop="compAddr" placeholder="请输入详细公司地址"></el-input>
+                        { required: true, message: '请输入纬度', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="form.longitude" ></el-input>
                     </el-form-item>
-                    <el-form-item label="注册资本" prop="registeredCapital" label-width="150px"
+                    <el-form-item class="item" label="地图地址" prop="map_address" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请输入注册地址', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.registeredCapital"></el-input>
+                        { required: true, message: '请输入地图地址', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="form.map_address" ></el-input>
                     </el-form-item>
-                    <el-form-item label="法人" prop="legal_person" label-width="150px"
+                    <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
-                    { required: true, message: '请输入法人', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.legal_person"></el-input>
-                    </el-form-item>
-                    <el-form-item label="纳税人识别号" prop="taxpayerIdentificationNo" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请输入纳税人识别号', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.taxpayerIdentificationNo"></el-input>
-                    </el-form-item>
-                    <el-form-item label="统一社会信用代码" prop="unifiedSocialCreditCode" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请输入统一社会信用代码', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.unifiedSocialCreditCode"></el-input>
-                    </el-form-item>
-                    <el-form-item label="工商注册号" prop="registeredNo" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请输入工商注册号', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.registeredNo"></el-input>
-                    </el-form-item>
-                </div>
-                <div>
-                    <el-form-item label="公司类型" prop="compType" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请选择公司类型', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.compType"></el-input>
-                    </el-form-item>
-                    <el-form-item label="状态" prop="state" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请输入公司状态', trigger: 'blur' },
-
-                ]">
-                        <el-input v-model="form.state"></el-input>
-                    </el-form-item>
-                    <el-form-item label="邮箱" prop="email" label-width="150px">
-                        <el-input v-model="form.email"></el-input>
-                    </el-form-item>
-                    <el-form-item label="电话" prop="tel" label-width="150px"
-                                  :rules="[
-                    { required: true, message: '请输入手机号码', trigger: 'blur' },
-                    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                ]"
-                    >
-                        <el-input v-model="form.tel"></el-input>
+                        { required: true, message: '请输入状态', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="form.state" ></el-input>
                     </el-form-item>
                     <el-form-item label="录入人" label-width="150px">
                         <el-input v-model="form.createdName" disabled></el-input>
@@ -263,9 +204,7 @@
 </template>
 
 <script scoped>
-    import { fetchData, updateData, deleteData, addData, getCityDict } from '../../api/index';
-    import companyLink from './companyLink';
-    import CitySelect from '../common/CitySelect';
+    import { getAllArea } from '../../api/comm_area';
 
     export default {
         name: 'basetable',
@@ -273,10 +212,6 @@
             return {
                 query: {
                     name: '',
-                    abbreviation: '',
-                    province: '',
-                    city: '',
-                    district: '',
                     pageNo: 1,
                     size: 10
                 },
@@ -290,29 +225,24 @@
                 form: {},
                 idx: -1,
                 title: '',
-                partyOrganId: [],
-                cascaderData: [],
+                compName:'',
+                commName:'',
                 id: -1
             };
         },
         created() {
             this.getData();
-            getCityDict(this.query).then(res => {
-                this.cascaderData = res.data;
-            });
         },
-        components: {
-            companyLink,
-            CitySelect
-        }
-        ,
+
         methods: {
             // 获取 easy-mock 的模拟数据
             getData() {
-                fetchData(this.query).then(res => {
-                    console.log(res);
-                    this.tableData = res.data.records;
-                    this.pageTotal = res.data.total || 0;
+                getAllArea(this.query).then(res => {
+                    console.log(res)
+                    this.tableData = res;
+                    this.compName = res[0].comp_name;
+                    this.commName = res[0].comm_name;
+                    this.pageTotal = res.length || 0;
                 });
             },
 
@@ -387,6 +317,7 @@
                 this.$set(this.form, 'createdAt', new Date());
                 this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
                 this.$set(this.form, 'modifiedAt', new Date());
+
             },
             // 编辑操作
             handleEdit(index, row) {

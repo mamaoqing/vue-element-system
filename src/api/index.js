@@ -78,6 +78,12 @@ export const getProvinceDict = query => {
 
 export const getCityDict = query => {
     return request({
+        url: '/api/rProvince/getProvinceChildFromRedis',
+        method: 'get'
+    });
+};
+export const getProvinces = query => {
+    return request({
         url: '/api/rProvince/get',
         method: 'get'
     });
