@@ -213,7 +213,7 @@ export default {
                     validator:checkname,required: true,trigger:'blur'
                 }],
                 dictId:[{
-                    validator:checkDict,required: true,trigger:'blur'
+                    validator:checkDict,required: true,trigger:'change'
                 }],
                 orderBy:[{
                     validator:checkOrder,required: true,trigger:'blur'
@@ -235,7 +235,7 @@ export default {
     ,
     methods: {
         abc(){
-            if(this.title==='新增'&&this.form.dictId!=undefined&&this.form.name!=undefined){
+            if(this.title==='新增字典项'&&this.form.dictId!=undefined&&this.form.name!=undefined){
                 checkDictItemName(this.form.dictId,this.form.name).then(res => {
                     if(res.data){
                         this.$message.error("字典项名称"+this.form.name+"重复，不可重复录入");
