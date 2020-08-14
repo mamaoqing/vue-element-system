@@ -145,7 +145,7 @@
                 title: '',
                 addVisible: false,
                 editVisible: false,
-                pageTotal: '',
+                pageTotal: 0,
                 menuData: [],
                 query: {
                     pageNo: '1',

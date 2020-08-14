@@ -228,7 +228,6 @@ export default {
     methods: {
         getData() {
             listRole(this.query).then(res => {
-                debugger
                 console.log(res);
                 this.tableData = res.data;
 
@@ -254,7 +253,6 @@ export default {
             console.log(id);
 
             checkRoleMenuUser(id).then(res => {
-                //debugger
                 //console.log(res);
                 if(res.data==''){
                     this.$confirm('确定要删除吗？', '提示', {
