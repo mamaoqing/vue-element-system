@@ -136,7 +136,7 @@
                 </el-form-item>
 
                 <el-form-item label="用途类型" label-width="100px">
-                    <el-input v-model="form.usableType"></el-input>
+                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType" ></child>
                 </el-form-item>
                 <el-form-item label="状态" label-width="100px">
                     <el-input v-model="form.state"></el-input>
@@ -205,7 +205,7 @@
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="title" :visible.sync="editVisible" width="60%">
+        <el-dialog :title="title" :visible.sync="editVisible" width="60%" :before-close="closeEdit">
             <el-form ref="editForm" :model="form" :disabled="disable" label-width="70px">
                 <el-form-item label="服务类型" label-width="100px" v-show="false">
                     <el-input v-model="form.id"></el-input>
@@ -230,10 +230,11 @@
                     <el-input v-model="form.name"></el-input>
                 </el-form-item>
                 <el-form-item label="用途类型" label-width="100px">
-                    <el-input v-model="form.usableType"></el-input>
+                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType" :change="useTypeChange"></child>
                 </el-form-item>
                 <el-form-item label="状态" label-width="100px">
-                    <el-input v-model="form.state"></el-input>
+<!--                    <el-input v-model="form.state"></el-input>-->
+                    <child @child1="checkIn" :distId="commStateDistId" :distName="commState" :change="commStateChange"></child>
                 </el-form-item>
                 <el-form-item label="省" label-width="100px">
                     <el-cascader
@@ -284,7 +285,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
+                <el-button @click="closeEdit">取 消</el-button>
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
@@ -390,11 +391,20 @@
     import {getComp} from "../../api/user";
     import {getCityDict, getProvinces} from "../../api/index";
     import {getCityList, getDistList} from "../../api/dist"
+    import child from "./child"
 
     export default {
-
+        components: {
+            child
+        },
         data() {
             return {
+                commStateDistId:'20',
+                commState:'commState',
+                commStateChange:'',
+                useTypeChange:'',
+                useType:'usableType',
+                useTypeDistId:'7',
                 provinceValue: "",
                 cityValue: '',
                 districtValue: '',
@@ -442,8 +452,12 @@
                 this.disable = false;
                 this.partyOrganId = [row.provinceId, row.cityId, row.districtId];
                 this.editVisible = true;
+                this.useTypeChange = row.usableTypeId;
+                this.commStateChange = row.stateId;
                 this.title = "修改社区";
                 this.form = row;
+                this.form.usableType= row.usableTypeId;
+                this.form.state = row.stateId;
             },
             deleteComm(id) {
                 this.$confirm('删除后，社区下的分区，角色数据权限都会删除。确定要删除吗？', '提示', {
@@ -574,6 +588,18 @@
                 this.title = '查看';
 
             },
+            checkIn(value,name){
+                if(name === 'usableType'){
+                    this.form.usableType = value;
+                }
+                if(name === 'commState'){
+                    this.form.state = value;
+                }
+            },
+            closeEdit(){
+                this.editVisible = false;
+                this.init();
+            }
         }
     }
 </script>
