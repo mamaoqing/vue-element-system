@@ -160,6 +160,7 @@
                                   :rules="[
                     { required: true, message: '请输入公司地址', trigger: 'blur' },
                 ]">
+
                         <el-input v-model="form.compAddr" prop="compAddr" placeholder="请输入详细公司地址"></el-input>
                     </el-form-item>
                     <el-form-item label="注册资本" prop="registeredCapital" label-width="150px"
@@ -382,25 +383,26 @@
                 this.editVisible = true;
                 this.title = '新增';
                 this.form = {};
+                this.partyOrganId = [];
                 this.disable = false;
-                this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'createdAt', new Date());
-                this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'modifiedAt', new Date());
+                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'createdAt', new Date());
+                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'modifiedAt', new Date());
             },
             // 编辑操作
             handleEdit(index, row) {
                 this.idx = index;
+                this.form = {};
                 this.form = row;
                 console.log(this.form)
-                this.partyOrganId[0] = this.form.provinceId;
-                this.partyOrganId[1] = this.form.cityId;
-                this.partyOrganId[2] = this.form.districtId;
+                this.partyOrganId = [row.provinceId,row.cityId,row.districtId]
+                console.log(this.partyOrganId)
                 this.editVisible = true;
                 this.disable = false;
                 this.title = '修改';
-                this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'modifiedAt', new Date());
+                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             //表格行点击事件
