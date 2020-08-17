@@ -235,33 +235,33 @@
                 </el-row>
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="用途类型" label-width="100px">
+                        <el-form-item label="用途类型">
                             <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"
                                    :change="useTypeChange"></child>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="状态" label-width="100px">
+                        <el-form-item label="状态">
                             <!--                    <el-input v-model="form.state"></el-input>-->
                             <child @child1="checkIn" :distId="commStateDistId" :distName="commState"
                                    :change="commStateChange"></child>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                <el-form-item label="省" label-width="100px">
-                    <el-cascader
-                            v-model="partyOrganId"
-                            ref="cascaderAddr"
-                            :props="{
+                        <el-form-item label="省">
+                            <el-cascader
+                                    v-model="partyOrganId"
+                                    ref="cascaderAddr"
+                                    :props="{
                                     value: 'id',
                                     label: 'name',
                                     children: 'childList'
                                   }"
-                            :options="cascaderData"
-                            placeholder="请选择省市区"
-                            @change="handleChange"
-                    ></el-cascader>
-                </el-form-item>
+                                    :options="cascaderData"
+                                    placeholder="请选择省市区"
+                                    @change="handleChange"
+                            ></el-cascader>
+                        </el-form-item>
                     </el-col>
                 </el-row>
                 <el-form-item label="详细地址" label-width="100px">
