@@ -72,7 +72,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <template >
                     <el-form-item label="字典类型" prop="dictId">
                         <el-select v-model="form.dictId" placeholder="请选择" :disabled="edit">
@@ -103,7 +103,7 @@
         </el-dialog>
 
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <template >
                     <el-form-item label="字典类型" prop="dictId">
                         <el-select v-model="form.dictId" placeholder="请选择" :disabled="edit">
