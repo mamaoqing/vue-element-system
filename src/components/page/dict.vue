@@ -69,7 +69,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <!--<el-form-item label="id">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>-->
@@ -96,7 +96,7 @@
             </span>
         </el-dialog>
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <!--<el-form-item label="id">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>-->
@@ -267,6 +267,7 @@ export default {
         handleAdd() {
             this.editVisible = true;
             this.title="新增字典";
+            this.disable=false;
             this.edit=false;
             this.form={state:'在用'}
             this.$refs.form.clearValidate();
