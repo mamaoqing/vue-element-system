@@ -99,6 +99,18 @@
                                 @click.stop
                                 @click="deleteComm(scope.row.id)">删除
                         </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="listUsers(scope.row.id)">下属用户
+                        </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="areaComm(scope.row.id)">协议
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -235,33 +247,33 @@
                 </el-row>
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="用途类型" label-width="100px">
+                        <el-form-item label="用途类型">
                             <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"
                                    :change="useTypeChange"></child>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="状态" label-width="100px">
+                        <el-form-item label="状态">
                             <!--                    <el-input v-model="form.state"></el-input>-->
                             <child @child1="checkIn" :distId="commStateDistId" :distName="commState"
                                    :change="commStateChange"></child>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                <el-form-item label="省" label-width="100px">
-                    <el-cascader
-                            v-model="partyOrganId"
-                            ref="cascaderAddr"
-                            :props="{
+                        <el-form-item label="省">
+                            <el-cascader
+                                    v-model="partyOrganId"
+                                    ref="cascaderAddr"
+                                    :props="{
                                     value: 'id',
                                     label: 'name',
                                     children: 'childList'
                                   }"
-                            :options="cascaderData"
-                            placeholder="请选择省市区"
-                            @change="handleChange"
-                    ></el-cascader>
-                </el-form-item>
+                                    :options="cascaderData"
+                                    placeholder="请选择省市区"
+                                    @change="handleChange"
+                            ></el-cascader>
+                        </el-form-item>
                     </el-col>
                 </el-row>
                 <el-form-item label="详细地址" label-width="100px">
@@ -398,10 +410,49 @@
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="userVisible" width="30%">
+            <el-table
+                    :data="listUser"
+                    border
+                    class="table"
+                    ref="multipleTable"
+                    header-cell-class-name="table-header"
+            >
+                <el-table-column prop="compName" label="公司名称" align="center"></el-table-column>
+                <el-table-column prop="areaName" label="社区名称" align="center"></el-table-column>
+                <el-table-column prop="orgName" label="所属机构" align="center"></el-table-column>
+                <el-table-column prop="userName" label="姓名" align="center"></el-table-column>
+                <el-table-column prop="type" label="用户类型" align="center"></el-table-column>
+                <el-table-column prop="state" label="状态" align="center"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="userVisible = false">确  定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="areaVisible" width="60%">
+            <el-table
+                    :data="listArea"
+                    border
+                    class="table"
+                    ref="multipleTable"
+                    header-cell-class-name="table-header"
+            >
+                <el-table-column prop="compName" label="公司名称" align="center"></el-table-column>
+                <el-table-column prop="areaName" label="社区名称" align="center"></el-table-column>
+                <el-table-column prop="roleName" label="角色名" align="center"></el-table-column>
+                <el-table-column prop="no" label="协议编号" align="center"></el-table-column>
+                <el-table-column prop="begin_date" label="协议开始时间" align="center"></el-table-column>
+                <el-table-column prop="end_date" label="协议结束时间" align="center"></el-table-column>
+                <el-table-column prop="state" label="状态" align="center"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="areaVisible = false">确  定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
-    import {listCommunity, addComm, updateComm, deleteComm} from '../../api/community'
+    import {listCommunity, addComm, updateComm, deleteComm,getListUser,getListArea} from '../../api/community'
     import {getComp} from "../../api/user";
     import {getCityDict, getProvinces} from "../../api/index";
     import {getCityList, getDistList} from "../../api/dist"
@@ -413,6 +464,10 @@
         },
         data() {
             return {
+                userVisible:false,
+                areaVisible:false,
+                listUser:[],
+                listArea:[],
                 commStateDistId: '20',
                 commState: 'commState',
                 commStateChange: '',
@@ -613,6 +668,20 @@
             closeEdit() {
                 this.editVisible = false;
                 this.init();
+            },
+            listUsers(id){
+                this.userVisible = true;
+                this.title = '下属用户';
+                getListUser(id).then(res=>{
+                    this.listUser = res.data;
+                });
+            },
+            areaComm(id){
+                this.areaVisible = true;
+                this.title = '社区协议';
+                getListArea(id).then(res=>{
+                    this.listArea = res.data;
+                });
             }
         }
     }

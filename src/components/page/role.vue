@@ -94,7 +94,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <template >
                     <el-form-item label="角色名称" prop="name" >
                         <el-input v-model="form.name" ></el-input>
@@ -116,7 +116,7 @@
             </span>
         </el-dialog>
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <template >
                     <el-form-item label="角色名称" prop="name" >
                         <el-input v-model="form.name" ></el-input>

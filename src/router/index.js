@@ -12,8 +12,50 @@ export default new Router({
         {
             path: '/',
             component: () => import(/* webpackChunkName: "home" */ '../components/common/Home.vue'),
-            meta: { title: '自述文件' },
+            meta: {title: '自述文件'},
             children: [
+                {
+                    path: '/周杰伦',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/org.vue'),
+                    meta: {title: '组织机构'}
+                },
+                {
+                    path: '/周润发',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                    meta: {title: '2222'}
+                },
+                {
+                    path: '/icon',
+                    component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
+                    meta: {title: '自定义图标'}
+                },
+                {
+                    path: '/table',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/BaseTable.vue'),
+                    meta: {title: '基础表格'}
+                },
+                {
+                    path: '/tabs',
+                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
+                    meta: {title: 'tab选项卡'}
+                },
+                {
+                    path: '/form',
+                    component: () => import(/* webpackChunkName: "form" */ '../components/page/BaseForm.vue'),
+                    meta: {title: '基本表单'}
+                },
+                {
+                    // 富文本编辑器组件
+                    path: '/editor',
+                    component: () => import(/* webpackChunkName: "editor" */ '../components/page/VueEditor.vue'),
+                    meta: {title: '富文本编辑器'}
+                },
+                {
+                    // markdown组件
+                    path: '/markdown',
+                    component: () => import(/* webpackChunkName: "markdown" */ '../components/page/Markdown.vue'),
+                    meta: {title: 'markdown编辑器'}
+                },
                 {
                     path: '/dashboard',
                     component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/org.vue'),
@@ -152,6 +194,12 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/commArea.vue'),
                     meta: { title: '分区管理' }
                 },
+                {
+                    path: '/agreement',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/agreements.vue'),
+                    meta: {title: '协议管理'}
+                },
+
                 {
                     path: '/unit',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/unit.vue'),

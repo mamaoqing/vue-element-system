@@ -1,9 +1,15 @@
 import request from '../utils/request';
 
 export const insertBuilding = query => {
-    console.log(query);
     return request({
         url: '/api/rBuilding/insertBuilding',
+        method: 'post',
+        data: query
+    });
+};
+export const copyBuilding = query => {
+    return request({
+        url: '/api/rBuilding/copyBuilding',
         method: 'post',
         data: query
     });

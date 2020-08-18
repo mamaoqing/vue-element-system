@@ -8,3 +8,40 @@ export const listCommunity = query => {
         params:query
     });
 };
+
+export const addComm = query => {
+    return request({
+        url: '/api/rCommunity/insertCommunity',
+        method: 'post',
+        data:query
+    });
+};
+
+export const updateComm = query => {
+    return request({
+        url: '/api/rCommunity/updateCommunity',
+        method: 'put',
+        data:query
+    });
+};
+
+export const deleteComm = id => {
+    return request({
+        url: '/api/rCommunity/'+id,
+        method: 'delete'
+    });
+};
+
+export const getListUser = query => {
+    return request({
+        url: '/api/rCommunity/listUser/'+query,
+        method: 'get'
+    });
+};
+
+export const getListArea = query => {
+    return request({
+        url: '/api/rCommunity/listArea/'+query,
+        method: 'get'
+    });
+};
