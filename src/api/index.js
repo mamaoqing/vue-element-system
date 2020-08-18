@@ -82,9 +82,3 @@ export const getCityDict = query => {
         method: 'get'
     });
 };
-export const getProvinces = query => {
-    return request({
-        url: '/api/rProvince/get',
-        method: 'get'
-    });
-};
