@@ -31,3 +31,17 @@ export const deleteComm = id => {
         method: 'delete'
     });
 };
+
+export const getListUser = query => {
+    return request({
+        url: '/api/rCommunity/listUser/'+query,
+        method: 'get'
+    });
+};
+
+export const getListArea = query => {
+    return request({
+        url: '/api/rCommunity/listArea/'+query,
+        method: 'get'
+    });
+};
