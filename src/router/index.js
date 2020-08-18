@@ -162,6 +162,11 @@ export default new Router({
                     path: '/buildings',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/building.vue'),
                     meta: { title: '建筑管理' }
+                },
+                {
+                    path: '/rooms',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/room.vue'),
+                    meta: { title: '房间管理' }
                 }
             ]
         },
