@@ -20,6 +20,48 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/周杰伦',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/org.vue'),
+                    meta: { title: '组织机构' }
+                },
+                {
+                    path: '/周润发',
+                    component: () => import(/* webpackChunkName: "dashboard" */ '../components/page/Dashboard.vue'),
+                    meta: { title: '2222' }
+                },
+                {
+                    path: '/icon',
+                    component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
+                    meta: { title: '自定义图标' }
+                },
+                {
+                    path: '/table',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/BaseTable.vue'),
+                    meta: { title: '基础表格' }
+                },
+                {
+                    path: '/tabs',
+                    component: () => import(/* webpackChunkName: "tabs" */ '../components/page/Tabs.vue'),
+                    meta: { title: 'tab选项卡' }
+                },
+                {
+                    path: '/form',
+                    component: () => import(/* webpackChunkName: "form" */ '../components/page/BaseForm.vue'),
+                    meta: { title: '基本表单' }
+                },
+                {
+                    // 富文本编辑器组件
+                    path: '/editor',
+                    component: () => import(/* webpackChunkName: "editor" */ '../components/page/VueEditor.vue'),
+                    meta: { title: '富文本编辑器' }
+                },
+                {
+                    // markdown组件
+                    path: '/markdown',
+                    component: () => import(/* webpackChunkName: "markdown" */ '../components/page/Markdown.vue'),
+                    meta: { title: 'markdown编辑器' }
+                },
+                {
                     // 图片上传组件
                     path: '/upload',
                     component: () => import(/* webpackChunkName: "upload" */ '../components/page/Upload.vue'),
@@ -59,11 +101,6 @@ export default new Router({
                     path: '/comm',
                     component: () => import(/* webpackChunkName: "404" */ '../components/page/community.vue'),
                     meta: { title: '社区管理' }
-                },
-                {
-                    path: '/menuList',
-                    component: () => import(/* webpackChunkName: "404" */ '../components/page/menuList.vue'),
-                    meta: { title: '菜单管理' }
                 },
                 {
                     path: '/403',
@@ -110,7 +147,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/commArea.vue'),
                     meta: { title: '分区管理' }
                 },
-
+                {
+                    path: '/unit',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/unit.vue'),
+                    meta: { title: '单元管理' }
+                }
             ]
         },
         {

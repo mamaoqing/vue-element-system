@@ -8,26 +8,3 @@ export const listCommunity = query => {
         params:query
     });
 };
-
-export const addComm = query => {
-    return request({
-        url: '/api/rCommunity/insertCommunity',
-        method: 'post',
-        data:query
-    });
-};
-
-export const updateComm = query => {
-    return request({
-        url: '/api/rCommunity/updateCommunity',
-        method: 'put',
-        data:query
-    });
-};
-
-export const deleteComm = id => {
-    return request({
-        url: '/api/rCommunity/'+id,
-        method: 'delete'
-    });
-};
