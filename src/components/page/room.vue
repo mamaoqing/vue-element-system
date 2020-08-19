@@ -8,39 +8,39 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" >
+            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" v-if="unitDisable">
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.commName" placeholder="请选择" @change="commChange" >
+            <el-select v-model="query.commName" placeholder="请选择" @change="commChange" v-if="unitDisable">
                 <el-option key="qxz" label="请选择社区名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.commAreaName" placeholder="请选择" @change="commAreaChange" >
+            <el-select v-model="query.commAreaName" placeholder="请选择" @change="commAreaChange" v-if="unitDisable">
                 <el-option key="qxz" label="请选择社区分区名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.buildingName" placeholder="请选择" @change="buildingChange" >
+            <el-select v-model="query.buildingName" placeholder="请选择" @change="buildingChange" v-if="unitDisable">
                 <el-option key="qxz" label="请选择建筑名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.unitName" placeholder="请选择" @change="select_status" >
+            <el-select v-model="query.unitName" placeholder="请选择" @change="select_status" v-if="unitDisable">
                 <el-option key="qxz" label="请选择单元名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.roomNo" placeholder="房间编号" class="handle-input mr10"></el-input>
+            <el-input v-model="query.roomNo" placeholder="房间编号" class="handle-input mr10" v-if="unitDisable"></el-input>
 
-            <el-select v-model="query.roomModel" placeholder="请选择" >
+            <el-select v-model="query.roomModel" placeholder="请选择" v-if="unitDisable">
                 <el-option key="qxz" label="请选择房型" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
             </el-select>
 
-            <el-select v-model="query.usable" placeholder="请选择" >
+            <el-select v-model="query.usable" placeholder="请选择" v-if="unitDisable">
                 <el-option key="qxz" label="请选择用途" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
             </el-select>
             <div class="handle-box">
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleSearch" v-if="unitDisable">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
                 <el-button
                     type="primary"
@@ -48,8 +48,8 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入1</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="uploadFile">导入</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="upload" v-if="unitDisable">导入1</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="uploadFile" v-if="unitDisable">导入</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -131,29 +131,29 @@
             </span>
         </el-dialog>
         <!-- 新增弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="editVisible" width="30%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
-                <el-form-item label="物业公司" prop="compId">
+                <el-form-item label="物业公司" prop="compId" v-show="unitDisable">
                     <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="社区名称" prop="commId">
+                <el-form-item label="社区名称" prop="commId" >
                     <el-select v-model="form.commId" placeholder="请选择" @change="commChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="社区分区名称" prop="commAreaId" >
+                <el-form-item label="社区分区名称" prop="commAreaId" v-show="unitDisable">
                     <el-select v-model="form.commAreaId" placeholder="请选择" @change="commAreaChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="建筑名称" prop="buildingId" >
+                <el-form-item label="建筑名称" prop="buildingId" v-show="unitDisable">
                     <el-select v-model="form.buildingId" placeholder="请选择" @change="buildingChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="单元名称" prop="unitId" >
+                <el-form-item label="单元名称" prop="unitId" v-show="unitDisable">
                     <el-select v-model="form.unitId" placeholder="请选择" @change="select_status" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
                     </el-select>
@@ -231,7 +231,7 @@
             </span>
         </el-dialog>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="updateVisible" width="30%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId">
                     <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
@@ -342,9 +342,9 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog  :visible.sync="cmpVisible" append-to-body>
-            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
-        </el-dialog>
+<!--        <el-dialog  :visible.sync="cmpVisible" append-to-body>-->
+<!--            <menu1 v-if="cmpVisible" ref="menu1"></menu1>-->
+<!--        </el-dialog>-->
     </div>
 </template>
 
@@ -353,8 +353,12 @@
 import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildings,getUnits } from '../../api/building';
 import { listCompAll } from '../../api/role';
 import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload} from '../../api/room';
-import menu1 from './roomUpload';
+// import menu1 from './roomUpload';
 export default {
+    name:"roomlistpage",
+    props:{
+        unitId:''
+    },
     data() {
         let checkname = (rule,value,callback) =>{
             if(!value){
@@ -371,7 +375,6 @@ export default {
             }
         }
         let checkcommId= (rule,value,callback) =>{
-            debugger
             if(!value){
                 return callback(new Error("请输入社区名称"));
             }else{
@@ -492,6 +495,7 @@ export default {
             uploadVisible:false,
             copyVisible:false,
             edit:false,
+            unitDisable:true,
             pageTotal:0,
             disable:false,
             cmpVisible:false,
@@ -508,6 +512,7 @@ export default {
             unitList:[],
             form: {},
             formCopy:{},
+            unitForm:{},
             idx: -1,
             title:'',
             buildingName:'',
@@ -551,15 +556,15 @@ export default {
         };
     },
     created() {
+        this.query.unitId = this.unitId
         this.getData();
     },
-    components:{
-        menu1
-    },
+    // components:{
+    //     menu1
+    // },
     methods: {
 
         compChange(val){
-            debugger
             if(this.form.compId!=undefined||val!=undefined){
                 var compId;
                 if(val==undefined){
@@ -581,7 +586,6 @@ export default {
             }
         },
         commChange(val){
-            debugger
             if(this.form.commId!=undefined||val!=undefined){
                 var commId;
                 if(this.form.commId!=undefined&&this.form.commId!=''){
@@ -603,7 +607,6 @@ export default {
             }
         },
         commAreaChange(val){
-            debugger
             if(this.form.commAreaId!=undefined||val!=undefined){
                 var commAreaId ;
                 if(this.form.commAreaId!=undefined&&this.form.commAreaId!=''){
@@ -614,7 +617,6 @@ export default {
                 }
                 getCommAreaContent(commAreaId).then(res => {
                     if(res.data){
-                        debugger
                         //this.buildedDate = res.data.buildedDate;
                         //this.deliverDate = res.data.deliverDate;
                         this.$set(this.form,"buildedDate",res.data.buildedDate);
@@ -642,7 +644,6 @@ export default {
                     this.query.buildingName=buildingId;
                 }
                 getUnits(buildingId).then(res => {
-                    debugger
                     if(res.data){
                         this.form.unitId=undefined;
                         this.query.unitName="请选择单元名称";
@@ -657,16 +658,17 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             listRoom(this.query).then(res => {
-                debugger
+                // debugger
+                console.log(this.query.unitId)
                 this.tableData = res.data;
             });
             listRoomNum(this.query).then(res => {
-                debugger
+                // debugger
                 this.pageTotal = res.data || 0;
                 console.log(this.pageTotal+"__+++__");
             });
             listCompAll(this.query).then(res => {
-                debugger
+                // debugger
                 this.compList = res.data.records;
                 if(res.data.records.length==1){
                     this.query.compName=res.data.records[0].name;
@@ -680,7 +682,7 @@ export default {
 
             });
             getDictItemByDictId(44).then(res => {//44是房型的id
-                debugger
+                // debugger
                 this.roomModelList = res.data;
             });
             getDictItemByDictId(7).then(res => {//7是用途的id
@@ -706,7 +708,7 @@ export default {
             this.getData();
         },
         delAllSelection() {
-            debugger
+            // debugger
             const length = this.multipleSelection.length;
             let str = '';
             let ids = '';
@@ -763,7 +765,15 @@ export default {
             this.title="新增房间";
             this.edit=false;
             this.form={state:'在用'}
+            if(this.unitDisable ===false){
+                this.$set(this.form, 'compId', this.unitForm.compName);
+                this.$set(this.form, 'commId', this.unitForm.commName);
+                this.$set(this.form, 'commAreaId', this.unitForm.commAreaName);
+                this.$set(this.form, 'buildingId', this.unitForm.buildingName);
+                this.$set(this.form, 'unitId', this.unitForm.unitName);
+            }
             this.$refs.form.clearValidate();
+
         },
         uploadFile(){
             this.uploadVisible = true;
@@ -808,7 +818,6 @@ export default {
 
         },
         uploadDr(title,form){
-            debugger
             console.log(this.form);
             upload(this.form.file,{
                 headers: { 'Content-Type': 'multipart/form-data' }
@@ -820,6 +829,7 @@ export default {
         saveEditOrAdd(title,form) {
             if(title==='新增房间'){
                 //this.editVisible = false;
+                console.log(this.form)
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
                         insertRoom(this.form).then(res => {
@@ -846,6 +856,22 @@ export default {
         // 分页导航
         handlePageChange(val) {
             this.$set(this.query, 'pageNo', val);
+            this.getData();
+        },
+        //初始化数据
+        dataInitialization(compId,commId,areaId,buildId,unitId) {
+            this.query.compName = compId;
+            this.query.commName = commId;
+            this.query.commAreaName = areaId;
+            this.query.buildingName = buildId;
+            this.query.unitName = unitId;
+            this.$set(this.unitForm, 'compName', compId);
+            this.$set(this.unitForm, 'commName', commId);
+            this.$set(this.unitForm, 'commAreaName', areaId);
+            this.$set(this.unitForm, 'buildingName', buildId);
+            this.$set(this.unitForm, 'unitName', unitId);
+
+            this.unitDisable = false
             this.getData();
         }
     }

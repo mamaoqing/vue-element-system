@@ -65,3 +65,14 @@ export const deleteUnit = id => {
         method: 'delete',
     });
 };
+
+export const PlAddRoom = query => {
+    return request({
+        url: '/api/rUnit/PlAddRoom',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+};
