@@ -49,7 +49,7 @@
                     @click="delAllSelection"
                 >批量删除</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload" v-if="unitDisable">导入1</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="uploadFile" v-if="unitDisable">导入</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导入</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -352,7 +352,7 @@
 
 import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildings,getUnits } from '../../api/building';
 import { listCompAll } from '../../api/role';
-import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload} from '../../api/room';
+import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload,exportXlsByT} from '../../api/room';
 // import menu1 from './roomUpload';
 export default {
     name:"roomlistpage",
@@ -651,6 +651,26 @@ export default {
                     }
                 });
             }
+        },
+        exportXls(){
+            exportXlsByT(this.query).then(res => {
+                debugger
+                //console.log(res);
+                const blob = new Blob([res.data], { type: 'application/vnd.ms-excel;' });
+                const a = document.createElement('a');
+                // 生成文件路径
+                let href = window.URL.createObjectURL(blob);
+                a.href = href;
+                console.log(res.headers);
+                let _fileName = res.headers['Content-Disposition'].split(';')[1].split('=')[1].split('.')[0];
+                // 文件名中有中文 则对文件名进行转码
+                a.download = decodeURIComponent(_fileName);
+                // 利用a标签做下载
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(href);
+            });
         },
         select_status(val){
             this.$forceUpdate();
