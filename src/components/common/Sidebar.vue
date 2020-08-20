@@ -44,8 +44,12 @@
         },
         methods: {
             handleNodeClick(e) {
+                console.log(e);
                 if(e.type === 'community'){
                     window.localStorage.setItem('commId',e.id);
+                }
+                if(e.compId){
+                    window.localStorage.setItem('compId',e.compId);
                 }
             },
             handleCheckChange () {

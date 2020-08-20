@@ -6,3 +6,10 @@ export const listComm = query => {
         method: 'get'
     });
 };
+
+export const listArea = query => {
+    return request({
+        url: '/api/rCommArea/listArea/'+query,
+        method: 'get'
+    });
+};

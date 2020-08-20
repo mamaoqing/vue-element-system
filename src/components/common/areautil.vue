@@ -1,6 +1,6 @@
 <template>
-    <el-select v-model="compValue" @clear="clearComm" clearable filterable placeholder="请选择社区"
-               @change="selectComm(compValue)">
+    <el-select v-model="areaValue" @clear="clearArea" clearable filterable placeholder="请选择社区分区"
+               @change="selectArea(areaValue)">
         <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -12,30 +12,30 @@
 
 <script>
 
-    import {listComm} from "./selectutil";
+    import {listArea} from "./selectutil";
 
     export default {
-        name: 'compUtil',
+        name: 'areaUtil',
         data() {
             return {
-                compValue: '',
+                areaValue: '',
                 options: [],
                 compId: '',
             }
         },
         created() {
-            this.getCommInit();
+            this.getAreaInit();
         },
         // 获取父组件的值
         watch: {
-            compIds: {
+            commIds: {
                 immediate: true,
                 handler: function (newVal) {
                     this.compId = newVal;
-                    this.getCommInit();
+                    this.getAreaInit();
                 }
             },
-            change: {
+            changeArea: {
                 immediate: true,
                 handler: function (newVal) {
                     this.compValue = newVal;
@@ -43,22 +43,22 @@
             }
         },
         props: {
-            compIds: Number,
-            change: Number
+            commIds: Number,
+            changeArea: Number
         },
         methods: {
-            getCommInit() {
-                if (this.compId && !(isNaN(this.compId))) {
-                    listComm(this.compId).then(res => {
+            getAreaInit() {
+                if (!isNaN(this.compId) && this.compId) {
+                    listArea(this.compId).then(res => {
                         this.options = res.data;
                     });
                 }
             },
-            selectComm(value) {
-                this.$emit("comm", value);
+            selectArea(value) {
+                this.$emit("area", value);
             },
-            clearComm() {
-                this.$emit("comm", '');
+            clearArea() {
+                this.$emit("area", '');
             },
         }
     }

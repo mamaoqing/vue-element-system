@@ -26,8 +26,17 @@
             this.getComp();
         },
         // 获取父组件的值
-        watch: {},
-        props: {},
+        watch: {
+            onChange:{
+                immediate: true,
+                handler: function (newVal) {
+                    this.compValue = newVal;
+                }
+            }
+        },
+        props: {
+            onChange:Number
+        },
         methods: {
             getComp() {
                 getComp().then(res => {
