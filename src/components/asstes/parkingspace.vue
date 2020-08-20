@@ -606,7 +606,6 @@
                 if (name === 'into') {
                     this.form.inMode = value;
                 }
-                console.log(value + "<-=-=-=-=->" + name)
             },
             formCompValue(value) {
                 if (value) {
@@ -619,7 +618,6 @@
                     this.form.commId = 0;
                     this.child.compId = 0;
                 }
-                console.log(this.form);
             },
             formCommValue(value) {
                 if (value) {
@@ -659,19 +657,33 @@
                 this.inputVusible = !this.inputVusible;
             },
             fileOutput() {
-                window.location.href = '/api/file/exportFile?className=' + this.className;
-                // exportExcel(this.className).then(res=>{
-                // });
+                exportExcel(this.className).then(res=>{
+                    console.log(res);
+                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                    } else {
+                        var downloadElement = document.createElement('a');
+                        var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                        downloadElement.href = href;
+                        downloadElement.download = unescape('导出文件2'); //下载后文件名
+
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); //点击下载
+
+                        document.body.removeChild(downloadElement); //下载完成移除元素
+
+                        window.URL.revokeObjectURL(href); //释放掉blob对象
+                    }
+                });
             },
             openDetails(row) {
                 this.form = row;
                 this.detailVisible = !this.detailVisible;
             },
-            fileUpload() {
-                return '192.168.0.105:9000/sdzy/rParkingSpace/exportFile?className' + this.className;
-            },
+
             beforeUpload(file) {
-                console.log(file);
                 let fd = new FormData();
                 fd.append('file', file);
                 fd.append('className', this.className);
@@ -692,7 +704,6 @@
                         type: 'warning'
                     }).then(() => {
                         deleteAllPark(this.deleteIds).then(res => {
-                            console.log(res);
                             if (res.code === 0 && res.data) {
                                 this.$message.success(`批量删除成功！`);
                                 this.init();
