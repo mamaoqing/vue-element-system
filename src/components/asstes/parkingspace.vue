@@ -110,10 +110,7 @@
                 ]">
                     <el-input v-model="form.no"></el-input>
                 </el-form-item>
-                <el-form-item label="位置" label-width="100px" prop="no"
-                              :rules="[
-                    { required: true, message: '请输入位置', trigger: 'blur' },
-                ]">
+                <el-form-item label="位置" label-width="100px">
                     <el-input v-model="form.position"></el-input>
                 </el-form-item>
                 <el-row>
@@ -428,7 +425,6 @@
         },
         data() {
             return {
-                className: 'com.estate.sdzy.asstes.entity.RParkingSpace',
                 header: {
                     'Authentication-Token': localStorage.getItem('token')
                 },
@@ -451,7 +447,7 @@
                 form: {
                     child: {}
                 },
-                query: {pageNo: 1, size: 10},
+                query: {pageNo: 1, size: 10,className: 'com.estate.sdzy.asstes.entity.RParkingSpace',pageTotal:0,},
                 dist: {
                     buildProp: '请选择建筑属性',
                     buildPropName: 'build',
@@ -493,6 +489,7 @@
                 listPark(this.query).then(res => {
                     this.parkData = res.data.records;
                     this.pageTotal = res.data.total;
+                    this.query.pageTotal = res.data.total;
                 })
             },
             search() {
@@ -657,7 +654,7 @@
                 this.inputVusible = !this.inputVusible;
             },
             fileOutput() {
-                exportExcel(this.className).then(res=>{
+                exportExcel(this.query).then(res=>{
                     console.log(res);
                     var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
                     if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
@@ -667,7 +664,7 @@
                         var href = window.URL.createObjectURL(blob); //创建下载的链接
 
                         downloadElement.href = href;
-                        downloadElement.download = unescape('导出文件2'); //下载后文件名
+                        downloadElement.download = unescape('停车位信息.xls'); //下载后文件名
 
                         document.body.appendChild(downloadElement);
                         downloadElement.click(); //点击下载
@@ -686,7 +683,7 @@
             beforeUpload(file) {
                 let fd = new FormData();
                 fd.append('file', file);
-                fd.append('className', this.className);
+                fd.append('className', this.query.className);
                 upload(fd).then(res => {
                     console.log(res);
                 })

@@ -41,9 +41,9 @@ export const upload = query => {
 
 export const exportExcel = query => {
     return request({
-        url: '/api/file/exportFile',
+        url: '/api/rParkingSpace/exportFile',
         method: 'get',
-        params: {className :query},
+        params: query,
         responseType: 'blob'
     });
 };

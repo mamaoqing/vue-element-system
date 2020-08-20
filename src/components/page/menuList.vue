@@ -141,15 +141,16 @@
     export default {
         data() {
             return {
+                disable:false,
                 hidden: true,
                 title: '',
                 addVisible: false,
                 editVisible: false,
-                pageTotal: '',
+                pageTotal: 0,
                 menuData: [],
                 query: {
-                    pageNo: '1',
-                    size: '10',
+                    pageNo: 1,
+                    size: 10,
                     menuName: ''
                 },
                 form: {},
@@ -167,10 +168,8 @@
             },
             init() {
                 getMenuList(this.query).then(res => {
-                    console.log(res);
                     this.menuData = res.data.records;
                     this.pageTotal = res.data.total || 0;
-                    console.log(this.menuData);
                 });
             },
             handleSearch() {
@@ -178,7 +177,6 @@
                 this.init();
             },
             editMenu(index, row) {
-                console.log(row);
                 this.title = '编辑菜单'
                 this.updateForm.name = row.name;
                 this.updateForm.url = row.url;
@@ -189,7 +187,6 @@
                 this.editVisible = true;
             },
             addMenu(row) {
-                console.log(row);
                 this.hidden = true;
                 this.form = {};
                 this.form.fcd = row.name;
