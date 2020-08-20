@@ -65,6 +65,19 @@ export const getCommAreaContent = commAreaId => {
         method: 'get'
     });
 };
+export const getBuildings = commAreaId => {
+    return request({
+        url: '/api/rBuilding/getBuildings/'+commAreaId,
+        method: 'get'
+    });
+};
+
+export const getUnits = buildingId => {
+    return request({
+        url: '/api/rBuilding/getUnits/'+buildingId,
+        method: 'get'
+    });
+};
 
 export const getDictItemByDictId = dictId => {
     return request({

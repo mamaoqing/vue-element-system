@@ -59,6 +59,14 @@
                                         @click="handleDelete(scope.row.id)"
                                 >删除
                                 </el-button>
+                                <el-button
+                                        type="text"
+                                        icon="el-icon-lx-homefill"
+                                        class="green"
+                                        @click.stop
+                                        @click="handleCompanyLink(scope.row.id)"
+                                >房间列表
+                                </el-button>
                             </el-button-group>
                         </el-row>
                     </template>
@@ -307,6 +315,7 @@
             },
             handleRefresh() {
                 this.query={
+                    commId:'',
                     pageNo: 1,
                     size: 10
                 };
@@ -321,10 +330,10 @@
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-                this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'createdAt', new Date());
-                this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'modifiedAt', new Date());
+                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'createdAt', new Date());
+                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             // 编辑操作
@@ -340,8 +349,8 @@
                 this.editVisible = true;
                 this.disable = false;
                 this.title = '修改';
-                this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                this.$set(this.form, 'modifiedAt', new Date());
+                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
+                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             //表格行点击事件
@@ -362,10 +371,10 @@
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
-                            this.$delete(this.form, 'createdName');
-                            this.$delete(this.form, 'createdAt');
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
+                            // this.$delete(this.form, 'createdName');
+                            // this.$delete(this.form, 'createdAt');
+                            // this.$delete(this.form, 'modifiedName');
+                            // this.$delete(this.form, 'modifiedAt');
                             this.editVisible = false;
                             addArea(this.form).then(res => {
                                 this.$message.success(`新增成功`);
@@ -378,8 +387,8 @@
                     this.$refs['form'].validate(valid => {
                         if (valid){
                             this.editVisible = false;
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
+                            // this.$delete(this.form, 'modifiedName');
+                            // this.$delete(this.form, 'modifiedAt');
                             updateData(this.form).then(res => {
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                 this.$set(this.tableData, this.idx, this.form);
