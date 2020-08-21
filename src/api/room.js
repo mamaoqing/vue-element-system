@@ -7,7 +7,13 @@ export const insertRoom = query => {
         data: query
     });
 };
-
+export const exportXlsByT = query => {
+    return request({
+        url: '/api/rRoom/test',
+        method: 'post',
+        data: query
+    });
+};
 export const deleteRoom = id => {
 
     return request({

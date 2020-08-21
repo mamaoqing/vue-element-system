@@ -64,7 +64,11 @@ Axios.interceptors.request.use(config => {
 // http response 拦截器
 Axios.interceptors.response.use(
     response => {
-
+        // 导出
+        // const headers = response.headers
+        // if (headers['content-type'] === 'application/octet-stream;charset=utf-8') {
+        //     return response.data
+        // }
         return response;
     },
     error => {

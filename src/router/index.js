@@ -199,7 +199,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/agreements.vue'),
                     meta: {title: '协议管理'}
                 },
-
+                {
+                    path: '/park',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/asstes/parkingspace'),
+                    meta: {title: '车位管理'}
+                },
                 {
                     path: '/unit',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/unit.vue'),

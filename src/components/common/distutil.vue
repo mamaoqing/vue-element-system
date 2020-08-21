@@ -1,11 +1,10 @@
 <template>
-
-    <el-select v-model="value" clearable placeholder="请选择" @change="selectDict(value)">
+    <el-select v-model="value" :placeholder="titleValue" @change="selectDict(value)" clearable style="width: 150px">
         <el-option
                 v-for="item in data"
                 :key="item.value"
                 :label="item.name"
-                :value="item.id">
+                :value="item.name">
         </el-option>
     </el-select>
 </template>
@@ -14,13 +13,14 @@
     import {getDictItemByDictId} from '../../api/building'
 
     export default {
-        name: 'child',
+        name: 'distUtil',
         data() {
             return {
                 id: '',
                 data: [],
                 value: '',
                 name: '',
+                titleValue:'',
             }
         },
         created() {
@@ -46,13 +46,20 @@
                 handler :function (newVal) {
                     this.value = newVal;
                 },
+            },
+            title:{
+                immediate: true,
+                handler :function (newVal) {
+                    this.titleValue = newVal;
+                },
             }
 
         },
         props: {
             distId: String,
             distName: String,
-            change: Number,
+            change: String,
+            title:String,
         },
         methods: {
 
@@ -66,7 +73,8 @@
             },
             selectDict(value) {
                 this.$emit("child1", value, this.name);
-            }
+            },
+
         }
     }
 </script>

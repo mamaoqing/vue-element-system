@@ -44,11 +44,13 @@
         },
         methods: {
             handleNodeClick(e) {
-                // console.log(e.id);
-                // console.log(e.name);
-                // console.log(e.type);
-                // console.log(e.parenttable);
-                // console.log(e.parentid);
+                console.log(e);
+                if(e.type === 'community'){
+                    window.localStorage.setItem('commId',e.id);
+                }
+                if(e.compId){
+                    window.localStorage.setItem('compId',e.compId);
+                }
             },
             handleCheckChange () {
                 var arr = this.$refs.tree.getCheckedNodes();

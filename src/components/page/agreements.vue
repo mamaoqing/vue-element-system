@@ -18,8 +18,7 @@
                             :value="item.id">
                     </el-option>
                 </el-select>
-                <el-input clearable v-model="query.type" placeholder="请输入协议类型"
-                          style="width: 200px"></el-input>
+                <child @child1="checkInQuery" :distId="agreementId" :distName="agreementType"></child>
                 <el-select v-model="roleValue" @clear="clearRole" clearable filterable placeholder="请选择角色"
                            @change="selectRole(roleValue)">
                     <el-option
@@ -55,9 +54,9 @@
                 <el-table-column prop="commName" label="社区名称" align="center"></el-table-column>
                 <el-table-column prop="commId" label="社区id" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="no" label="协议编号" align="center"></el-table-column>
-                <el-table-column prop="roleName" label="角色名" align="center"></el-table-column>
+                <el-table-column prop="roleName" label="协议类型" align="center"></el-table-column>
                 <el-table-column prop="roleId" label="角色id" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="type" label="类型" align="center"></el-table-column>
+                <el-table-column prop="typeName" label="类型" align="center"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center"></el-table-column>
                 <el-table-column prop="beginDate" label="协议开始时间" align="center"></el-table-column>
                 <el-table-column prop="endDate" label="协议结束时间" align="center"></el-table-column>
@@ -147,7 +146,7 @@
                     <el-input v-model="form.no"></el-input>
                 </el-form-item>
                 <el-form-item label="协议类型" label-width="100px">
-                    <el-input v-model="form.type"></el-input>
+                    <child @child1="checkInForm" :distId="agreementId" :distName="agreementType"></child>
                 </el-form-item>
                 <el-form-item label="协议开始时间" label-width="100px" prop="beginDate"
                               :rules="[
@@ -235,7 +234,7 @@
                     <el-input v-model="form.no"></el-input>
                 </el-form-item>
                 <el-form-item label="协议类型" label-width="100px">
-                    <el-input v-model="form.type"></el-input>
+                    <child @child1="checkInForm" :distId="agreementId" :distName="agreementType" :change="agreementChange"></child>
                 </el-form-item>
                 <el-form-item label="协议开始时间" label-width="100px" prop="beginDate"
                               :rules="[
@@ -281,10 +280,17 @@
         getCommList
     } from '../../api/agreements'
     import {getComp} from "../../api/user";
+    import child from "./child"
 
     export default {
+        components: {
+            child
+        },
         data() {
             return {
+                agreementId: '46',
+                agreementType: 'type',
+                agreementChange: '',
                 agrees: [{
                     id: 'over',
                     name: '已过期'
@@ -346,6 +352,7 @@
             editAgree(index, row) {
                 this.selectComp1(row.compId);
                 this.form = row;
+                this.agreementChange = Number(row.type);
                 this.form.roleValue = row.roleId;
                 this.title = '修改协议';
                 this.editVisible = true;
@@ -365,7 +372,7 @@
             submit() {
                 if (this.title === '新增协议') {
                     this.$refs['addForm'].validate(valid => {
-                        if(valid){
+                        if (valid) {
                             insertAgreement(this.form).then(res => {
                                 if (res.code === 0 && res.data) {
                                     this.$message.success('协议添加成功！！');
@@ -379,12 +386,12 @@
                 } else {
                     this.$refs['editForm'].validate(valid => {
                         if (valid) {
-                            updateAgreement(this.form).then(res=>{
-                               if(res.code ===0 && res.data){
-                                   this.$message.success('协议修改成功！！');
-                                   this.editVisible = false;
-                                   this.init();
-                               }
+                            updateAgreement(this.form).then(res => {
+                                if (res.code === 0 && res.data) {
+                                    this.$message.success('协议修改成功！！');
+                                    this.editVisible = false;
+                                    this.init();
+                                }
                             });
                         }
                     });
@@ -397,11 +404,9 @@
                 this.query.roleId = value;
             },
             selectRoleForm(value) {
-                console.log(value);
                 this.form.roleId = value;
             },
             selectRoleUpdate(value) {
-                console.log(value);
                 this.form.roleId = value;
             },
             clearAgree(value) {
@@ -421,14 +426,12 @@
                 this.query.compId = value;
             },
             selectComp1(value) {
-                console.log(value);
                 getCommList(value).then(res => {
                     this.commList = res.data;
-                })
+                });
                 this.form.compId = value;
             },
             selectComm(value) {
-                console.log(value);
                 this.form.commId = value;
             },
             clearComp() {
@@ -439,6 +442,12 @@
                     this.options = res.data;
                 });
             },
+            checkInQuery(value, name) {
+                this.query.type = value;
+            },
+            checkInForm(value, name) {
+                this.form.type = value;
+            }
         }
     }
 
