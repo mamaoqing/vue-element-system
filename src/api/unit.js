@@ -76,3 +76,11 @@ export const PlAddRoom = query => {
         data: query
     });
 };
+
+export const copyUnit = query => {
+    return request({
+        url: '/api/rUnit/copyUnit',
+        method: 'post',
+        data: query
+    });
+};

@@ -214,6 +214,11 @@ export default new Router({
                     path: '/rooms',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/room.vue'),
                     meta: { title: '房间管理' }
+                },
+                {
+                    path: '/owner',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/owner.vue'),
+                    meta: { title: '业主管理' }
                 }
             ]
         },
