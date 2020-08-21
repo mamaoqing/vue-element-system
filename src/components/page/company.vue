@@ -9,23 +9,42 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <!--<el-button
-                    type="primary"
-                    icon="el-icon-delete"
-                    class="handle-del mr10"
-                    @click="delAllSelection"
-                >批量删除</el-button>-->
-                <!--<el-select v-model="query.address" placeholder="地址" class="handle-select mr10">
-                    <el-option key="1" label="广东省" value="广东省"></el-option>
-                    <el-option key="2" label="湖南省" value="湖南省"></el-option>
-                </el-select>-->
                 <el-input v-model="query.name" placeholder="公司名称" class="handle-input mr10"></el-input>
                 <el-input v-model="query.abbreviation" placeholder="公司简称" class="handle-input mr10"></el-input>
-                <!--                <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>-->
-                <el-input v-model="query.province" placeholder="省" class="handle-input mr10"></el-input>
-                <el-input v-model="query.city" placeholder="市" class="handle-input mr10"></el-input>
-                <el-input v-model="query.district" placeholder="区" class="handle-input mr10"></el-input>
 
+                <el-select v-model="provinceValue" @clear="clearProvince" clearable filterable placeholder="请选择省份"
+                           @change="selectProvince(provinceValue)">
+                    <el-option
+                            v-for="item in province"
+                            :key="item.provinceName"
+                            :label="item.provinceName"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+                <template v-if="city.length &gt; 0">
+                    <el-select v-model="cityValue" @clear="clearCity" clearable filterable
+                               placeholder="请选择市"
+                               @change="selectCity(cityValue)">
+                        <el-option
+                                v-for="item in city"
+                                :key="item.cityName"
+                                :label="item.cityName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </template>
+                <template v-if="district.length &gt; 0">
+                    <el-select v-model="districtValue" @clear="clearDistrict" clearable filterable
+                               placeholder="请选择县/区"
+                               @change="selectDistrict(districtValue)">
+                        <el-option
+                                v-for="item in district"
+                                :key="item.districtName"
+                                :label="item.districtName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </template>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置</el-button>
@@ -264,9 +283,10 @@
 </template>
 
 <script scoped>
-    import { fetchData, updateData, deleteData, addData, getCityDict } from '../../api/index';
+    import { fetchData, updateData, deleteData, addData, getCityDict, getProvinces } from '../../api/index';
     import companyLink from './companyLink';
     import CitySelect from '../common/CitySelect';
+    import { getCityList, getDistList } from '../../api/dist';
 
     export default {
         name: 'basetable',
@@ -286,11 +306,17 @@
                 delList: [],
                 editVisible: false,
                 pageTotal: 0,
+                provinceValue: "",
+                cityValue: '',
+                districtValue: '',
                 disable: false,
                 cmpVisible: false,
                 form: {},
                 idx: -1,
                 title: '',
+                province: [],
+                city: [],
+                district: [],
                 partyOrganId: [],
                 cascaderData: [],
                 id: -1
@@ -298,6 +324,7 @@
         },
         created() {
             this.getData();
+            getProvinces(this.query).then(res => {this.province = res.data;});
             getCityDict(this.query).then(res => {
                 this.cascaderData = res.data;
             });
@@ -446,6 +473,41 @@
                     });
                 }
 
+            },
+            selectProvince(value) {
+                this.query.provinceId = value;
+                getCityList({provinceId: value}).then(res => {
+                    if (res.code === 0) {
+                        this.city = res.data
+                    }
+                });
+
+            },
+            selectCity(value) {
+                this.query.cityId = value;
+                getDistList({cityId: value}).then(res => {
+                    if (res.code === 0) {
+                        this.district = res.data;
+                    }
+                });
+            },
+            selectDistrict(value) {
+                this.query.districtId = value;
+            },
+            clearProvince() {
+                this.query.provinceId = '';
+                this.query.cityId = '';
+                this.query.district = '';
+                this.city = [];
+                this.district = [];
+            },
+            clearCity() {
+                this.query.cityId = '';
+                this.query.district = '';
+                this.district = [];
+            },
+            clearDistrict() {
+                this.query.district = '';
             },
             // 分页导航
             handlePageChange(val) {
