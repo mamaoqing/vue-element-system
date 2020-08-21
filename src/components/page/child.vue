@@ -1,6 +1,6 @@
 <template>
 
-    <el-select v-model="value" placeholder="请选择" @change="selectDict(value)">
+    <el-select v-model="value" clearable placeholder="请选择" @change="selectDict(value)">
         <el-option
                 v-for="item in data"
                 :key="item.value"
