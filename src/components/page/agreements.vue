@@ -397,11 +397,9 @@
                 this.query.roleId = value;
             },
             selectRoleForm(value) {
-                console.log(value);
                 this.form.roleId = value;
             },
             selectRoleUpdate(value) {
-                console.log(value);
                 this.form.roleId = value;
             },
             clearAgree(value) {
@@ -421,14 +419,12 @@
                 this.query.compId = value;
             },
             selectComp1(value) {
-                console.log(value);
                 getCommList(value).then(res => {
                     this.commList = res.data;
-                })
+                });
                 this.form.compId = value;
             },
             selectComm(value) {
-                console.log(value);
                 this.form.commId = value;
             },
             clearComp() {
