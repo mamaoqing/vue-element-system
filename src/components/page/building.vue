@@ -96,6 +96,9 @@
         <!-- 新增弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name" >
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -118,9 +121,6 @@
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  :disabled="edit"></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
@@ -164,6 +164,9 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -187,9 +190,7 @@
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  ></el-input>
-                </el-form-item>
+
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
                             v-model="form.buildedDate"
@@ -244,6 +245,9 @@
         <!-- 复制弹出框 -->
         <el-dialog :title="title" :visible.sync="copyVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -266,9 +270,6 @@
                     <el-select v-model="form.dictName" placeholder="请选择" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  ></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
