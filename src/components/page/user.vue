@@ -182,7 +182,7 @@
                 <el-form-item label="id" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
-                <el-form-item label="公司名称" label-width="100px" prop="compName"
+                <el-form-item label="公司名称" label-width="100px" prop="compId"
                               :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
@@ -463,6 +463,7 @@
 
             }, selectComp1(value) {
                 this.query.compId = value;
+                console.log(value);
                 getOrg(this.query).then(res => {
                     if (res.code === 0) {
 

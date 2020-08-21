@@ -655,7 +655,6 @@
             },
             fileOutput() {
                 exportExcel(this.query).then(res=>{
-                    console.log(res);
                     var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
                     if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
                         window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
@@ -685,7 +684,13 @@
                 fd.append('file', file);
                 fd.append('className', this.query.className);
                 upload(fd).then(res => {
-                    console.log(res);
+                    if(res.code === 0 && res.data){
+                        this.$message.success(`文件导入成功！`);
+                        this.init();
+                        this.inputVusible = !this.inputVusible;
+                    }else{
+                        this.$message.error(res.msg);
+                    }
                 })
                 return false
             },
