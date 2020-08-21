@@ -233,6 +233,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costrole'),
                     meta: { title: '收费标准' }
                 },
+                {
+                    path: '/owner',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/owner.vue'),
+                    meta: { title: '业主管理' }
+                }
             ]
         },
         {

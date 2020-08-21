@@ -465,7 +465,7 @@
         getAllModel,
         addUnit,
         deleteUnit,
-        updateData, PlAddRoom
+        updateData, PlAddRoom, copyUnit
     } from '../../api/unit';
     import room from './room'
     import { getDictItemByDictId } from '../../api/building';
@@ -701,7 +701,6 @@
                 console.log(row)
                 this.form.no = '';
                 this.form.name = '';
-                this.form.id = null;
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
@@ -747,7 +746,7 @@
             },
             // 保存编辑
             saveEditOrAdd(title) {
-                if (title === '新增'||title === '复制') {
+                if (title === '新增') {
                     this.$refs['form'].validate(valid => {
                         if (valid) {
                             // this.$delete(this.form, 'createdName');
@@ -763,6 +762,17 @@
                         }
                     });
 
+                }else if(title === '复制'){
+                    this.$refs['form'].validate(valid => {
+                        if (valid) {
+                            this.editVisible = false;
+                            this.copyVisible = false;
+                            copyUnit(this.form).then(res => {
+                                this.$message.success(`复制成功`);
+                                this.getData();
+                            });
+                        }
+                    });
                 } else {
                     this.$refs['form'].validate(valid => {
                         if (valid) {
