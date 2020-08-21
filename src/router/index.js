@@ -218,7 +218,21 @@ export default new Router({
                     path: '/rooms',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/room.vue'),
                     meta: { title: '房间管理' }
-                }
+                },
+                {
+                    path: '/costtype',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costtype'),
+                    meta: { title: '收费类型' }
+                },
+                {
+                    path: '/costitem',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costitem'),
+                    meta: { title: '费用项目' }
+                },{
+                    path: '/costrole',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costrole'),
+                    meta: { title: '收费标准' }
+                },
             ]
         },
         {
