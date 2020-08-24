@@ -6,7 +6,7 @@
                     :headers="header"
                     ref="upload"
                     :action="uploadUrl()"
-                    name="excelFile"
+                    name="file"
                     drag
                     :data="upData"
                     :file-list="fileList"
@@ -17,7 +17,7 @@
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                 <!-- <el-button slot="trigger" size="small" >选取文件</el-button> -->
-                <div slot="tip" class="el-upload__tip" style="color:red">上传文件只能是 xls、xlsx、txt 格式!</div>
+                <div slot="tip" class="el-upload__tip" style="color:red">上传文件只能是 xls、xlsx格式!</div>
             </el-upload>
         </el-form-item>
 
@@ -77,7 +77,7 @@
                     });
                 }else {
                     this.$message({
-                        message: '导入失败',
+                        message: response.msg,
                         type: 'error'
                     });
                 }
@@ -94,14 +94,14 @@
                 this.form.fileName = file.name;
                 const extension = file.name.split(".")[1] === "xls";
                 const extension2 = file.name.split(".")[1] === "xlsx";
-                const extension3 = file.name.split(".")[1] === "txt";
-                if (!extension && !extension2 && !extension3) {
+                //const extension3 = file.name.split(".")[1] === "txt";
+                if (!extension && !extension2) {
                     this.$message({
-                        message: '上传文件只能是 xls、xlsx、txt 格式!',
+                        message: '上传文件只能是 xls、xlsx格式!',
                         type: 'error'
                     });
                 }
-                return extension || extension2 || extension3 ;
+                return extension || extension2  ;
             },
             //表单提交
             submitUpload(form) {
