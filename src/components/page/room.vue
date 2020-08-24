@@ -32,12 +32,12 @@
 
             <el-select v-model="query.roomModel" placeholder="请选择" v-if="unitDisable">
                 <el-option key="qxz" label="请选择房型" value=""></el-option>
-                <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
             </el-select>
 
             <el-select v-model="query.usable" placeholder="请选择" v-if="unitDisable">
                 <el-option key="qxz" label="请选择用途" value=""></el-option>
-                <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
             </el-select>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" v-if="unitDisable">搜索</el-button>
@@ -48,8 +48,8 @@
                     class="handle-del mr10"
                     @click="delAllSelection"
                 >批量删除</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="upload" v-if="unitDisable">导入1</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导入</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="upload" v-if="unitDisable">导入</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -74,12 +74,12 @@
                 <el-table-column prop="floorNum" label="楼层数"></el-table-column>
                 <el-table-column prop="elevatorNum" label="电梯数"></el-table-column>
                 <el-table-column prop="roomNum" label="每层房间数"></el-table-column>
-                <el-table-column prop="roomModelName" label="房型"></el-table-column>
-                <el-table-column prop="roomTypeName" label="房屋类型"></el-table-column>
-                <el-table-column prop="propertyRightNatureName" label="产权性质"></el-table-column>
-                <el-table-column prop="directionName" label="朝向"></el-table-column>
-                <el-table-column prop="renovationLevelName" label="装修程度"></el-table-column>
-                <el-table-column prop="usableName" label="用途"></el-table-column>
+                <el-table-column prop="roomModel" label="房型"></el-table-column>
+                <el-table-column prop="roomType" label="房屋类型"></el-table-column>
+                <el-table-column prop="propertyRightNature" label="产权性质"></el-table-column>
+                <el-table-column prop="direction" label="朝向"></el-table-column>
+                <el-table-column prop="renovationLevel" label="装修程度"></el-table-column>
+                <el-table-column prop="usable" label="用途"></el-table-column>
                 <el-table-column prop="titleDeedNo" label="产权证号"></el-table-column>
                 <el-table-column prop="landDeedNo" label="土地证号"></el-table-column>
                 <el-table-column prop="contractNo" label="购房合同号"></el-table-column>
@@ -96,7 +96,12 @@
                             @click.stop
                             @click="handleEdit(scope.$index, scope.row)"
                         >编辑</el-button>
-
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="ownerDetail(scope.$index, scope.row)"
+                        >查看业主</el-button>
                         <el-button
                             type="text"
                             icon="el-icon-delete"
@@ -169,32 +174,32 @@
                 </el-form-item>
                 <el-form-item label="房型" >
                     <el-select v-model="form.roomModel" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="房屋类型" >
                     <el-select v-model="form.roomType" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权性质" >
                     <el-select v-model="form.propertyRightNature" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="朝向" >
                     <el-select v-model="form.direction" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="装修程度" >
                     <el-select v-model="form.renovationLevel" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="用途" >
                     <el-select v-model="form.usable" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权证号"  >
@@ -268,33 +273,33 @@
                     <el-input v-model="form.floor" ></el-input>
                 </el-form-item>
                 <el-form-item label="房型" prop="form.roomModel">
-                    <el-select v-model="form.roomModelName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                    <el-select v-model="form.roomModel" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="房屋类型" prop="form.roomType">
-                    <el-select v-model="form.roomTypeName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
+                    <el-select v-model="form.roomType" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权性质" prop="form.propertyRightNature">
-                    <el-select v-model="form.propertyRightNatureName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
+                    <el-select v-model="form.propertyRightNature" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="朝向" prop="form.direction">
-                    <el-select v-model="form.directionName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
+                    <el-select v-model="form.direction" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="装修程度" prop="form.renovationLevel">
-                    <el-select v-model="form.renovationLevelName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
+                    <el-select v-model="form.renovationLevel" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="用途" prop="form.usable">
-                    <el-select v-model="form.usableName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                    <el-select v-model="form.usable" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权证号"  >
@@ -342,9 +347,12 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
-<!--        <el-dialog  :visible.sync="cmpVisible" append-to-body>-->
-<!--            <menu1 v-if="cmpVisible" ref="menu1"></menu1>-->
-<!--        </el-dialog>-->
+        <el-dialog  :visible.sync="cmpVisible" append-to-body>
+            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
+        </el-dialog>
+        <el-dialog  :visible.sync="ownerVisible" append-to-body width="75%" >
+            <ownerVisible v-if="ownerVisible" ref="ownerVisible"></ownerVisible>
+        </el-dialog>
     </div>
 </template>
 
@@ -353,7 +361,8 @@
 import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildings,getUnits } from '../../api/building';
 import { listCompAll } from '../../api/role';
 import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload,exportXlsByT} from '../../api/room';
-// import menu1 from './roomUpload';
+import menu1 from './roomUpload';
+import ownerVisible from './owner';
 export default {
     name:"roomlistpage",
     props:{
@@ -499,6 +508,7 @@ export default {
             pageTotal:0,
             disable:false,
             cmpVisible:false,
+            ownerVisible:false,
             compList:[],
             commList:[],
             commAreaList:[],
@@ -559,9 +569,10 @@ export default {
         this.query.unitId = this.unitId
         this.getData();
     },
-    // components:{
-    //     menu1
-    // },
+    components:{
+        menu1,
+        ownerVisible
+     },
     methods: {
 
         compChange(val){
@@ -654,22 +665,23 @@ export default {
         },
         exportXls(){
             exportXlsByT(this.query).then(res => {
-                debugger
-                //console.log(res);
-                const blob = new Blob([res.data], { type: 'application/vnd.ms-excel;' });
-                const a = document.createElement('a');
-                // 生成文件路径
-                let href = window.URL.createObjectURL(blob);
-                a.href = href;
-                console.log(res.headers);
-                let _fileName = res.headers['Content-Disposition'].split(';')[1].split('=')[1].split('.')[0];
-                // 文件名中有中文 则对文件名进行转码
-                a.download = decodeURIComponent(_fileName);
-                // 利用a标签做下载
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(href);
+                var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                    window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                } else {
+                    var downloadElement = document.createElement('a');
+                    var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                    downloadElement.href = href;
+                    downloadElement.download = unescape('房间信息.xls'); //下载后文件名
+
+                    document.body.appendChild(downloadElement);
+                    downloadElement.click(); //点击下载
+
+                    document.body.removeChild(downloadElement); //下载完成移除元素
+
+                    window.URL.revokeObjectURL(href); //释放掉blob对象
+                }
             });
         },
         select_status(val){
@@ -724,6 +736,7 @@ export default {
 
         // 触发搜索按钮
         handleSearch() {
+            this.query.pageNo=1;
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
@@ -814,6 +827,14 @@ export default {
             this.cmpVisible = true;
             this.$nextTick(()=>{
                 //this.$refs.menu1.dataInitialization(linkID);
+            })
+
+        },
+        ownerDetail(index, row){
+            let linkID = row.id;
+            this.ownerVisible = true;
+            this.$nextTick(()=>{
+                this.$refs.ownerVisible.dataInitialization(linkID);
             })
 
         },
