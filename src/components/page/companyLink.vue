@@ -9,7 +9,7 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">添加</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增联系人</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -25,15 +25,15 @@
                 <el-table-column prop="name" label="姓名"  align="center"></el-table-column>
                 <el-table-column prop="job" label="职务" align="center"></el-table-column>
                 <el-table-column prop="likes" label="爱好" align="center"></el-table-column>
-                <el-table-column prop="birthday" label="生日" align="center"></el-table-column>
+                <el-table-column prop="birthday" label="生日" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="addr" label="地址" align="center"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center"></el-table-column>
-                <el-table-column prop="tel" label="电话" align="center"></el-table-column>
+                <el-table-column prop="tel" label="电话" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="email" label="邮箱" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center"></el-table-column>
-                <el-table-column prop="createdAt" label="创建时间" align="center"></el-table-column>
+                <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
 
@@ -42,7 +42,7 @@
                                 icon="el-icon-edit"
                                 @click.stop
                                 @click="handleEdit(scope.$index, scope.row)"
-                        >编辑
+                        >编辑联系人
                         </el-button>
                         <el-button
                                 type="text"
@@ -97,7 +97,7 @@
                             value-format="yyyy-MM-dd"
                     />
                 </el-form-item>
-                <el-form-item label="工作" prop="job"
+                <el-form-item label="职务" prop="job"
                               :rules="[
                     { required: true, message: '请输入工作', trigger: 'blur' },
                 ]">
@@ -160,7 +160,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button v-if="!disable" type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -207,13 +207,13 @@
                 this.form = row;
                 this.disable = true;
                 this.editVisible = true;
-                this.title = '查看';
+                this.title = '查看联系人';
 
             },
             //新增操作
             handleAdd() {
                 this.editVisible = true;
-                this.title = '新增';
+                this.title = '新增联系人';
                 this.form = {};
                 this.form.compId = this.query.id;
 
@@ -256,17 +256,17 @@
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = row;
-                this.title = '编辑';
+                this.title = '编辑联系人';
                 this.editVisible = true;
             },
             // 保存编辑
             saveEditOrAdd(title) {
-                if (title === '新增') {
+                if (title === '新增联系人') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
                             this.editVisible = false;
                             addLinkData(this.form).then(res => {
-                                this.$message.success(`新增成功`);
+                                this.$message.success(`新增联系人成功`);
                                 this.getData();
                             });
                         }
