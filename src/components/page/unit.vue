@@ -182,12 +182,12 @@
                     ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="单元类型" prop="model" label-width="150px"
+                    <el-form-item label="单元类型" prop="modelId" label-width="150px"
                                   :rules="[
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
-                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.name"></el-option>
+                        <el-select v-model.number="form.modelId" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
+                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -317,7 +317,7 @@
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
                         <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
-                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.name"></el-option>
+                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -564,7 +564,7 @@
             handleChangeModel(val) {
                 let that = this
                 this.modelArr.forEach(function(value,key,arr){
-                   if(arr[key].name==val){
+                   if(arr[key].id==val){
                        that.$set(that.form, 'roomNum', arr[key].roomNum);
                        that.eleNum = arr[key].elevatorNum
                    }
@@ -678,7 +678,6 @@
                 this.idx = index;
                 this.form = row;
                 this.editshow = false;
-                console.log(typeof this.form.model)
 
                 getComp().then(res => {
                     this.compName = res.data.name;
@@ -733,14 +732,14 @@
                 this.editVisible = true;
                 let that = this
                 this.editshow = false
-                that.$set(that.form, 'model', this.form.model-0);
+               /* that.$set(that.form, 'modelId', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
                     if(arr[key].id==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
-                })
+                })*/
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
@@ -847,5 +846,4 @@
     .el-table--small td {
         padding: 1px 0;
     }
-
 </style>
