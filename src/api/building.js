@@ -7,6 +7,13 @@ export const insertBuilding = query => {
         data: query
     });
 };
+export const checkBulidingNameNo = query => {
+    return request({
+        url: '/api/rBuilding/checkBulidingNameNo',
+        method: 'post',
+        data: query
+    });
+};
 export const copyBuilding = query => {
     return request({
         url: '/api/rBuilding/copyBuilding',

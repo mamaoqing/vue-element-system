@@ -246,6 +246,7 @@ export default {
         },
         // 触发搜索按钮
         handleSearch() {
+            this.query.pageNo=1;
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },

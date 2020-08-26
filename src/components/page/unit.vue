@@ -187,7 +187,7 @@
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
                         <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
-                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -212,9 +212,12 @@
                     </el-form-item>
                     <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入状态', trigger: 'blur' },
+                        { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
@@ -314,7 +317,7 @@
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
                         <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
-                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                            <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.name"></el-option>
                         </el-select>
                     </el-form-item>
 
@@ -339,9 +342,12 @@
                     </el-form-item>
                     <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入状态', trigger: 'blur' },
+                        { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
@@ -394,14 +400,14 @@
                         { required: true, message: '请选择房型', trigger: 'blur' },
                     ]">
                     <el-select v-model="formPl.roomModelName" placeholder="请选择"  >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="用途" prop="usableName" :rules="[
                         { required: true, message: '请选择用途', trigger: 'blur' },
                     ]">
                     <el-select v-model="formPl.usableName" placeholder="请选择"  >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
 
@@ -558,7 +564,7 @@
             handleChangeModel(val) {
                 let that = this
                 this.modelArr.forEach(function(value,key,arr){
-                   if(arr[key].id==val){
+                   if(arr[key].name==val){
                        that.$set(that.form, 'roomNum', arr[key].roomNum);
                        that.eleNum = arr[key].elevatorNum
                    }
@@ -679,10 +685,9 @@
                     this.$set(this.form, 'compId', res.data.id);
                 });
                 let that = this
-                that.$set(that.form, 'model', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
-                    if(arr[key].id==that.form.model){
+                    if(arr[key].name==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
@@ -709,10 +714,9 @@
                     this.buidlArr = res.data;
                 });
                 let that = this
-                that.$set(that.form, 'model', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
-                    if(arr[key].id==that.form.model){
+                    if(arr[key].name==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
@@ -843,4 +847,5 @@
     .el-table--small td {
         padding: 1px 0;
     }
+
 </style>

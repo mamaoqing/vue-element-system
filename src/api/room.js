@@ -9,9 +9,10 @@ export const insertRoom = query => {
 };
 export const exportXlsByT = query => {
     return request({
-        url: '/api/rRoom/test',
+        url: '/api/rRoom/export',
         method: 'post',
-        data: query
+        params: query,
+        responseType: 'blob'
     });
 };
 export const deleteRoom = id => {
