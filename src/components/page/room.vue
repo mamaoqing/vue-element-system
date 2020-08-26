@@ -741,22 +741,19 @@ export default {
             this.getData();
         },
         delAllSelection() {
-            // debugger
+            debugger
             const length = this.multipleSelection.length;
-            let str = '';
-            let ids = '';
-            this.delList = this.delList.concat(this.multipleSelection);
             for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-                ids += this.multipleSelection[i].id + ',';
+                this.delList.push(this.multipleSelection[i].id);
             }
+            console.log(this.delList);
             /*deleteRoom(ids).then(res => {
                 //console.log(res);
                 this.$message.success(`删除了${str}`);
                 this.multipleSelection = [];
                 this.getData();
             });*/
-            this.handleDelete(ids);
+            this.handleDelete(this.delList);
         },
         // 删除操作
         handleDelete(id) {
@@ -788,6 +785,7 @@ export default {
                         .catch(() => {});
                 }
             });
+            this.delList=[];
         },
         // 多选操作
         handleSelectionChange(val) {
@@ -855,6 +853,7 @@ export default {
             this.form = row;
             this.disable=true;
             this.updateVisible = true;
+            this.$refs.form.clearValidate();
             this.title="查看房间"
 
         },
