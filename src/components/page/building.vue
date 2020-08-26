@@ -24,7 +24,7 @@
             <el-input v-model="query.no" placeholder="建筑编号" class="handle-input mr10"></el-input>
             <el-select v-model="query.type" placeholder="请选择" >
                 <el-option key="qxz" label="请选择建筑类型" value=""></el-option>
-                <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
             </el-select>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
@@ -45,7 +45,7 @@
                 <el-table-column prop="compName" label="物业公司"></el-table-column>
                 <el-table-column prop="commName" label="社区名称"></el-table-column>
                 <el-table-column prop="commAreaName" label="社区分区名称"></el-table-column>
-                <el-table-column prop="dictName" label="建筑类型"></el-table-column>
+                <el-table-column prop="type" label="建筑类型"></el-table-column>
                 <el-table-column prop="no" label="建筑编号"></el-table-column>
                 <el-table-column prop="buildedDate" label="建造日期"></el-table-column>
                 <el-table-column prop="deliverDate" label="交付日期"></el-table-column>
@@ -96,6 +96,9 @@
         <!-- 新增弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name" >
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -116,11 +119,8 @@
                 </el-form-item>
                 <el-form-item label="建筑类型" prop="type">
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  :disabled="edit"></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
@@ -164,6 +164,9 @@
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -183,13 +186,11 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="建筑类型" prop="type">
-                    <el-select v-model="form.dictName" placeholder="请选择" >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                    <el-select v-model="form.type" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  ></el-input>
-                </el-form-item>
+
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
                             v-model="form.buildedDate"
@@ -244,6 +245,9 @@
         <!-- 复制弹出框 -->
         <el-dialog :title="title" :visible.sync="copyVisible" width="30%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
+                <el-form-item label="建筑编号" prop="no" >
+                    <el-input v-model="form.no"  ></el-input>
+                </el-form-item>
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -263,12 +267,9 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="建筑类型" prop="type">
-                    <el-select v-model="form.dictName" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                    <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
+                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="建筑编号" prop="no" >
-                    <el-input v-model="form.no"  ></el-input>
                 </el-form-item>
                 <el-form-item label="建造日期" prop="buildedDate">
                     <el-date-picker
@@ -316,7 +317,7 @@
 
 <script>
 
-import { insertBuilding,deleteBuilding,updateBuilding,listBuilding,getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,listBuildingNum,checkBuildingRoomUnit,copyBuilding } from '../../api/building';
+import { insertBuilding,deleteBuilding,updateBuilding,listBuilding,getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,listBuildingNum,checkBuildingRoomUnit,copyBuilding,checkBulidingNameNo } from '../../api/building';
 import { checkRoleMenuUser, deleteRole, listCompAll } from '../../api/role';
 
 
@@ -584,6 +585,7 @@ export default {
 
         // 触发搜索按钮
         handleSearch() {
+            this.query.pageNo=1;
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
@@ -633,6 +635,8 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
+            this.buildingName = row.name;
+            this.buildingNo = row.no;
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
@@ -665,22 +669,46 @@ export default {
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        insertBuilding(this.form).then(res => {
-                            this.editVisible = false;
-                            this.$message.success(`新增成功`);
-                            this.getData();
+                        //提交前验证建筑名称和编号是否重复
+                        checkBulidingNameNo(this.form).then(res => {
+                            if(res.data==''){
+                                insertBuilding(this.form).then(res => {
+                                    this.editVisible = false;
+                                    this.$message.success(`新增成功`);
+                                    this.getData();
+                                });
+                            }else{
+                                this.$message.info(res.data);
+                            }
                         });
+
                     }
                 });
             }else {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        updateBuilding(this.form).then(res => {
-                            this.updateVisible = false;
-                            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                            this.$set(this.tableData, this.idx, this.form);
-                            this.getData();
-                        });
+                        //需要判断是否修改了建筑的名称和编号
+                        if(this.buildingName != this.form.name&&this.buildingNo != this.form.no) {
+                            checkBulidingNameNo(this.form).then(res => {
+                                if(res.data==''){
+                                    updateBuilding(this.form).then(res => {
+                                        this.updateVisible = false;
+                                        this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                        this.$set(this.tableData, this.idx, this.form);
+                                        this.getData();
+                                    });
+                                }else{
+                                    this.$message.info(res.data);
+                                }
+                            });
+                        }else{
+                            updateBuilding(this.form).then(res => {
+                                this.updateVisible = false;
+                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                this.$set(this.tableData, this.idx, this.form);
+                                this.getData();
+                            });
+                        }
                     }
                 });
             }
@@ -691,11 +719,17 @@ export default {
             if(this.buildingName != this.form.name&&this.buildingNo != this.form.no){
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        copyBuilding(this.form).then(res => {
-                            this.copyVisible = false;
-                            this.$message.success(res.data);
-                            this.$set(this.tableData, this.idx, this.form);
-                            this.getData();
+                        checkBulidingNameNo(this.form).then(res => {
+                            if (res.data == '') {
+                                copyBuilding(this.form).then(res => {
+                                    this.copyVisible = false;
+                                    this.$message.success(res.data);
+                                    this.$set(this.tableData, this.idx, this.form);
+                                    this.getData();
+                                });
+                            }else{
+                                this.$message.info(res.data);
+                            }
                         });
                     }
                 });

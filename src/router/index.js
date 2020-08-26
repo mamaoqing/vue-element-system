@@ -220,6 +220,20 @@ export default new Router({
                     meta: { title: '房间管理' }
                 },
                 {
+                    path: '/costtype',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costtype'),
+                    meta: { title: '收费类型' }
+                },
+                {
+                    path: '/costitem',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costitem'),
+                    meta: { title: '费用项目' }
+                },{
+                    path: '/costrole',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/costrole'),
+                    meta: { title: '收费标准' }
+                },
+                {
                     path: '/owner',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/owner.vue'),
                     meta: { title: '业主管理' }
