@@ -147,11 +147,10 @@
                 ]">
                         <el-date-picker
                                 v-model="form.establishmentDate"
-                                type="datetime"
+                                type="date"
                                 placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
                         />
                     </el-form-item>
                     <el-form-item label="公司地址" label-width="150px">
@@ -225,7 +224,10 @@
                     { required: true, message: '请输入公司状态', trigger: 'blur' },
 
                 ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email" label-width="150px">
                         <el-input v-model="form.email"></el-input>
@@ -560,5 +562,11 @@
     }
     .el-table--small td{
         padding: 1px 0;
+    }
+    .el-input{
+        width: 200px;
+    }
+    .el-input__inner{
+        width: 200px;
     }
 </style>
