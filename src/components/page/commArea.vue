@@ -161,34 +161,7 @@
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark" ></el-input>
                     </el-form-item>
-                    <el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.created_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishment_date" label-width="150px" disabled>
-                        <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modified_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishment_date" label-width="150px" >
-                        <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
                 </div>
 
 
@@ -207,6 +180,7 @@
 
 <script scoped>
     import { addArea, getAllArea, getComm, getCommById, getComp,updateData,deleteData } from '../../api/comm_area';
+    import commPage from '../common/commPage';
 
     export default {
         name: 'basetable',
@@ -224,6 +198,7 @@
                 editVisible: false,
                 pageTotal: 0,
                 disable: false,
+                status: 0,
                 cmpVisible: false,
                 form: {},
                 idx: -1,
@@ -240,7 +215,9 @@
             });
 
         },
-
+        components: {
+            commPage
+        },
         methods: {
             // 获取数据
             getData() {
@@ -283,7 +260,6 @@
                 })
                     .then(() => {
                         deleteData(id).then(res => {
-                            console.log(res);
                             this.$message.success('删除成功');
                             this.getData();
                         });
@@ -326,21 +302,18 @@
                 this.title = '新增';
                 this.form = {};
                 this.disable = false;
+                this.status = 0;
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'createdAt', new Date());
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             // 编辑操作
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = row;
-                console.log(this.form)
+                this.status = 1;
 
                 getComp().then(res => {
                     this.compName = res.data.name;
@@ -349,8 +322,6 @@
                 this.editVisible = true;
                 this.disable = false;
                 this.title = '修改';
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             //表格行点击事件
@@ -358,6 +329,7 @@
                 //具体操作
                 this.form = row;
                 this.disable = true;
+                this.status = 2;
                 this.editVisible = true;
                 getComp().then(res => {
                     this.compName = res.data.name;
@@ -371,10 +343,6 @@
                 if (title === '新增') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
-                            // this.$delete(this.form, 'createdName');
-                            // this.$delete(this.form, 'createdAt');
-                            // this.$delete(this.form, 'modifiedName');
-                            // this.$delete(this.form, 'modifiedAt');
                             this.editVisible = false;
                             addArea(this.form).then(res => {
                                 this.$message.success(`新增成功`);
@@ -387,8 +355,6 @@
                     this.$refs['form'].validate(valid => {
                         if (valid){
                             this.editVisible = false;
-                            // this.$delete(this.form, 'modifiedName');
-                            // this.$delete(this.form, 'modifiedAt');
                             updateData(this.form).then(res => {
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                 this.$set(this.tableData, this.idx, this.form);

@@ -1,11 +1,11 @@
 <template>
     <div>
         <el-form-item label="录入人" label-width="150px">
-            <el-input v-model="form.createdName" disabled></el-input>
+            <el-input v-model="commForm.createdName" disabled></el-input>
         </el-form-item>
         <el-form-item label="录入时间" prop="createdAt" label-width="150px" disabled>
             <el-date-picker
-                    v-model="form.createdAt"
+                    v-model="commForm.createdAt"
                     type="datetime"
                     placeholder="选择日期时间"
                     format="yyyy-MM-dd HH:mm:ss"
@@ -15,11 +15,11 @@
             />
         </el-form-item>
         <el-form-item label="修改人" label-width="150px">
-            <el-input v-model="form.modifiedName" disabled></el-input>
+            <el-input v-model="commForm.modifiedName" disabled></el-input>
         </el-form-item>
         <el-form-item label="修改时间" prop="modifiedAt" label-width="150px">
             <el-date-picker
-                    v-model="form.modifiedAt"
+                    v-model="commForm.modifiedAt"
                     type="datetime"
                     placeholder="选择日期时间"
                     format="yyyy-MM-dd HH:mm:ss"
@@ -32,28 +32,45 @@
 </template>
 
 <script>
-    import { getCityDict, getProvinces } from '../../api';
-    import { getDictItemByDictId } from '../../api/building';
 
     export default {
         name: 'commPage',
-        props: ["form"],//从父组件接受的数据
-        created() {
-
-        },
-        mounted() {
-            if (this.form.id!=null){
-                console.log("--------------------------")
-                this.form.modifiedName = localStorage.getItem('ms_username')
-                this.form.modifiedAt = new Date()
-            }else{
-                console.log("+++++++++++++++++++++++++")
-                this.form.createdName = localStorage.getItem('ms_username')
-                this.form.createdAt = new Date()
-                this.form.modifiedName = localStorage.getItem('ms_username')
-                this.form.modifiedAt = new Date()
-
+        props: ["form","status","editVisible"],//从父组件接受的数据
+        data() {
+            return {
+                commForm:{}
             }
+        },
+        created() {
+            this.commForm = JSON.parse(JSON.stringify(this.form));
+            if (this.status===0){
+                this.commForm.createdName = localStorage.getItem('ms_username')
+                this.commForm.createdAt = new Date()
+                this.commForm.modifiedName = localStorage.getItem('ms_username')
+                this.commForm.modifiedAt = new Date()
+            }else if(this.status===1){
+                this.commForm.modifiedName = localStorage.getItem('ms_username')
+                this.commForm.modifiedAt = new Date()
+            }
+        }
+        ,
+        watch:{
+            editVisible:{
+                handler() {
+                    this.commForm = JSON.parse(JSON.stringify(this.form));
+                    if (this.status===0){
+                        this.commForm.createdName = localStorage.getItem('ms_username')
+                        this.commForm.createdAt = new Date()
+                        this.commForm.modifiedName = localStorage.getItem('ms_username')
+                        this.commForm.modifiedAt = new Date()
+                    }else if(this.status===1){
+                        this.commForm.modifiedName = localStorage.getItem('ms_username')
+                        this.commForm.modifiedAt = new Date()
+                    }
+                },
+                deep: true
+            }
+
         }
     };
 </script>

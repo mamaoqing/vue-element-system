@@ -69,7 +69,7 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="50%" append-to-body>
-            <el-form ref="form" :model="form" label-width="70px">
+            <el-form ref="form" :model="form" label-width="150px">
                 <el-form-item label="ID" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
@@ -131,32 +131,7 @@
                 ]">
                     <el-input v-model="form.email"></el-input>
                 </el-form-item>
-                <el-form-item label="录入人">
-                    <el-input v-model="form.createdName"></el-input>
-                </el-form-item>
-                <el-form-item label="录入时间" prop="establishmentDate">
-                    <el-date-picker
-                            v-model="form.createdAt"
-                            type="datetime"
-                            placeholder="选择日期时间"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            default-time="00:00:00"
-                    />
-                </el-form-item>
-                <el-form-item label="修改人">
-                    <el-input v-model="form.modifiedName"></el-input>
-                </el-form-item>
-                <el-form-item label="修改时间" prop="establishmentDate">
-                    <el-date-picker
-                            v-model="form.modifiedAt"
-                            type="datetime"
-                            placeholder="选择日期时间"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            default-time="00:00:00"
-                    />
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -168,7 +143,7 @@
 
 <script>
     import { deleteLinkData, fetchLinkData, addLinkData, updateLinkData } from '../../api/index';
-
+    import commPage from '../common/commPage';
     export default {
         name: 'basetable',
         data() {
@@ -180,14 +155,19 @@
                 },
                 title: '',
                 tableData: [],
+                disable:false,
                 multipleSelection: [],
                 delList: [],
                 editVisible: false,
                 pageTotal: 0,
                 form: {},
+                status:0,
                 idx: -1,
                 id: -1
             };
+        },
+        components: {
+            commPage
         },
         methods: {
             getData() {
@@ -207,6 +187,7 @@
                 this.form = row;
                 this.disable = true;
                 this.editVisible = true;
+                this.status = 2;
                 this.title = '查看联系人';
 
             },
@@ -215,6 +196,8 @@
                 this.editVisible = true;
                 this.title = '新增联系人';
                 this.form = {};
+                this.status = 0;
+                this.disable = false;
                 this.form.compId = this.query.id;
 
             },
@@ -257,6 +240,8 @@
                 this.idx = index;
                 this.form = row;
                 this.title = '编辑联系人';
+                this.status = 1;
+                this.disable = false;
                 this.editVisible = true;
             },
             // 保存编辑

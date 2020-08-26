@@ -266,35 +266,7 @@
                     <el-form-item label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
                     </el-form-item>
-                    <!--<el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.createdName" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishmentDate" label-width="150px" disabled>
-                        <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modifiedName" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishmentDate" label-width="150px" >
-                        <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>-->
-                    <commPage :form="form"></commPage>
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
                 </div>
 
 
@@ -314,7 +286,6 @@
 <script scoped>
     import { fetchData, updateData, deleteData, addData, getCityDict, getProvinces } from '../../api/index';
     import companyLink from './companyLink';
-    import CitySelect from '../common/CitySelect';
     import commPage from '../common/commPage';
     import { getCityList, getDistList } from '../../api/dist';
     import { getDictItemByDictId } from '../../api/building';
@@ -345,6 +316,7 @@
                 form: {},
                 idx: -1,
                 title: '',
+                status: 0,
                 province: [],
                 city: [],
                 district: [],
@@ -367,12 +339,11 @@
         },
         components: {
             companyLink,
-            CitySelect,
             commPage
         }
         ,
         methods: {
-            // 获取 easy-mock 的模拟数据
+            // 获取数据
             getData() {
                 fetchData(this.query).then(res => {
                     this.tableData = res.data.records;
@@ -446,10 +417,7 @@
                 this.form = {};
                 this.partyOrganId = [];
                 this.disable = false;
-                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'createdAt', new Date());
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
+                this.status = 0;
             },
             // 编辑操作
             handleEdit(index, row) {
@@ -460,8 +428,7 @@
                 this.editVisible = true;
                 this.disable = false;
                 this.title = '编辑公司';
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
+                this.status = 1;
 
             },
             //表格行点击事件
@@ -471,6 +438,7 @@
                 this.disable = true;
                 this.editVisible = true;
                 this.title = '查看';
+                this.status = 2;
 
             },
             // 保存编辑
@@ -478,10 +446,6 @@
                 if (title === '新增公司') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
-                            this.$delete(this.form, 'createdName');
-                            this.$delete(this.form, 'createdAt');
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
                             this.editVisible = false;
                             addData(this.form).then(res => {
                                 this.$message.success(`新增公司成功`);
@@ -495,8 +459,6 @@
                         if (valid){
 
                             this.editVisible = false;
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
                             updateData(this.form).then(res => {
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                 this.$set(this.tableData, this.idx, this.form);

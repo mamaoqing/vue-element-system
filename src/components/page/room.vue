@@ -918,7 +918,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .handle-box {
     margin-bottom: 20px;
 }
