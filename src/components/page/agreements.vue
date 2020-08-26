@@ -56,7 +56,7 @@
                 <el-table-column prop="no" label="协议编号" align="center"></el-table-column>
                 <el-table-column prop="roleName" label="协议类型" align="center"></el-table-column>
                 <el-table-column prop="roleId" label="角色id" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="typeName" label="类型" align="center"></el-table-column>
+                <el-table-column prop="type" label="类型" align="center"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center"></el-table-column>
                 <el-table-column prop="beginDate" label="协议开始时间" align="center"></el-table-column>
                 <el-table-column prop="endDate" label="协议结束时间" align="center"></el-table-column>
@@ -64,7 +64,7 @@
                 <el-table-column prop="createdAt" label="录入时间" width="180" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" width="180" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center">
+                <el-table-column label="操作" width="150" align="center">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
