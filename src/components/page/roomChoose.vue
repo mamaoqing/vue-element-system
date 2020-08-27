@@ -365,9 +365,10 @@ export default {
             this.$set(this.query, 'pageNo', val);
             this.getData();
         },
-        dataInitializationByMeter(compId,commId){
+        dataInitializationByMeter(compId,commId,commAreaId){
             this.query.compName = compId;
             this.query.commName = commId;
+            this.query.commAreaName = commAreaId;
             this.meterDisable = false;
             this.getBuildings();
         }
