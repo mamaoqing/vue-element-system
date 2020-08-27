@@ -94,7 +94,7 @@
         </div>
 
         <!-- 新增弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -162,7 +162,7 @@
             </span>
         </el-dialog>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="updateVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -243,7 +243,7 @@
             </span>
         </el-dialog>
         <!-- 复制弹出框 -->
-        <el-dialog :title="title" :visible.sync="copyVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="copyVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -331,26 +331,37 @@ export default {
             }
         }
         let checkcompId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入物业公司名称"));
+            if(this.title!='编辑建筑'){
+                if(!value){
+                    return callback(new Error("请输入物业公司名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommId= (rule,value,callback) =>{
-            debugger
-            if(!value){
-                return callback(new Error("请输入社区名称"));
+            if(this.title!='编辑建筑'){
+                if(!value){
+                    return callback(new Error("请输入社区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommAreaId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区分区名称"));
-            }else{
-                return callback();
-            }
+                if(this.title!='编辑建筑') {
+                    if (!value) {
+                        return callback(new Error("请输入社区分区名称"));
+                    } else {
+                        return callback();
+                    }
+                }else{
+                    return callback();
+                }
         }
         let checktype = (rule,value,callback) =>{
             if(!value){
@@ -457,16 +468,16 @@ export default {
                     validator:checkname,required: true,trigger:'blur'
                 }],
                 compId:[{
-                    validator:checkcompId,required: true,trigger:'change'
+                    validator:checkcompId,required: true,trigger:'blur'
                 }],
                 commId:[{
-                    validator:checkcommId,required: true,trigger:'change'
+                    validator:checkcommId,required: true,trigger:'blur'
                 }],
                 commAreaId:[{
-                    validator:checkcommAreaId,required: true,trigger:'change'
+                    validator:checkcommAreaId,required: true,trigger:'blur'
                 }],
                 type:[{
-                    validator:checktype,required: true,trigger:'change'
+                    validator:checktype,required: true,trigger:'blur'
                 }],
                 no:[{
                     validator:checkno,required: true,trigger:'blur'
@@ -626,6 +637,7 @@ export default {
         },
         handleAdd() {
             this.editVisible = true;
+            this.disable = false;
             this.title="新增建筑";
             this.edit=false;
             this.form={state:'在用'}
@@ -633,6 +645,7 @@ export default {
         },
         // 编辑操作
         handleEdit(index, row) {
+            //this.$refs.form.clearValidate();
             this.idx = index;
             this.form = row;
             this.buildingName = row.name;
@@ -640,8 +653,8 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改建筑"
-            this.$refs.form.clearValidate();
+            this.title="编辑建筑"
+
         },
         copyEdit(index, row) {
             this.idx = index;
