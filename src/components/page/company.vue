@@ -46,7 +46,7 @@
                     </el-select>
                 </template>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增公司</el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置</el-button>
             </div>
             <el-table
@@ -68,20 +68,22 @@
                 <el-table-column prop="district" label="区" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="compAddr" label="公司地址" align="center" min-width="205" min-height="55"></el-table-column>
                 <el-table-column prop="registeredAddr" label="注册地址" align="center" min-width="205" min-height="55"></el-table-column>
-                <el-table-column prop="legal_person" label="法人" align="center" min-width="75" min-height="55"></el-table-column>
+                <el-table-column prop="legalPerson" label="法人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="registeredCapital" label="注册资本" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="unifiedSocialCreditCode" label="统一社会信用代码" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="taxpayerIdentificationNo" label="纳税人识别号" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="registeredNo" label="工商注册号" align="center" min-width="75" min-height="55"></el-table-column>
-                <el-table-column prop="compType" label="公司类型" align="center" min-width="55" min-height="55"></el-table-column>
+                <el-table-column prop="compType" label="公司类型" align="center" min-width="95" min-height="55"></el-table-column>
                 <el-table-column prop="tel" label="电话" align="center" min-width="110" min-height="55"></el-table-column>
-                <el-table-column prop="eMail" label="邮箱" align="center" min-width="75" min-height="55"></el-table-column>
+                <el-table-column prop="email" label="邮箱" align="center" min-width="125" min-height="55"></el-table-column>
+                <el-table-column prop="businessTermBegin" label="营业开始时间" align="center" min-width="155" min-height="55"></el-table-column>
+                <el-table-column prop="businessTermEnd" label="营业结束时间" align="center" min-width="155" min-height="55"></el-table-column>
                 <el-table-column prop="state" label="状态" align="center" min-width="55" min-height="55"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155" min-height="55"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column label="操作" width="210" align="center">
                     <template slot-scope="scope">
                         <el-row>
                             <el-button-group>
@@ -90,7 +92,7 @@
                                         icon="el-icon-edit"
                                         @click.stop
                                         @click="handleEdit(scope.$index, scope.row)"
-                                >编辑
+                                >编辑公司
                                 </el-button>
                                 <el-button
                                         type="text"
@@ -106,7 +108,7 @@
                                         class="green"
                                         @click.stop
                                         @click="handleCompanyLink(scope.row.id)"
-                                >联系人
+                                >公司联系人
                                 </el-button>
                             </el-button-group>
                         </el-row>
@@ -147,11 +149,10 @@
                 ]">
                         <el-date-picker
                                 v-model="form.establishmentDate"
-                                type="datetime"
+                                type="date"
                                 placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
                         />
                     </el-form-item>
                     <el-form-item label="公司地址" label-width="150px">
@@ -188,11 +189,11 @@
                 ]">
                         <el-input v-model="form.registeredCapital"></el-input>
                     </el-form-item>
-                    <el-form-item label="法人" prop="legal_person" label-width="150px"
+                    <el-form-item label="法人" prop="legalPerson" label-width="150px"
                                   :rules="[
                     { required: true, message: '请输入法人', trigger: 'blur' },
                 ]">
-                        <el-input v-model="form.legal_person"></el-input>
+                        <el-input v-model="form.legalPerson"></el-input>
                     </el-form-item>
                     <el-form-item label="纳税人识别号" prop="taxpayerIdentificationNo" label-width="150px"
                                   :rules="[
@@ -218,14 +219,19 @@
                                   :rules="[
                     { required: true, message: '请选择公司类型', trigger: 'blur' },
                 ]">
-                        <el-input v-model="form.compType"></el-input>
+                        <el-select v-model="form.compType" placeholder="请选择"  >
+                            <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in compTypes" >{{types.name}}</el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="状态" prop="state" label-width="150px"
                                   :rules="[
                     { required: true, message: '请输入公司状态', trigger: 'blur' },
 
                 ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email" label-width="150px">
                         <el-input v-model="form.email"></el-input>
@@ -238,41 +244,36 @@
                     >
                         <el-input v-model="form.tel"></el-input>
                     </el-form-item>
-                    <el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.createdName" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishmentDate" label-width="150px" disabled>
+                    <el-form-item label="营业开始时间" prop="businessTermBegin" label-width="150px" >
                         <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
+                                v-model="form.businessTermBegin"
+                                type="date"
                                 placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
+
                         />
                     </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modifiedName" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishmentDate" label-width="150px" >
+                    <el-form-item label="营业结束日期" prop="businessTermEnd" label-width="150px" >
                         <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
+                                v-model="form.businessTermEnd"
+                                type="date"
                                 placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
                         />
                     </el-form-item>
+                    <el-form-item label="备注" label-width="150px">
+                        <el-input v-model="form.remark"></el-input>
+                    </el-form-item>
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
                 </div>
 
 
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button v-if="!disable" type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 联系人弹出框   -->
@@ -285,8 +286,9 @@
 <script scoped>
     import { fetchData, updateData, deleteData, addData, getCityDict, getProvinces } from '../../api/index';
     import companyLink from './companyLink';
-    import CitySelect from '../common/CitySelect';
+    import commPage from '../common/commPage';
     import { getCityList, getDistList } from '../../api/dist';
+    import { getDictItemByDictId } from '../../api/building';
 
     export default {
         name: 'basetable',
@@ -314,9 +316,11 @@
                 form: {},
                 idx: -1,
                 title: '',
+                status: 0,
                 province: [],
                 city: [],
                 district: [],
+                compTypes: [],
                 partyOrganId: [],
                 cascaderData: [],
                 id: -1
@@ -328,17 +332,20 @@
             getCityDict(this.query).then(res => {
                 this.cascaderData = res.data;
             });
+            getDictItemByDictId(6).then(res => {//44是物业服务类型的id
+                // debugger
+                this.compTypes = res.data;
+            });
         },
         components: {
             companyLink,
-            CitySelect
+            commPage
         }
         ,
         methods: {
-            // 获取 easy-mock 的模拟数据
+            // 获取数据
             getData() {
                 fetchData(this.query).then(res => {
-                    console.log(res);
                     this.tableData = res.data.records;
                     this.pageTotal = res.data.total || 0;
                 });
@@ -362,14 +369,12 @@
             },
             // 删除操作
             handleDelete(id) {
-                console.log(id);
                 // 二次确认删除
                 this.$confirm('确定要删除吗？', '提示', {
                     type: 'warning'
                 })
                     .then(() => {
                         deleteData(id).then(res => {
-                            console.log(res);
                             this.$message.success('删除成功');
                             this.getData();
                         });
@@ -408,28 +413,22 @@
             },
             handleAdd() {
                 this.editVisible = true;
-                this.title = '新增';
+                this.title = '新增公司';
                 this.form = {};
                 this.partyOrganId = [];
                 this.disable = false;
-                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'createdAt', new Date());
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
+                this.status = 0;
             },
             // 编辑操作
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = {};
                 this.form = row;
-                console.log(this.form)
                 this.partyOrganId = [row.provinceId,row.cityId,row.districtId]
-                console.log(this.partyOrganId)
                 this.editVisible = true;
                 this.disable = false;
-                this.title = '修改';
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
+                this.title = '编辑公司';
+                this.status = 1;
 
             },
             //表格行点击事件
@@ -439,20 +438,17 @@
                 this.disable = true;
                 this.editVisible = true;
                 this.title = '查看';
+                this.status = 2;
 
             },
             // 保存编辑
             saveEditOrAdd(title) {
-                if (title === '新增') {
+                if (title === '新增公司') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
-                            this.$delete(this.form, 'createdName');
-                            this.$delete(this.form, 'createdAt');
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
                             this.editVisible = false;
                             addData(this.form).then(res => {
-                                this.$message.success(`新增成功`);
+                                this.$message.success(`新增公司成功`);
                                 this.getData();
                             });
                         }
@@ -463,8 +459,6 @@
                         if (valid){
 
                             this.editVisible = false;
-                            this.$delete(this.form, 'modifiedName');
-                            this.$delete(this.form, 'modifiedAt');
                             updateData(this.form).then(res => {
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                 this.$set(this.tableData, this.idx, this.form);
@@ -560,5 +554,11 @@
     }
     .el-table--small td{
         padding: 1px 0;
+    }
+    .el-input{
+        width: 200px;
+    }
+    .el-input__inner{
+        width: 200px;
     }
 </style>

@@ -171,8 +171,8 @@
                     </el-form-item>
                     <el-form-item class="item" label="单元编号" prop="no" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入单元编号'},
-                        { type: 'number', message: '必须为数字值'}
+                        { required: true, message: '请输入单元编号', trigger: 'blur'}
+
                     ]">
                         <el-input v-model.number="form.no"></el-input>
                     </el-form-item>
@@ -182,11 +182,11 @@
                     ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="单元类型" prop="model" label-width="150px"
+                    <el-form-item label="单元类型" prop="modelId" label-width="150px"
                                   :rules="[
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
+                        <el-select v-model.number="form.modelId" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
                             <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
@@ -205,48 +205,24 @@
                     </el-form-item>
                     <el-form-item class="item" label="楼层数" prop="floorNum" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入楼层数'},
+                        { required: true, message: '请输入楼层数', trigger: 'blur'},
                         { type: 'number', message: '必须是数字'},
                     ]">
                         <el-input v-model.number="form.floorNum"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入状态', trigger: 'blur' },
+                        { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
                     </el-form-item>
-                    <el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.created_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishment_date" label-width="150px" disabled>
-                        <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modified_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishment_date" label-width="150px">
-                        <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
                 </div>
 
 
@@ -298,8 +274,8 @@
                     </el-form-item>
                     <el-form-item class="item" label="单元编号" prop="no" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入单元编号'},
-                        { type: 'number', message: '必须为数字值'}
+                        { required: true, message: '请输入单元编号', trigger: 'blur'},
+
                     ]">
                         <el-input v-model.number="form.no"></el-input>
                     </el-form-item>
@@ -332,50 +308,26 @@
                     </el-form-item>
                     <el-form-item class="item" label="楼层数" prop="floorNum" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入楼层数'},
+                        { required: true, message: '请输入楼层数' , trigger: 'blur'},
                         { type: 'number', message: '必须是数字'},
                     ]">
                         <el-input v-model.number="form.floorNum"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入状态', trigger: 'blur' },
+                        { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-input v-model="form.state"></el-input>
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
                     </el-form-item>
-                    <el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.created_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishment_date" label-width="150px" disabled>
-                        <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modified_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishment_date" label-width="150px">
-                        <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                </div>
 
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
+                </div>
 
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -384,24 +336,24 @@
             </span>
         </el-dialog>
         <!-- 房间弹出框   -->
-        <el-dialog :visible.sync="cmpVisible" append-to-body>
+        <el-dialog :visible.sync="cmpVisible" width="55%" append-to-body>
             <room v-if="cmpVisible" ref="room"></room>
         </el-dialog>
         <!--批量生成房间-->
-        <el-dialog :title="title" :visible.sync="formCpoyVisable" width="30%" append-to-body>
+        <el-dialog :title="title" :visible.sync="formCpoyVisable" width="35%" append-to-body>
             <el-form ref="formCopy" :model="formPl" label-width="120px"  :disabled="disable">
                 <el-form-item label="房型" prop="roomModelName" :rules="[
                         { required: true, message: '请选择房型', trigger: 'blur' },
                     ]">
                     <el-select v-model="formPl.roomModelName" placeholder="请选择"  >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="用途" prop="usableName" :rules="[
                         { required: true, message: '请选择用途', trigger: 'blur' },
                     ]">
                     <el-select v-model="formPl.usableName" placeholder="请选择"  >
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
 
@@ -414,17 +366,6 @@
                         { required: true, message: '请输入使用面积', trigger: 'blur' },
                     ]">
                     <el-input v-model="formPl.usableArea" ></el-input>
-                </el-form-item>
-                <el-form-item label="状态">
-                    <el-select v-model="formPl.state" placeholder="请选择" >
-                        <el-option key="bbk" label="在用" value="在用" ></el-option>
-                        <el-option key="xtc" label="不在用" value="不在用"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="房间号后缀" prop="suffix" :rules="[
-                        { required: true, message: '请输入后缀', trigger: 'blur' },
-                    ]">
-                    <el-input v-model="formPl.suffix" ></el-input>
                 </el-form-item>
                 <el-form-item label="楼层"  >
                     <el-col :span="10">
@@ -439,12 +380,25 @@
                                   maxLength='2'></el-input>
                     </el-col>
                 </el-form-item>
-
                 <el-form-item label="前缀" >
                     <el-input v-model="formPl.prefix" ></el-input>
                 </el-form-item>
                 <el-form-item label="分割符"  >
                     <el-input v-model="formPl.separator" placeholder="楼层与后缀分割符"></el-input>
+                </el-form-item>
+                <el-form-item label="房间号后缀" prop="suffix" :rules="[
+                        { required: true, message: '请输入后缀', trigger: 'blur' },
+                    ]">
+                    <el-input v-model="formPl.suffix" ></el-input>
+                </el-form-item>
+
+
+
+                <el-form-item label="状态">
+                    <el-select v-model="formPl.state" placeholder="请选择" >
+                        <el-option key="bbk" label="在用" value="在用" ></el-option>
+                        <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -469,6 +423,7 @@
     } from '../../api/unit';
     import room from './room'
     import { getDictItemByDictId } from '../../api/building';
+    import commPage from '../common/commPage';
     export default {
         name: 'basetable',
         data() {
@@ -495,6 +450,7 @@
                 editshow:true,
                 copyVisible:false,
                 formCpoyVisable:false,
+                status:0,
                 form: {},
                 formPl: {},
                 idx: -1,
@@ -510,6 +466,7 @@
         },
         components:{
             room,
+            commPage
         },
         created() {
             this.getData();
@@ -656,15 +613,12 @@
                 this.title = '新增';
                 this.form = {};
                 this.editshow = true
+                this.status = 0
                 this.disable = false;
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'createdAt', new Date());
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
 
             },
             // 编辑操作
@@ -672,17 +626,15 @@
                 this.idx = index;
                 this.form = row;
                 this.editshow = false;
-                console.log(typeof this.form.model)
-
+                this.status = 1;
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
                 let that = this
-                that.$set(that.form, 'model', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
-                    if(arr[key].id==that.form.model){
+                    if(arr[key].name==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
@@ -709,10 +661,9 @@
                     this.buidlArr = res.data;
                 });
                 let that = this
-                that.$set(that.form, 'model', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
-                    if(arr[key].id==that.form.model){
+                    if(arr[key].name==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
@@ -728,15 +679,16 @@
                 this.disable = true;
                 this.editVisible = true;
                 let that = this
+                this.status = 2;
                 this.editshow = false
-                that.$set(that.form, 'model', this.form.model-0);
+               /* that.$set(that.form, 'modelId', this.form.model-0);
                 this.modelArr.forEach(function(value,key,arr){
 
                     if(arr[key].id==that.form.model){
                         that.eleNum = arr[key].elevatorNum
                     }
 
-                })
+                })*/
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
@@ -797,7 +749,7 @@
     };
 </script>
 
-<style>
+<style scoped>
     .handle-box {
         margin-bottom: 20px;
     }
@@ -843,4 +795,5 @@
     .el-table--small td {
         padding: 1px 0;
     }
+
 </style>
