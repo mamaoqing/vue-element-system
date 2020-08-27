@@ -136,7 +136,7 @@
             </span>
         </el-dialog>
         <!-- 新增弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%" append-to-body>
+        <el-dialog :title="title" :visible.sync="editVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId" v-show="unitDisable">
                     <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
@@ -226,7 +226,7 @@
                         <el-option key="xtc" label="不在用" value="不在用"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
+                <el-form-item label="备注" >
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
             </el-form>
@@ -236,7 +236,7 @@
             </span>
         </el-dialog>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%" append-to-body>
+        <el-dialog :title="title" :visible.sync="updateVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId">
                     <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
@@ -272,32 +272,32 @@
                 <el-form-item label="楼层" prop="floor" >
                     <el-input v-model="form.floor" ></el-input>
                 </el-form-item>
-                <el-form-item label="房型" prop="form.roomModel">
+                <el-form-item label="房型" >
                     <el-select v-model="form.roomModel" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="房屋类型" prop="form.roomType">
+                <el-form-item label="房屋类型" >
                     <el-select v-model="form.roomType" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="产权性质" prop="form.propertyRightNature">
+                <el-form-item label="产权性质" >
                     <el-select v-model="form.propertyRightNature" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="朝向" prop="form.direction">
+                <el-form-item label="朝向" >
                     <el-select v-model="form.direction" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="装修程度" prop="form.renovationLevel">
+                <el-form-item label="装修程度" >
                     <el-select v-model="form.renovationLevel" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="用途" prop="form.usable">
+                <el-form-item label="用途" >
                     <el-select v-model="form.usable" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
@@ -326,7 +326,7 @@
                         <el-option key="xtc" label="不在用" value="不在用"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
+                <el-form-item label="备注" >
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
                 <el-form-item label="创建人" >
@@ -356,7 +356,7 @@
     </div>
 </template>
 
-<script>
+<script scope>
 
 import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildings,getUnits } from '../../api/building';
 import { listCompAll } from '../../api/role';
@@ -377,36 +377,56 @@ export default {
             }
         }
         let checkcompId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入物业公司名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入物业公司名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommId= (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入社区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommAreaId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区分区名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入社区分区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkbuildingId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入建筑名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入建筑名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkunitId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入单元名称"));
+            if(this.title!='编辑房间') {
+                if (!value) {
+                    return callback(new Error("请输入单元名称"));
+                } else {
+                    return callback();
+                }
             }else{
                 return callback();
             }
@@ -533,19 +553,19 @@ export default {
                     validator:checkname,required: true,trigger:'blur'
                 }],
                 compId:[{
-                    validator:checkcompId,required: true,trigger:'change'
+                    validator:checkcompId,required: true,trigger:'blur'
                 }],
                 commId:[{
-                    validator:checkcommId,required: true,trigger:'change'
+                    validator:checkcommId,required: true,trigger:'blur'
                 }],
                 commAreaId:[{
-                    validator:checkcommAreaId,required: true,trigger:'change'
+                    validator:checkcommAreaId,required: true,trigger:'blur'
                 }],
                 buildingId:[{
-                    validator:checkbuildingId,required: true,trigger:'change'
+                    validator:checkbuildingId,required: true,trigger:'blur'
                 }],
                 unitId:[{
-                    validator:checkunitId,required: true,trigger:'change'
+                    validator:checkunitId,required: true,trigger:'blur'
                 }],
                 roomNo:[{
                     validator:checkroomNo,required: true,trigger:'blur'
@@ -792,9 +812,11 @@ export default {
             this.multipleSelection = val;
         },
         handleAdd() {
+            this.updateVisible = false;
             this.editVisible = true;
             this.title="新增房间";
             this.edit=false;
+            this.disable=false;
             this.form={state:'在用'}
             if(this.unitDisable ===false){
                 this.$set(this.form, 'compId', this.unitForm.compName);
@@ -844,8 +866,7 @@ export default {
             this.copyVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="复制房间"
-            this.$refs.form.clearValidate();
+            this.title="复制房间";
         },
         //表格行点击事件
         openDetails (row) {
@@ -853,7 +874,6 @@ export default {
             this.form = row;
             this.disable=true;
             this.updateVisible = true;
-            this.$refs.form.clearValidate();
             this.title="查看房间"
 
         },
