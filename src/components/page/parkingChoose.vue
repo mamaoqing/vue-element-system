@@ -12,7 +12,7 @@
                 <template>
                     <dist-util @child1="checkIn" :distId="dist.buildPropId" :distName="dist.buildPropName"
                                :title="dist.buildProp"></dist-util>
-                    <el-input v-model="query.no" placeholder="车位编号" class="handle-input mr10" ></el-input>
+                    <el-input v-model="query.no" placeholder="车位编号" style="width:180px"></el-input>
                 </template>
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
             </div>
@@ -405,9 +405,10 @@
                     this.deleteIds.push(selection[i].id);
                 }
             },
-            dataInitializationByMeter(compId,commId){
+            dataInitializationByMeter(compId,commId,commAreaId){
                 this.query.compId = compId;
                 this.query.commId = commId;
+                this.query.commAreaId = commAreaId;
                 this.meterDisable = false;
                 this.getBuildings();
             }
