@@ -78,6 +78,12 @@ export const getBuildings = commAreaId => {
         method: 'get'
     });
 };
+export const getBuildingsByCommId = commId => {
+    return request({
+        url: '/api/rBuilding/getBuildingsByCommId/'+commId,
+        method: 'get'
+    });
+};
 
 export const getUnits = buildingId => {
     return request({
