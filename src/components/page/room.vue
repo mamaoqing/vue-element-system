@@ -602,15 +602,14 @@ export default {
                     compId = this.form.compId;
                 }else{
                     compId = val;
-                    this.query.compName=compId;
                 }
                 getUserComm(compId).then(res => {
                     if(res.data){
                         this.form.commId=undefined;
-                        this.query.commName="请选择社区名称";
+                        /*this.query.commName="请选择社区名称";
                         this.query.commAreaName="请选择社区分区名称";
                         this.query.buildingName="请选择建筑名称";
-                        this.query.unitName="请选择单元名称";
+                        this.query.unitName="请选择单元名称";*/
                         this.commList = res.data;
                     }
                 });
@@ -623,15 +622,15 @@ export default {
                     commId = this.form.commId;
                 }else{
                     commId = val;
-                    this.query.commName=commId;
+                    //this.query.commName=commId;
                 }
                 getCommArea(commId).then(res => {
                     if(res.data){
                         this.form.commAreaId=undefined;
-                        this.query.commAreaName="请选择社区分区名称";
+                        /*this.query.commAreaName="请选择社区分区名称";
                         this.query.buildingName="请选择建筑名称";
                         this.query.unitName="请选择单元名称";
-                        console.log(this.form.commId);
+                        console.log(this.form.commId);*/
                         this.commAreaList = res.data;
                     }
                 });
@@ -644,7 +643,7 @@ export default {
                     commAreaId = this.form.commAreaId;
                 }else{
                     commAreaId = val;
-                    this.query.commAreaName=commAreaId;
+                    //this.query.commAreaName=commAreaId;
                 }
                 getCommAreaContent(commAreaId).then(res => {
                     if(res.data){
@@ -657,9 +656,9 @@ export default {
                 getBuildings(commAreaId).then(res => {
                     if(res.data){
                         this.form.buildingId=undefined;
-                        this.query.buildingName="请选择建筑名称";
+                        /*this.query.buildingName="请选择建筑名称";
                         this.query.unitName="请选择单元名称";
-                        console.log(this.form.commId);
+                        console.log(this.form.commId);*/
                         this.buildingList = res.data;
                     }
                 });
@@ -672,12 +671,12 @@ export default {
                     buildingId = this.form.buildingId;
                 }else{
                     buildingId = val;
-                    this.query.buildingName=buildingId;
+                    //this.query.buildingName=buildingId;
                 }
                 getUnits(buildingId).then(res => {
                     if(res.data){
                         this.form.unitId=undefined;
-                        this.query.unitName="请选择单元名称";
+                        //this.query.unitName="请选择单元名称";
                         this.unitList = res.data;
                     }
                 });
