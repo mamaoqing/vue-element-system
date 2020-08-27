@@ -505,18 +505,18 @@ export default {
     },
     methods: {
         compChange(val){
-            debugger
+            //debugger
             if(this.form.compId!=undefined||val!=undefined){
                 var compId;
                 if(val==undefined){
                     compId = this.form.compId;
                 }else{
                     compId = val;
-                    this.query.compName=compId;
+                    //this.query.compName=compId;
                 }
                 getUserComm(compId).then(res => {
                     if(res.data){
-                        this.form.commId=undefined;
+                        //this.form.commId=undefined;
                         this.commList = res.data;
                     }
                 });
@@ -530,12 +530,12 @@ export default {
                     commId = this.form.commId;
                 }else{
                     commId = val;
-                    this.query.commName=commId;
+                    //this.query.commName=commId;
                 }
                 getCommArea(commId).then(res => {
                     if(res.data){
                         this.form.commAreaId=undefined;
-                        console.log(this.form.commId);
+                        //console.log(this.form.commId);
                         this.commAreaList = res.data;
                     }
                 });
@@ -549,11 +549,11 @@ export default {
                     commAreaId = this.form.commAreaId;
                 }else{
                     commAreaId = val;
-                    this.query.commAreaName=commAreaId;
+                    //this.query.commAreaName=commAreaId;
                 }
                 getCommAreaContent(commAreaId).then(res => {
                     if(res.data){
-                        debugger
+                        //debugger
                         //this.buildedDate = res.data.buildedDate;
                         //this.deliverDate = res.data.deliverDate;
                         this.$set(this.form,"buildedDate",res.data.buildedDate);
@@ -762,42 +762,42 @@ export default {
 </script>
 
 <style scoped>
-.handle-box {
-    margin-bottom: 20px;
-}
+    .handle-box {
+        margin-bottom: 20px;
+    }
 
-.handle-select {
-    width: 120px;
-}
+    .handle-select {
+        width: 120px;
+    }
 
-.handle-input {
-    width: 300px;
-    display: inline-block;
-}
-.table {
-    width: 100%;
-    font-size: 14px;
-}
-.red {
-    color: #ff0000;
-}
-.mr10 {
-    margin-right: 10px;
-}
-.table-td-thumb {
-    display: block;
-    margin: auto;
-    width: 40px;
-    height: 40px;
-}
-.el-form{
-    overflow: hidden;
-}
-.el-form-item{
-    /*width: 45%;*/
-    /*float: left;*/
-}
-.el-table--small td{
-    padding: 1px 0;
-}
+    .handle-input {
+        width: 300px;
+        display: inline-block;
+    }
+    .table {
+        width: 100%;
+        font-size: 14px;
+    }
+    .red {
+        color: #ff0000;
+    }
+    .mr10 {
+        margin-right: 10px;
+    }
+    .table-td-thumb {
+        display: block;
+        margin: auto;
+        width: 40px;
+        height: 40px;
+    }
+    .el-form{
+        overflow: hidden;
+    }
+    .el-form-item{
+        width: 45%;
+        float: left;
+    }
+    .el-table--small td{
+        padding: 1px 0;
+    }
 </style>
