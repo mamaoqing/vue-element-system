@@ -19,7 +19,7 @@
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
                 </el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;" v-if="ownerDisable">新增
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>
@@ -106,6 +106,7 @@
                                         icon="el-icon-lx-homefill"
                                         @click.stop
                                         @click="handleRoom(scope.row)"
+                                        v-if="ownerDisable"
                                 >房间信息
                                 </el-button>
                                 <el-button
@@ -113,6 +114,7 @@
                                         icon="el-icon-lx-homefill"
                                         @click.stop
                                         @click="handlePl(scope.row)"
+                                        v-if="ownerDisable"
                                 >批量生成房间
                                 </el-button>
                             </el-button-group>
@@ -223,6 +225,7 @@
                 roomModelList: [],
                 usableList: [],
                 editVisible: false,
+                ownerDisable:true,
                 pageTotal: 0,
                 disable: false,
                 cmpVisible: false,
@@ -445,6 +448,18 @@
             // 分页导航
             handlePageChange(val) {
                 this.$set(this.query, 'pageNo', val);
+                this.getData();
+            },
+            //初始化数据
+            dataInitialization(roomId) {
+                this.query.roomId = roomId;
+                /*this.$set(this.unitForm, 'compName', compId);
+                this.$set(this.unitForm, 'commName', commId);
+                this.$set(this.unitForm, 'commAreaName', areaId);
+                this.$set(this.unitForm, 'buildingName', buildId);
+                this.$set(this.unitForm, 'unitName', unitId);*/
+
+                this.unitDisable = false
                 this.getData();
             }
         }
