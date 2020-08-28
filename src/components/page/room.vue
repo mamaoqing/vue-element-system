@@ -350,7 +350,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
@@ -548,6 +548,7 @@ export default {
             disable:false,
             cmpVisible:false,
             ownerVisible:false,
+            detail:false,
             compList:[],
             commList:[],
             commAreaList:[],
@@ -861,6 +862,7 @@ export default {
             this.disable=false;
             this.edit=true;
             this.title="编辑房间"
+            this.detail=true;
             this.$refs.form.clearValidate();
         },
         upload(){
@@ -896,7 +898,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看房间"
-
+            this.detail=false;
         },
         uploadDr(title,form){
             console.log(this.form);
