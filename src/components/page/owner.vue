@@ -23,7 +23,7 @@
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
                 </el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;" v-if="ownerDisable">新增
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>
@@ -240,41 +240,14 @@
                     <el-form-item class="item" label="备注" label-width="150px">
                         <el-input v-model="form.remark"></el-input>
                     </el-form-item>
-                    <el-form-item label="录入人" label-width="150px">
-                        <el-input v-model="form.created_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="录入时间" prop="establishment_date" label-width="150px" disabled>
-                        <el-date-picker
-                                v-model="form.createdAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
-                    <el-form-item label="修改人" label-width="150px">
-                        <el-input v-model="form.modified_name" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item label="修改时间" prop="establishment_date" label-width="150px">
-                        <el-date-picker
-                                v-model="form.modifiedAt"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                                disabled
-                        />
-                    </el-form-item>
+                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
                 </div>
 
 
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+                <el-button v-if="!disable" type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 联系人弹出框   -->
@@ -297,6 +270,7 @@
     import companyLink from './companyLink';
     import CitySelect from '../common/CitySelect';
     import { getCityDict } from '../../api';
+    import commPage from '../common/commPage';
     export default {
         name: 'basetable',
         data() {
@@ -312,6 +286,7 @@
                 delList: [],
                 usableList: [],
                 editVisible: false,
+                ownerDisable:true,
                 pageTotal: 0,
                 disable: false,
                 oiiVisible: false,
@@ -326,6 +301,7 @@
                 hys: [],
                 areaArr: [],
                 eleNum: '',
+                status:0,
                 compList: [],
                 commList: [],
                 modelArr: [],
@@ -351,6 +327,7 @@
         },
         components: {
             ownerInvoiceInfo,
+            commPage
         }
         ,
         methods: {
@@ -453,6 +430,7 @@
                 this.editVisible = true;
                 this.title = '新增';
                 this.form = {};
+                this.status = 0;
                 this.disable = false;
                 // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
                 // this.$set(this.form, 'createdAt', new Date());
@@ -468,8 +446,7 @@
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = row;
-                console.log(typeof this.form.model);
-
+                this.status = 1;
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
@@ -495,6 +472,7 @@
                 //具体操作
                 this.form = row;
                 this.disable = true;
+                this.status = 2;
                 this.editVisible = true;
                 let that = this;
                 that.$set(that.form, 'model', this.form.model - 0);
@@ -584,6 +562,18 @@
             // 分页导航
             handlePageChange(val) {
                 this.$set(this.query, 'pageNo', val);
+                this.getData();
+            },
+            //初始化数据
+            dataInitialization(roomId) {
+                this.query.roomId = roomId;
+                /*this.$set(this.unitForm, 'compName', compId);
+                this.$set(this.unitForm, 'commName', commId);
+                this.$set(this.unitForm, 'commAreaName', areaId);
+                this.$set(this.unitForm, 'buildingName', buildId);
+                this.$set(this.unitForm, 'unitName', unitId);*/
+
+                this.unitDisable = false
                 this.getData();
             }
         }

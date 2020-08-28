@@ -136,7 +136,7 @@
             </span>
         </el-dialog>
         <!-- 新增弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%" append-to-body>
+        <el-dialog :title="title" :visible.sync="editVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId" v-show="unitDisable">
                     <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
@@ -217,6 +217,9 @@
                 <el-form-item label="使用面积" prop="usableArea" >
                     <el-input v-model="form.usableArea" ></el-input>
                 </el-form-item>
+                <el-form-item label="暖气计费面积" prop="heatingArea" >
+                    <el-input v-model="form.heatingArea" ></el-input>
+                </el-form-item>
                 <el-form-item label="花园面积"  >
                     <el-input v-model="form.gardenArea" ></el-input>
                 </el-form-item>
@@ -226,7 +229,7 @@
                         <el-option key="xtc" label="不在用" value="不在用"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
+                <el-form-item label="备注" >
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
             </el-form>
@@ -236,7 +239,7 @@
             </span>
         </el-dialog>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%" append-to-body>
+        <el-dialog :title="title" :visible.sync="updateVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId">
                     <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
@@ -272,32 +275,32 @@
                 <el-form-item label="楼层" prop="floor" >
                     <el-input v-model="form.floor" ></el-input>
                 </el-form-item>
-                <el-form-item label="房型" prop="form.roomModel">
+                <el-form-item label="房型" >
                     <el-select v-model="form.roomModel" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="房屋类型" prop="form.roomType">
+                <el-form-item label="房屋类型" >
                     <el-select v-model="form.roomType" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="产权性质" prop="form.propertyRightNature">
+                <el-form-item label="产权性质" >
                     <el-select v-model="form.propertyRightNature" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="朝向" prop="form.direction">
+                <el-form-item label="朝向" >
                     <el-select v-model="form.direction" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="装修程度" prop="form.renovationLevel">
+                <el-form-item label="装修程度" >
                     <el-select v-model="form.renovationLevel" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="用途" prop="form.usable">
+                <el-form-item label="用途" >
                     <el-select v-model="form.usable" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
@@ -317,6 +320,9 @@
                 <el-form-item label="使用面积" prop="usableArea" >
                     <el-input v-model="form.usableArea" ></el-input>
                 </el-form-item>
+                <el-form-item label="暖气计费面积" prop="heatingArea" >
+                    <el-input v-model="form.heatingArea" ></el-input>
+                </el-form-item>
                 <el-form-item label="花园面积"  >
                     <el-input v-model="form.gardenArea" ></el-input>
                 </el-form-item>
@@ -326,7 +332,7 @@
                         <el-option key="xtc" label="不在用" value="不在用"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="备注" prop="remark">
+                <el-form-item label="备注" >
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
                 <el-form-item label="创建人" >
@@ -344,7 +350,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
@@ -356,7 +362,7 @@
     </div>
 </template>
 
-<script>
+<script scope>
 
 import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildings,getUnits } from '../../api/building';
 import { listCompAll } from '../../api/role';
@@ -377,36 +383,56 @@ export default {
             }
         }
         let checkcompId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入物业公司名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入物业公司名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommId= (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入社区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommAreaId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区分区名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入社区分区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkbuildingId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入建筑名称"));
+            if(this.title!='编辑房间'){
+                if(!value){
+                    return callback(new Error("请输入建筑名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkunitId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入单元名称"));
+            if(this.title!='编辑房间') {
+                if (!value) {
+                    return callback(new Error("请输入单元名称"));
+                } else {
+                    return callback();
+                }
             }else{
                 return callback();
             }
@@ -445,6 +471,18 @@ export default {
         var checkusableArea = (rule, value, callback) => {
             if (!value) {
                 return callback(new Error("请输入使用面积"));
+            } else {
+                var reg = /^-?\d{1,16}(?:\.\d{1,2})?$/;//小数点左边最高16位，小数点右边最多2位
+                if (reg.test(value)) {
+                    return callback();
+                } else {
+                    return callback(new Error("输入正确的数字,小数点后可1到2位"));
+                }
+            }
+        }
+        var checkheatingArea = (rule, value, callback) => {
+            if (!value) {
+                return callback(new Error("请输入暖气计费面积"));
             } else {
                 var reg = /^-?\d{1,16}(?:\.\d{1,2})?$/;//小数点左边最高16位，小数点右边最多2位
                 if (reg.test(value)) {
@@ -493,6 +531,7 @@ export default {
                 buildingArea:'',//建筑面积
                 usableArea:'',//使用面积
                 gardenArea:'',//花园面积
+                heatingArea:'',
                 pageNo: 1,
                 size: 10
             },
@@ -509,6 +548,7 @@ export default {
             disable:false,
             cmpVisible:false,
             ownerVisible:false,
+            detail:false,
             compList:[],
             commList:[],
             commAreaList:[],
@@ -533,19 +573,19 @@ export default {
                     validator:checkname,required: true,trigger:'blur'
                 }],
                 compId:[{
-                    validator:checkcompId,required: true,trigger:'change'
+                    validator:checkcompId,required: true,trigger:'blur'
                 }],
                 commId:[{
-                    validator:checkcommId,required: true,trigger:'change'
+                    validator:checkcommId,required: true,trigger:'blur'
                 }],
                 commAreaId:[{
-                    validator:checkcommAreaId,required: true,trigger:'change'
+                    validator:checkcommAreaId,required: true,trigger:'blur'
                 }],
                 buildingId:[{
-                    validator:checkbuildingId,required: true,trigger:'change'
+                    validator:checkbuildingId,required: true,trigger:'blur'
                 }],
                 unitId:[{
-                    validator:checkunitId,required: true,trigger:'change'
+                    validator:checkunitId,required: true,trigger:'blur'
                 }],
                 roomNo:[{
                     validator:checkroomNo,required: true,trigger:'blur'
@@ -558,6 +598,9 @@ export default {
                 }],
                 usableArea:[{
                     validator:checkusableArea,required: true,trigger:'blur'
+                }],
+                heatingArea:[{
+                    validator:checkheatingArea,required: true,trigger:'blur'
                 }],
                 state:[{
                     validator:checkstate,required: true,trigger:'blur'
@@ -582,15 +625,14 @@ export default {
                     compId = this.form.compId;
                 }else{
                     compId = val;
-                    this.query.compName=compId;
                 }
                 getUserComm(compId).then(res => {
                     if(res.data){
                         this.form.commId=undefined;
-                        this.query.commName="请选择社区名称";
+                        /*this.query.commName="请选择社区名称";
                         this.query.commAreaName="请选择社区分区名称";
                         this.query.buildingName="请选择建筑名称";
-                        this.query.unitName="请选择单元名称";
+                        this.query.unitName="请选择单元名称";*/
                         this.commList = res.data;
                     }
                 });
@@ -603,15 +645,15 @@ export default {
                     commId = this.form.commId;
                 }else{
                     commId = val;
-                    this.query.commName=commId;
+                    //this.query.commName=commId;
                 }
                 getCommArea(commId).then(res => {
                     if(res.data){
                         this.form.commAreaId=undefined;
-                        this.query.commAreaName="请选择社区分区名称";
+                        /*this.query.commAreaName="请选择社区分区名称";
                         this.query.buildingName="请选择建筑名称";
                         this.query.unitName="请选择单元名称";
-                        console.log(this.form.commId);
+                        console.log(this.form.commId);*/
                         this.commAreaList = res.data;
                     }
                 });
@@ -624,7 +666,7 @@ export default {
                     commAreaId = this.form.commAreaId;
                 }else{
                     commAreaId = val;
-                    this.query.commAreaName=commAreaId;
+                    //this.query.commAreaName=commAreaId;
                 }
                 getCommAreaContent(commAreaId).then(res => {
                     if(res.data){
@@ -637,9 +679,9 @@ export default {
                 getBuildings(commAreaId).then(res => {
                     if(res.data){
                         this.form.buildingId=undefined;
-                        this.query.buildingName="请选择建筑名称";
+                        /*this.query.buildingName="请选择建筑名称";
                         this.query.unitName="请选择单元名称";
-                        console.log(this.form.commId);
+                        console.log(this.form.commId);*/
                         this.buildingList = res.data;
                     }
                 });
@@ -652,12 +694,12 @@ export default {
                     buildingId = this.form.buildingId;
                 }else{
                     buildingId = val;
-                    this.query.buildingName=buildingId;
+                    //this.query.buildingName=buildingId;
                 }
                 getUnits(buildingId).then(res => {
                     if(res.data){
                         this.form.unitId=undefined;
-                        this.query.unitName="请选择单元名称";
+                        //this.query.unitName="请选择单元名称";
                         this.unitList = res.data;
                     }
                 });
@@ -792,9 +834,11 @@ export default {
             this.multipleSelection = val;
         },
         handleAdd() {
+            this.updateVisible = false;
             this.editVisible = true;
             this.title="新增房间";
             this.edit=false;
+            this.disable=false;
             this.form={state:'在用'}
             if(this.unitDisable ===false){
                 this.$set(this.form, 'compId', this.unitForm.compName);
@@ -817,14 +861,15 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改房间"
+            this.title="编辑房间"
+            this.detail=true;
             this.$refs.form.clearValidate();
         },
         upload(){
             //let linkID = id;
             this.cmpVisible = true;
             this.$nextTick(()=>{
-                //this.$refs.menu1.dataInitialization(linkID);
+                this.$refs.menu1.dataInitializationUpload("http://localhost:8900/api/rRoom/upload");
             })
 
         },
@@ -844,8 +889,7 @@ export default {
             this.copyVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="复制房间"
-            this.$refs.form.clearValidate();
+            this.title="复制房间";
         },
         //表格行点击事件
         openDetails (row) {
@@ -853,9 +897,8 @@ export default {
             this.form = row;
             this.disable=true;
             this.updateVisible = true;
-            this.$refs.form.clearValidate();
             this.title="查看房间"
-
+            this.detail=false;
         },
         uploadDr(title,form){
             console.log(this.form);
@@ -918,7 +961,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .handle-box {
     margin-bottom: 20px;
 }
