@@ -239,7 +239,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 复制弹出框 -->
@@ -462,6 +462,7 @@ export default {
             title:'',
             buildingName:'',
             buildingNo:'',
+            detail:'',
             id: -1,
             rules:{
                 name:[{
@@ -655,6 +656,7 @@ export default {
             this.disable=false;
             this.edit=true;
             this.title="编辑建筑"
+            this.detail=true;
 
         },
         copyEdit(index, row) {
@@ -675,7 +677,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看建筑"
-
+            this.detail=false;
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
