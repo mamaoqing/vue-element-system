@@ -217,6 +217,9 @@
                 <el-form-item label="使用面积" prop="usableArea" >
                     <el-input v-model="form.usableArea" ></el-input>
                 </el-form-item>
+                <el-form-item label="暖气计费面积" prop="heatingArea" >
+                    <el-input v-model="form.heatingArea" ></el-input>
+                </el-form-item>
                 <el-form-item label="花园面积"  >
                     <el-input v-model="form.gardenArea" ></el-input>
                 </el-form-item>
@@ -316,6 +319,9 @@
                 </el-form-item>
                 <el-form-item label="使用面积" prop="usableArea" >
                     <el-input v-model="form.usableArea" ></el-input>
+                </el-form-item>
+                <el-form-item label="暖气计费面积" prop="heatingArea" >
+                    <el-input v-model="form.heatingArea" ></el-input>
                 </el-form-item>
                 <el-form-item label="花园面积"  >
                     <el-input v-model="form.gardenArea" ></el-input>
@@ -474,6 +480,18 @@ export default {
                 }
             }
         }
+        var checkheatingArea = (rule, value, callback) => {
+            if (!value) {
+                return callback(new Error("请输入暖气计费面积"));
+            } else {
+                var reg = /^-?\d{1,16}(?:\.\d{1,2})?$/;//小数点左边最高16位，小数点右边最多2位
+                if (reg.test(value)) {
+                    return callback();
+                } else {
+                    return callback(new Error("输入正确的数字,小数点后可1到2位"));
+                }
+            }
+        }
         let checkstate = (rule,value,callback) =>{
             if(!value){
                 return callback(new Error("请输入状态"));
@@ -513,6 +531,7 @@ export default {
                 buildingArea:'',//建筑面积
                 usableArea:'',//使用面积
                 gardenArea:'',//花园面积
+                heatingArea:'',
                 pageNo: 1,
                 size: 10
             },
@@ -578,6 +597,9 @@ export default {
                 }],
                 usableArea:[{
                     validator:checkusableArea,required: true,trigger:'blur'
+                }],
+                heatingArea:[{
+                    validator:checkheatingArea,required: true,trigger:'blur'
                 }],
                 state:[{
                     validator:checkstate,required: true,trigger:'blur'
@@ -845,7 +867,7 @@ export default {
             //let linkID = id;
             this.cmpVisible = true;
             this.$nextTick(()=>{
-                //this.$refs.menu1.dataInitialization(linkID);
+                this.$refs.menu1.dataInitializationUpload("http://localhost:8900/api/rRoom/upload");
             })
 
         },
