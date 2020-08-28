@@ -280,7 +280,7 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改字典"
+            this.title="编辑字典"
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
