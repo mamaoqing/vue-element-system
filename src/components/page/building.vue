@@ -516,7 +516,7 @@ export default {
                 }
                 getUserComm(compId).then(res => {
                     if(res.data){
-                        //this.form.commId=undefined;
+                        this.form.commId=undefined;
                         this.commList = res.data;
                     }
                 });
@@ -542,7 +542,7 @@ export default {
             }
         },
         commAreaChange(val){
-            debugger
+            this.$forceUpdate();
             if(this.form.commAreaId!=undefined||val!=undefined){
                 var commAreaId ;
                 if(this.form.commAreaId!=undefined&&this.form.commAreaId!=''){
@@ -567,6 +567,7 @@ export default {
         },*/
         // 获取 easy-mock 的模拟数据
         getData() {
+            this.form={};
             listBuilding(this.query).then(res => {
                 debugger
                 this.tableData = res.data;
@@ -701,7 +702,7 @@ export default {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
                         //需要判断是否修改了建筑的名称和编号
-                        if(this.buildingName != this.form.name&&this.buildingNo != this.form.no) {
+                        if(this.buildingNo != this.form.no) {
                             checkBulidingNameNo(this.form).then(res => {
                                 if(res.data==''){
                                     updateBuilding(this.form).then(res => {
