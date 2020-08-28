@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 仪表管理
+                    <i class="el-icon-lx-cascades"></i> 仪表抄表管理
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -13,13 +13,9 @@
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.commName" placeholder="请选择"  @change="commChange">
+            <el-select v-model="query.commName" placeholder="请选择"  >
                 <el-option key="qxz" label="请选择社区名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
-            </el-select>
-            <el-select v-model="query.commAreaName" placeholder="请选择"  >
-                <el-option key="qxz" label="请选择社区分区名称" value=""></el-option>
-                <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
             </el-select>
             <el-select v-model="query.propertyType" placeholder="请选择" >
                 <el-option key="qxz" label="请选择物业类型" value=""></el-option>
@@ -31,6 +27,18 @@
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" ></el-input>
+
+                <div class="block">
+                    <span class="demonstration">起始日期时刻为 12:00:00</span>
+                    <el-date-picker
+                            v-model="query.modifiedAt"
+                            type="datetimerange"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            onclick="modifiedAt"
+                            >
+                    </el-date-picker>
+                </div>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" >搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
@@ -63,11 +71,6 @@
                 <el-table-column prop="type" label="仪表类型"></el-table-column>
                 <el-table-column prop="no" label="仪表编号"></el-table-column>
                 <el-table-column prop="name" label="仪表名称"></el-table-column>
-
-                <el-table-column prop="newNum" label="抄表刻度"></el-table-column>
-                <el-table-column prop="meterReadTime" label="抄表时间"></el-table-column>
-                <el-table-column prop="billNum" label="账单刻度"></el-table-column>
-                <el-table-column prop="billDate" label="账单日期"></el-table-column>
 
                 <el-table-column prop="state" label="状态"></el-table-column>
                 <el-table-column prop="createdName" label="创建人"></el-table-column>
@@ -124,29 +127,9 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="社区名称" prop="commId" >
-                    <el-select v-model="form.commId" placeholder="请选择"  @change="commChange" :disabled="edit">
+                    <el-select v-model="form.commId" placeholder="请选择"  @change="select_status" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="社区分区名称" prop="commAreaId" >
-                    <el-select v-model="form.commAreaId" placeholder="请选择" @change="select_status" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="物业类型" prop="commId">
-                    <el-select v-model="form.propertyType" placeholder="请选择" :disabled="edit" @blur="propertyTypeChage">
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="物业编号"  prop="propertyId" :disabled="false">
-                    <el-input v-model="form.propertyName" :disabled="true"></el-input>
-                    <el-button
-                            type="text"
-                            icon="el-icon-search"
-                            @click.stop
-                            @click="roomParkingSearch()"
-
-                    >选择</el-button>
                 </el-form-item>
                 <el-form-item label="仪表类型" prop="type" >
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
@@ -156,30 +139,15 @@
                 <el-form-item label="仪表编号" prop="no" >
                     <el-input v-model="form.no" ></el-input>
                 </el-form-item>
-                <el-form-item label="仪表名称"  prop="name">
-                    <el-input v-model="form.name" ></el-input>
-                </el-form-item>
-               <el-form-item label="抄表刻度" >
+               <el-form-item label="抄表刻度" prop="newNum" >
                     <el-input v-model="form.newNum" ></el-input>
                 </el-form-item>
-                <el-form-item label="抄表时间" prop="meterReadTime">
+                <el-form-item label="抄表时间" prop="modifiedAt">
                     <el-date-picker
-                            v-model="form.meterReadTime"
+                            v-model="form.modifiedAt"
                             type="datetime"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-d HH:mm:ss"
-                            :disabled="edit"
-                    />
-                </el-form-item>
-                <el-form-item label="账单刻度" >
-                    <el-input v-model="form.billNum" ></el-input>
-                </el-form-item>
-                <el-form-item label="账单日期" prop="billDate">
-                    <el-date-picker
-                            v-model="form.billDate"
-                            type="datetime"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-d HH:mm:ss"
+                            format="yyyy-MM-dd"
+                            value-format="yyyy-MM-d"
                             :disabled="edit"
                     />
                 </el-form-item>
@@ -300,9 +268,10 @@
 
 <script scope>
 
-    import { getUserComm, getDictItemByDictId, getCommArea, checkBulidingNameNo } from '../../api/building';
+    import { getUserComm, getDictItemByDictId, } from '../../api/building';
 import { listCompAll } from '../../api/role';
 import { insertMeter,deleteMeter,updateMeter,listMeter,listMeterNum,upload,exportXlsByT,checkMeterNo} from '../../api/meter';
+import {insertMeterRecord,exportXlsByT,deleteMeterRecord,upload,updateMeterRecord,listMeterRecord,listMeterRecordNum} from '../../api/meterRecord';
 import menu1 from './roomUpload';
 import roomVisible from './roomChoose';
 import parkingVisible from './parkingChoose';
@@ -415,23 +384,24 @@ export default {
         }
         return {
             query: {
+                id:'',
                 compId:'',
                 compName:'',
                 commId:'',
                 commName:'',
-                commAreaId:'',
-                commAreaName:'',
-                propertyType:'',
-                propertyId:'',
+                meterId:'',
                 propertyName:'',
+                propertyId:'',
                 type:'',
                 no:'',
                 name:'',
+                operType:'',
                 newNum:'',
-                meterReadTime:'',
-                billNum:'',
-                billDate:'',
                 remark:'',
+                createdAt:'',
+                createdName:'',
+                modifiedAt:'',
+                modifiedName:'',
                 state:'',
                 pageNo: 1,
                 size: 10
@@ -451,13 +421,10 @@ export default {
             parkingVisible:false,
             compList:[],
             commList:[],
-            commAreaList:[],
             propertyTypeList:[],//物业类型
             typeList:[],//仪表类型
             form: {},
             no:'',
-            formCopy:{},
-            unitForm:{},
             state:'',
             meterReadTime:'',
             billDate:'',
@@ -539,7 +506,7 @@ export default {
                 });
             }
         },
-        commChange(val){
+        /*commChange(val){
             debugger
             if(this.form.commId!=undefined||val!=undefined){
                 var commId;
@@ -555,7 +522,7 @@ export default {
                     }
                 });
             }
-        },
+        },*/
         exportXls(){
             exportXlsByT(this.query).then(res => {
                 var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
@@ -566,7 +533,7 @@ export default {
                     var href = window.URL.createObjectURL(blob); //创建下载的链接
 
                     downloadElement.href = href;
-                    downloadElement.download = unescape('仪表信息'+this.getTime()+'.xls'); //下载后文件名
+                    downloadElement.download = unescape('仪表信息.xls'); //下载后文件名
 
                     document.body.appendChild(downloadElement);
                     downloadElement.click(); //点击下载
@@ -577,44 +544,17 @@ export default {
                 }
             });
         },
-        getTime(){
-            let date = new Date();
-            let yy = date.getFullYear();
-            let mm = date.getMonth() + 1;
-            if(mm<10){
-                mm = '0'+mm;
-            }
-            let dd = date.getDate();
-            if(dd<10){
-                dd = '0'+dd;
-            }
-            let h = date.getHours();
-            if(h<10){
-                h = '0'+h;
-            }
-            let m = date.getMinutes();
-            if(m<10){
-                m = '0'+m;
-            }
-            let s = date.getSeconds();
-            if(s<10){
-                s = '0'+s;
-            }
-            let ms = date.getMilliseconds();
-            let time = yy+""+mm+""+dd+""+h+""+m+""+s+""+ms;
-            return time;
-        },
         select_status(val){
             this.$forceUpdate();
         },
         // 获取 easy-mock 的模拟数据
         getData() {
-            listMeter(this.query).then(res => {
+            listMeterRecord(this.query).then(res => {
                 // debugger
                 console.log(this.query.unitId)
                 this.tableData = res.data;
             });
-            listMeterNum(this.query).then(res => {
+            listMeterRecordNum(this.query).then(res => {
                 // debugger
                 this.pageTotal = res.data || 0;
                 console.log(this.pageTotal+"__+++__");
@@ -696,11 +636,8 @@ export default {
             let yy = date.getFullYear();
             let mm = date.getMonth() + 1;
             let dd = date.getDate();
-            let h = date.getHours();
-            let m = date.getMinutes();
-            let s = date.getSeconds();
-            this.form.meterReadTime = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
-            this.form.billDate = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
+            this.form.meterReadTime = yy+"-"+mm+"-"+dd;
+            this.form.billDate = yy+"-"+mm+"-"+dd;
             this.edit=false;
             this.$refs.form.clearValidate();
         },
@@ -785,7 +722,7 @@ export default {
                     if(valid) {
                         checkMeterNo(this.form).then(res => {
                             if(res.data==''){
-                                insertMeter(this.form).then(res => {
+                                insertMeterRecord(this.form).then(res => {
                                     this.editVisible = false;
                                     this.$message.success(`新增成功`);
                                     this.getData();
@@ -802,7 +739,7 @@ export default {
                         if(this.no != this.form.no){
                             checkMeterNo(this.form).then(res => {
                                 if(res.data==''){
-                                    updateMeter(this.form).then(res => {
+                                    updateMeterRecord(this.form).then(res => {
                                         this.updateVisible = false;
                                         this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                         this.$set(this.tableData, this.idx, this.form);
@@ -813,7 +750,7 @@ export default {
                                 }
                             });
                         }else{
-                            updateMeter(this.form).then(res => {
+                            updateMeterRecord(this.form).then(res => {
                                 this.updateVisible = false;
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                 this.$set(this.tableData, this.idx, this.form);
@@ -823,6 +760,9 @@ export default {
                     }
                 });
             }
+
+        },
+        modifiedAt(){
 
         },
         // 分页导航
