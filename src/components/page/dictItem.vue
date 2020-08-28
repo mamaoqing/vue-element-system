@@ -325,7 +325,7 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改字典项";
+            this.title="编辑字典项";
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
