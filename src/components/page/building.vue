@@ -94,7 +94,7 @@
         </div>
 
         <!-- 新增弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="editVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -162,7 +162,7 @@
             </span>
         </el-dialog>
         <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="updateVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -239,11 +239,11 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
         <!-- 复制弹出框 -->
-        <el-dialog :title="title" :visible.sync="copyVisible" width="30%">
+        <el-dialog :title="title" :visible.sync="copyVisible" width="40%">
             <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
@@ -331,26 +331,37 @@ export default {
             }
         }
         let checkcompId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入物业公司名称"));
+            if(this.title!='编辑建筑'){
+                if(!value){
+                    return callback(new Error("请输入物业公司名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommId= (rule,value,callback) =>{
-            debugger
-            if(!value){
-                return callback(new Error("请输入社区名称"));
+            if(this.title!='编辑建筑'){
+                if(!value){
+                    return callback(new Error("请输入社区名称"));
+                }else{
+                    return callback();
+                }
             }else{
                 return callback();
             }
         }
         let checkcommAreaId = (rule,value,callback) =>{
-            if(!value){
-                return callback(new Error("请输入社区分区名称"));
-            }else{
-                return callback();
-            }
+                if(this.title!='编辑建筑') {
+                    if (!value) {
+                        return callback(new Error("请输入社区分区名称"));
+                    } else {
+                        return callback();
+                    }
+                }else{
+                    return callback();
+                }
         }
         let checktype = (rule,value,callback) =>{
             if(!value){
@@ -451,22 +462,23 @@ export default {
             title:'',
             buildingName:'',
             buildingNo:'',
+            detail:'',
             id: -1,
             rules:{
                 name:[{
                     validator:checkname,required: true,trigger:'blur'
                 }],
                 compId:[{
-                    validator:checkcompId,required: true,trigger:'change'
+                    validator:checkcompId,required: true,trigger:'blur'
                 }],
                 commId:[{
-                    validator:checkcommId,required: true,trigger:'change'
+                    validator:checkcommId,required: true,trigger:'blur'
                 }],
                 commAreaId:[{
-                    validator:checkcommAreaId,required: true,trigger:'change'
+                    validator:checkcommAreaId,required: true,trigger:'blur'
                 }],
                 type:[{
-                    validator:checktype,required: true,trigger:'change'
+                    validator:checktype,required: true,trigger:'blur'
                 }],
                 no:[{
                     validator:checkno,required: true,trigger:'blur'
@@ -494,14 +506,14 @@ export default {
     },
     methods: {
         compChange(val){
-            debugger
+            //debugger
             if(this.form.compId!=undefined||val!=undefined){
                 var compId;
                 if(val==undefined){
                     compId = this.form.compId;
                 }else{
                     compId = val;
-                    this.query.compName=compId;
+                    //this.query.compName=compId;
                 }
                 getUserComm(compId).then(res => {
                     if(res.data){
@@ -519,30 +531,30 @@ export default {
                     commId = this.form.commId;
                 }else{
                     commId = val;
-                    this.query.commName=commId;
+                    //this.query.commName=commId;
                 }
                 getCommArea(commId).then(res => {
                     if(res.data){
                         this.form.commAreaId=undefined;
-                        console.log(this.form.commId);
+                        //console.log(this.form.commId);
                         this.commAreaList = res.data;
                     }
                 });
             }
         },
         commAreaChange(val){
-            debugger
+            this.$forceUpdate();
             if(this.form.commAreaId!=undefined||val!=undefined){
                 var commAreaId ;
                 if(this.form.commAreaId!=undefined&&this.form.commAreaId!=''){
                     commAreaId = this.form.commAreaId;
                 }else{
                     commAreaId = val;
-                    this.query.commAreaName=commAreaId;
+                    //this.query.commAreaName=commAreaId;
                 }
                 getCommAreaContent(commAreaId).then(res => {
                     if(res.data){
-                        debugger
+                        //debugger
                         //this.buildedDate = res.data.buildedDate;
                         //this.deliverDate = res.data.deliverDate;
                         this.$set(this.form,"buildedDate",res.data.buildedDate);
@@ -556,6 +568,7 @@ export default {
         },*/
         // 获取 easy-mock 的模拟数据
         getData() {
+            this.form={};
             listBuilding(this.query).then(res => {
                 debugger
                 this.tableData = res.data;
@@ -626,6 +639,7 @@ export default {
         },
         handleAdd() {
             this.editVisible = true;
+            this.disable = false;
             this.title="新增建筑";
             this.edit=false;
             this.form={state:'在用'}
@@ -633,6 +647,7 @@ export default {
         },
         // 编辑操作
         handleEdit(index, row) {
+            //this.$refs.form.clearValidate();
             this.idx = index;
             this.form = row;
             this.buildingName = row.name;
@@ -640,8 +655,9 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改建筑"
-            this.$refs.form.clearValidate();
+            this.title="编辑建筑"
+            this.detail=true;
+
         },
         copyEdit(index, row) {
             this.idx = index;
@@ -661,7 +677,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看建筑"
-
+            this.detail=false;
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
@@ -688,7 +704,7 @@ export default {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
                         //需要判断是否修改了建筑的名称和编号
-                        if(this.buildingName != this.form.name&&this.buildingNo != this.form.no) {
+                        if(this.buildingNo != this.form.no) {
                             checkBulidingNameNo(this.form).then(res => {
                                 if(res.data==''){
                                     updateBuilding(this.form).then(res => {
@@ -749,42 +765,42 @@ export default {
 </script>
 
 <style scoped>
-.handle-box {
-    margin-bottom: 20px;
-}
+    .handle-box {
+        margin-bottom: 20px;
+    }
 
-.handle-select {
-    width: 120px;
-}
+    .handle-select {
+        width: 120px;
+    }
 
-.handle-input {
-    width: 300px;
-    display: inline-block;
-}
-.table {
-    width: 100%;
-    font-size: 14px;
-}
-.red {
-    color: #ff0000;
-}
-.mr10 {
-    margin-right: 10px;
-}
-.table-td-thumb {
-    display: block;
-    margin: auto;
-    width: 40px;
-    height: 40px;
-}
-.el-form{
-    overflow: hidden;
-}
-.el-form-item{
-    /*width: 45%;*/
-    /*float: left;*/
-}
-.el-table--small td{
-    padding: 1px 0;
-}
+    .handle-input {
+        width: 300px;
+        display: inline-block;
+    }
+    .table {
+        width: 100%;
+        font-size: 14px;
+    }
+    .red {
+        color: #ff0000;
+    }
+    .mr10 {
+        margin-right: 10px;
+    }
+    .table-td-thumb {
+        display: block;
+        margin: auto;
+        width: 40px;
+        height: 40px;
+    }
+    .el-form{
+        overflow: hidden;
+    }
+    .el-form-item{
+        width: 45%;
+        float: left;
+    }
+    .el-table--small td{
+        padding: 1px 0;
+    }
 </style>

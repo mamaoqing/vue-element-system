@@ -141,7 +141,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -204,6 +204,7 @@ export default {
             edit:false,
             cmpVisible:false,
             form: {name:''},
+            detail:false,
             idx: -1,
             title:'',
             id: -1,
@@ -325,7 +326,8 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改字典项";
+            this.detail=true;
+            this.title="编辑字典项";
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
@@ -335,7 +337,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看字典项"
-
+            this.detail=false;
         },
         // 保存编辑
         saveEditOrAdd(title,form) {

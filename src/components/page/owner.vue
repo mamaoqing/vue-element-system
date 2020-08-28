@@ -31,6 +31,10 @@
                 </el-button>-->
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增业主
                 </el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;" v-if="ownerDisable">新增
+                </el-button>
+                <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
+                </el-button>
                 <!--<el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>-->
             </div>
@@ -105,14 +109,6 @@
                                 >删除
                                 </el-button>
                             </el-button-group>
-<!--                            <el-button
-                                    type="text"
-                                    icon="el-icon-lx-text"
-                                    class="green"
-                                    @click.stop
-                                    @click="handleProp(scope.row.id)"
-                            >物业关系
-                            </el-button>-->
                             <el-button
                                     type="text"
                                     icon="el-icon-lx-text"
@@ -290,11 +286,6 @@
         <el-dialog :visible.sync="oiiVisible" append-to-body>
             <ownerInvoiceInfo v-if="oiiVisible" ref="ownerInvoiceInfo"></ownerInvoiceInfo>
         </el-dialog>
-
-       <!-- &lt;!&ndash; 物业关系弹出框   &ndash;&gt;
-        <el-dialog :visible.sync="propVisible" append-to-body>
-            <ownerProperty v-if="propVisible" ref="ownerProperty"></ownerProperty>
-        </el-dialog>-->
     </div>
 </template>
 
@@ -328,6 +319,7 @@
                 delList: [],
                 usableList: [],
                 editVisible: false,
+                ownerDisable:true,
                 pageTotal: 0,
                 disable: false,
                 oiiVisible: false,
@@ -625,6 +617,16 @@
             dataInitialization(row){
               this.query.roomId = row.id
               this.row = row
+
+                // this.query.roomId = roomId;
+                /*this.$set(this.unitForm, 'compName', compId);
+                this.$set(this.unitForm, 'commName', commId);
+                this.$set(this.unitForm, 'commAreaName', areaId);
+                this.$set(this.unitForm, 'buildingName', buildId);
+                this.$set(this.unitForm, 'unitName', unitId);*/
+
+                this.unitDisable = false
+                this.getData();
 
             },
             handleoii(id) {

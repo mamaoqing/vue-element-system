@@ -19,6 +19,8 @@
                                 :value="item.id">
                         </el-option>
                     </el-select>
+                    <child @child1="checkInQuery" :distId="useTypeDistId" :distName="useType"
+                           :change="useTypeChange"></child>
                     <el-input clearable v-model="query.name" placeholder="请输入社区名"
                               style="width: 200px"></el-input>
                     <el-select v-model="provinceValue" @clear="clearProvince" clearable filterable placeholder="请选择省份"
@@ -85,7 +87,7 @@
                 <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center">
+                <el-table-column label="操作" width="250" align="center">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -148,10 +150,10 @@
                 </el-form-item>
 
                 <el-form-item label="用途类型" label-width="100px">
-                    <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"></child>
+                    <child @child1="checkInForm" :distId="useTypeDistId" :distName="useType"></child>
                 </el-form-item>
                 <el-form-item label="状态" label-width="100px">
-                    <el-input v-model="form.state"></el-input>
+                    <child @child1="checkInForm" :distId="commStateDistId" :distName="commState"></child>
                 </el-form-item>
                 <el-form-item label="地址" label-width="100px">
                     <el-cascader
@@ -517,16 +519,16 @@
                 this.title = "添加社区";
             },
             editComm(index, row) {
+                this.useTypeChange = '';
+                this.commStateChange = '';
                 this.form = {};
                 this.disable = false;
                 this.partyOrganId = [row.provinceId, row.cityId, row.districtId];
                 this.editVisible = true;
-                this.useTypeChange = row.usableTypeId;
-                this.commStateChange = row.stateId;
+                this.useTypeChange = row.usableType;
+                this.commStateChange = row.state;
                 this.title = "修改社区";
                 this.form = row;
-                this.form.usableType = row.usableTypeId;
-                this.form.state = row.stateId;
             },
             deleteComm(id) {
                 this.$confirm('删除后，社区下的分区，角色数据权限都会删除。确定要删除吗？', '提示', {
@@ -658,12 +660,24 @@
 
             },
             checkIn(value, name) {
+                console.log(value+"<---->"+name);
                 if (name === 'usableType') {
                     this.form.usableType = value;
                 }
                 if (name === 'commState') {
                     this.form.state = value;
                 }
+            },checkInForm(value, name) {
+                console.log(value+"<---->"+name);
+                if (name === 'usableType') {
+                    this.form.usableType = value;
+                }
+                if (name === 'commState') {
+                    this.form.state = value;
+                }
+            },
+            checkInQuery(value, name){
+                this.query.usableType = value;
             },
             closeEdit() {
                 this.editVisible = false;
