@@ -2,7 +2,7 @@ import request from '../../utils/request';
 
 export const listCostType = query => {
     return request({
-        url: '/api/fCostType/listCostType',
+        url: '/order/fCostType/listCostType',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export const listCostType = query => {
 
 export const updateCostType = query => {
     return request({
-        url: '/api/fCostType/updateCostType',
+        url: '/order/fCostType/updateCostType',
         method: 'put',
         data: query
     });
@@ -18,7 +18,7 @@ export const updateCostType = query => {
 
 export const insertCostType = query => {
     return request({
-        url: '/api/fCostType/insertCostType',
+        url: '/order/fCostType/insertCostType',
         method: 'post',
         data: query
     });
@@ -26,7 +26,7 @@ export const insertCostType = query => {
 
 export const deleteCostType = query => {
     return request({
-        url: '/api/fCostType/'+query,
+        url: '/order/fCostType/'+query,
         method: 'delete'
     });
 };

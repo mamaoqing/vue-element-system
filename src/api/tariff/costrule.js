@@ -2,7 +2,7 @@ import request from '../../utils/request';
 
 export const listCostRule = query => {
     return request({
-        url: '/api/fCostRule/listCostRule',
+        url: '/order/fCostRule/listCostRule',
         method: 'get',
         params: query
     });
@@ -10,7 +10,7 @@ export const listCostRule = query => {
 
 export const updateCostRule = query => {
     return request({
-        url: '/api/fCostRule/updateCostRule',
+        url: '/order/fCostRule/updateCostRule',
         method: 'put',
         data: query
     });
@@ -18,7 +18,7 @@ export const updateCostRule = query => {
 
 export const insertCostRule = query => {
     return request({
-        url: '/api/fCostRule/insertCostRule',
+        url: '/order/fCostRule/insertCostRule',
         method: 'post',
         data: query
     });
@@ -26,14 +26,29 @@ export const insertCostRule = query => {
 
 export const deleteCostRule = query => {
     return request({
-        url: '/api/fCostRule/'+query,
+        url: '/order/fCostRule/'+query,
         method: 'delete'
     });
 };
 
 export const listCostItem = query => {
     return request({
-        url: '/api/fCostRule/costItemList/'+query,
+        url: '/order/fCostRule/costItemList/'+query,
         method: 'get',
+    });
+};
+
+export const insertRuleRoom = query => {
+    return request({
+        url: '/order/fCostRuleRoom/insertRoomRule',
+        method: 'post',
+        data: query
+    });
+};
+
+export const getRoomIds = query => {
+    return request({
+        url: '/order/fCostRuleRoom/'+query,
+        method: 'get'
     });
 };

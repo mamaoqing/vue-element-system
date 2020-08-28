@@ -4,6 +4,7 @@
         <el-tree :data="data" :props="defaultProps" show-checkbox @node-click="handleNodeClick"
                  @check-change="handleCheckChange" class="trees"
                  :default-checked-keys="checkdata"
+                 node-key="id"
                  ref="tree"
         ></el-tree>
     </div>
@@ -20,7 +21,7 @@
             return {
                 collapse: false,
                 items: [],
-                checkdata:[],
+                checkdata: [],
                 data: [],
                 defaultProps: {
                     children: 'childList',
@@ -40,14 +41,14 @@
                 }
             });
         },
-        props:{
-            arr :array,
+        props: {
+            arr: Array,
         },
         watch: {
             arr: {
                 immediate: true,
                 handler: function (newVal) {
-                    this.checkdata = newVal;
+                   this.checkdata = newVal;
                 }
             },
 
@@ -55,7 +56,6 @@
         },
         methods: {
             handleNodeClick(e) {
-                console.log(e);
                 if (e.type === 'community') {
                     window.localStorage.setItem('commId', e.id);
                 }
@@ -64,24 +64,22 @@
                 }
             },
             handleCheckChange() {
-                console.log();
                 var arr = this.$refs.tree.getCheckedNodes();
-                console.log(arr);
-                for (var i = 0; i < arr.length; i++) {
-                    this.child(arr[i]);
-                }
+                var s = this.child(arr);
+                this.$emit("child1", s,'room');
             },
             child(arr) {
-                if(arr.childList){
-                    this.child(arr.childList);
-                } else {
-                    for (var i = 0; i < arr.length; i++) {
-                        if(arr[i].type==='build'){
-                            console.log(arr[i].id+"<======>"+arr[i].name);
-                            this.$emit("child1", arr[i].id, arr[i].name);
+                var result = '';
+                for (var i = 0; i < arr.length; i++) {
+                    if (arr[i].childList) {
+                        this.child(arr[i].childList);
+                    } else {
+                        if(arr[i].type === 'room'){
+                            result +=arr[i].id+',';
                         }
                     }
                 }
+                return result;
             }
         }
     };

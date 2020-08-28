@@ -25,6 +25,7 @@
                 <el-table-column prop="costTypeName" label="费用类型" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="costItemName" label="费用明细" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="标准名称" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="billingMethod" label="计费方式" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="price" label="价格" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="priceUnit" label="价格单位" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="beginDate" label="开始时间" min-width="125" min-height="55" align="center"></el-table-column>
@@ -33,6 +34,7 @@
                 <el-table-column prop="liquidatedDamagesMethod" label="违约金计算方式" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="billCycle" label="账单周期" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="billDay" label="出账天" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="payTime" label="付款天" min-width="125" min-height="55" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75" min-height="55"></el-table-column>
@@ -196,6 +198,24 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="付款期" label-width="100px" prop="billCycle"
+                                      :rules="[
+                    { required: true, message: '请输入付款期', trigger: 'blur' },
+                ]">
+                           <el-input type="Integer" v-model="form.payTime" placeholder="" style="width: 250px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="计费方式" label-width="100px" prop="billingMethod"
+                                      :rules="[
+                    { required: true, message: '请选择计费方式', trigger: 'blur' },
+                ]">
+                        <dist-util @child1="checkForm" :distId="dist.estateId" :distName="dist.estateName"
+                                   :title="dist.estateProp" :change="form.billingMethod"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addVisible = false">取 消</el-button>
@@ -327,6 +347,23 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="付款期" label-width="100px" prop="billCycle"
+                                      :rules="[
+                    { required: true, message: '请输入付款期', trigger: 'blur' },
+                ]">
+                            <el-input type="Integer" v-model="form.payTime" placeholder="" style="width: 250px"></el-input>
+                        </el-form-item>
+                        <el-form-item label="计费方式" label-width="100px" prop="billingMethod"
+                                      :rules="[
+                    { required: true, message: '请选择计费方式', trigger: 'blur' },
+                ]">
+                            <dist-util @child1="checkForm" :distId="dist.estateId" :distName="dist.estateName"
+                                       :title="dist.estateProp" :change="form.billingMethod"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -335,17 +372,17 @@
         </el-dialog>
 
         <el-dialog :title="title" :visible.sync="addUnitVisible" width="40%">
-            <trees @child1="setRoom"></trees>
+            <trees @child1="setRoom" :arr="changeRoom"></trees>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submit()">确 定</el-button>
+                <el-button @click="addUnitVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitUnit()">确 定</el-button>
             </span>
         </el-dialog>
     </div>
 </template>
 
 <script>
-    import {listCostRule, insertCostRule, updateCostRule, deleteCostRule, listCostItem} from '../../api/tariff/costrule'
+    import {listCostRule, insertCostRule, updateCostRule, deleteCostRule, listCostItem,insertRuleRoom,getRoomIds} from '../../api/tariff/costrule'
     import {getComp} from "../../api/user";
     import distUtil from "../common/distutil"
     import trees from '../common/tree'
@@ -368,9 +405,17 @@
                     billProp:'请选择账单周期',
                     billId:'53',
                     billName:'bill',
+                    estateProp:'请选择物业费计费方式',
+                    estateId:'54',
+                    estateName:'estate',
                 },
                 title: '',
+                addForm:{
+                    rooms:'',
+                    ruleId:'',
+                },
                 ruleData: [],
+                changeRoom:[],
                 options: [],
                 itemData: [],
                 form: {},
@@ -391,6 +436,7 @@
         methods: {
             init() {
                 listCostRule(this.query).then(res => {
+                    console.log(res);
                     this.ruleData = res.data.records;
                     this.pageTotal = res.data.total;
                 });
@@ -416,8 +462,24 @@
                 })
             },
             addUnit(id){
+                getRoomIds(id).then(res=>{
+                   this.changeRoom = res.data;
+                });
+                this.addForm.ruleId = id;
                 this.addUnitVisible = !this.addUnitVisible;
                 this.title='选择物业单位';
+
+            },
+            submitUnit(){
+                insertRuleRoom(this.addForm).then(res=>{
+                    if(res.code === 0 && res.data){
+                        this.$message.success(`设置成功`);
+                        this.addUnitVisible = !this.addUnitVisible;
+                        this.changeRoom = [];
+                    }else{
+                        this.$message.error(`设置失败！`);
+                    }
+                });
             },
             add() {
                 this.addVisible = !this.addVisible;
@@ -503,9 +565,16 @@
                 if(name ==='bill'){
                     this.form.billCycle = value;
                 }
+                if(name ==='estate'){
+                    this.form.billingMethod = value;
+                }
             },
             setRoom(value,name){
-                console.log(value);
+                if(value){
+                    this.addForm.rooms = value;
+                }else{
+                    this.addForm.rooms = '';
+                }
             },
 
         }
