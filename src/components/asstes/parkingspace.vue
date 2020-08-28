@@ -113,17 +113,17 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="编号" label-width="100px" prop="no"
                                       :rules="[
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
-                            <el-input v-model="form.no" style="width: 350px"></el-input>
+                            <el-input v-model="form.no" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="16">
                         <el-form-item label="位置" label-width="100px">
-                            <el-input v-model="form.position" style="width: 350px"></el-input>
+                            <el-input v-model="form.position"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -185,6 +185,13 @@
                         <el-form-item label="入位方式" label-width="100px">
                             <dist-util @child1="checkForm" :distId="dist.intoPropId" :distName="dist.intoPropName"
                                        :title="dist.intoProp" :change="form.inMode"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="16">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -279,6 +286,14 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-row>
+                    <el-col :span="16">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="detailVisible = false">确 定</el-button>
@@ -310,15 +325,15 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="8">
                         <el-form-item label="编号" label-width="100px" prop="no"
                                       :rules="[
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
-                            <el-input v-model="form.no" style="width: 350px"></el-input>
+                            <el-input v-model="form.no" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="16">
                         <el-form-item label="位置" label-width="100px">
                             <el-input v-model="form.position"></el-input>
                         </el-form-item>
@@ -383,6 +398,13 @@
                         <el-form-item label="入位方式" label-width="100px">
                             <dist-util @child1="checkForm" :distId="dist.intoPropId" :distName="dist.intoPropName"
                                        :title="dist.intoProp" :change="form.inMode"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="16">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -718,7 +740,8 @@
                         var href = window.URL.createObjectURL(blob); //创建下载的链接
 
                         downloadElement.href = href;
-                        downloadElement.download = unescape('停车位信息.xls'); //下载后文件名
+                        var date = new Date();
+                        downloadElement.download = unescape('停车位信息'+date+'.xls'); //下载后文件名
 
                         document.body.appendChild(downloadElement);
                         downloadElement.click(); //点击下载
@@ -731,6 +754,7 @@
             },
             openDetails(row) {
                 this.form = row;
+                this.title = '查看车位信息';
                 this.detailVisible = !this.detailVisible;
             },
 

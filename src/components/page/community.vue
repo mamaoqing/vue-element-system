@@ -129,140 +129,91 @@
         </div>
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
-                <el-form-item label="公司名称" label-width="100px">
-                    <template>
-                        <el-select v-model="form.compId" filterable placeholder="请选择"
-                                   @change="selectComp1(form.compId)" clearable>
-                            <el-option
-                                    v-for="item in options"
-                                    :key="item.value"
-                                    :label="item.name"
-                                    :value="item.id">
-                            </el-option>
-                        </el-select>
-                    </template>
-                </el-form-item>
-                <el-form-item label="社区名" label-width="100px" prop="name"
-                              :rules="[
-                    { required: true, message: '请输入社区名称', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-
-                <el-form-item label="用途类型" label-width="100px">
-                    <child @child1="checkInForm" :distId="useTypeDistId" :distName="useType"></child>
-                </el-form-item>
-                <el-form-item label="状态" label-width="100px">
-                    <child @child1="checkInForm" :distId="commStateDistId" :distName="commState"></child>
-                </el-form-item>
-                <el-form-item label="地址" label-width="100px">
-                    <el-cascader
-                            v-model="partyOrganId"
-                            ref="cascaderAddr"
-                            :props="{
-                                    value: 'id',
-                                    label: 'name',
-                                    children: 'childList'
-                                  }"
-                            :options="cascaderData"
-                            placeholder="请选择省市区"
-                            @change="handleChange"
-                    ></el-cascader>
-                </el-form-item>
-
-                <el-form-item label="详细地址" label-width="100px">
-                    <el-input v-model="form.detailedAddress"></el-input>
-                </el-form-item>
-                <el-form-item label="经度" label-width="100px">
-                    <el-input v-model="form.latitude"></el-input>
-                </el-form-item>
-                <el-form-item label="纬度" label-width="100px">
-                    <el-input v-model="form.longitude"></el-input>
-                </el-form-item>
-                <el-form-item label="地图地址" label-width="100px">
-                    <el-input v-model="form.mapAddress"></el-input>
-                </el-form-item>
-                <el-form-item label="电话" label-width="100px">
-                    <el-input v-model="form.tel"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" label-width="100px">
-                    <el-input v-model="form.email"></el-input>
-                </el-form-item>
-                <el-form-item label="建造日期" label-width="100px">
-                    <el-date-picker
-                            v-model="form.buildedDate"
-                            type="datetime"
-                            format="yyyy-MM-dd"
-                            placeholder="选择日期时间">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="交付日期" label-width="100px">
-                    <el-date-picker
-                            v-model="form.deliverDate"
-                            type="datetime"
-                            format="yyyy-MM-dd"
-                            placeholder="选择日期时间">
-                    </el-date-picker>
-                </el-form-item>
-                <el-form-item label="社区简介" label-width="100px">
-                    <el-input v-model="form.introduction"></el-input>
-                </el-form-item>
-                <el-form-item label="社区图标" label-width="100px">
-                    <el-input v-model="form.iconPath"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" label-width="100px">
-                    <el-input v-model="form.remark"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="addVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submit()">确 定</el-button>
-            </span>
-        </el-dialog>
-        <el-dialog :title="title" :visible.sync="editVisible" width="60%" :before-close="closeEdit">
-            <el-form ref="editForm" :model="form" :disabled="disable" label-width="70px">
-                <el-row>
-                    <el-form-item label="服务类型" label-width="100px" v-show="false">
-                        <el-input v-model="form.id"></el-input>
-                    </el-form-item>
-                    <el-form-item label="公司名称" label-width="100px">
-                        <template>
-                            <el-select v-model="form.compId" filterable placeholder="请选择"
-                                       @change="selectComp1(form.compId)" clearable disabled>
-                                <el-option
-                                        v-for="item in options"
-                                        :key="item.value"
-                                        :label="item.name"
-                                        :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </template>
-                    </el-form-item>
-                </el-row>
-                <el-row>
-                    <el-form-item label="社区名" label-width="100px" prop="name"
-                                  :rules="[
-                    { required: true, message: '请输入社区名称', trigger: 'blur' },
-                ]">
-                        <el-input v-model="form.name"></el-input>
-                    </el-form-item>
-                </el-row>
                 <el-row>
                     <el-col :span="8">
-                        <el-form-item label="用途类型">
-                            <child @child1="checkIn" :distId="useTypeDistId" :distName="useType"
-                                   :change="useTypeChange"></child>
+                        <el-form-item label="公司名称" label-width="100px" prop="compId"
+                                      :rules="[
+                    { required: true, message: '请选择公司名称', trigger: 'blur' },
+                ]">
+                            <template>
+                                <el-select v-model="form.compId" style="width: 250px" filterable placeholder="请选择"
+                                           @change="selectComp1(form.compId)" clearable>
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </template>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="状态">
-                            <!--                    <el-input v-model="form.state"></el-input>-->
-                            <child @child1="checkIn" :distId="commStateDistId" :distName="commState"
-                                   :change="commStateChange"></child>
+                        <el-form-item label="社区名" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入社区名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name" style="width: 250px"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="用途类型" label-width="100px">
+                            <child style="width: 250px" @child1="checkInForm" :distId="useTypeDistId"
+                                   :distName="useType"></child>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="状态" label-width="100px">
+                            <child @child1="checkInForm" style="width: 250px" :distId="commStateDistId"
+                                   :distName="commState"></child>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="省">
+                        <el-form-item label="经度" label-width="100px">
+                            <el-input v-model="form.latitude" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="纬度" label-width="100px">
+                            <el-input v-model="form.longitude" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="建造日期" label-width="100px">
+                            <el-date-picker
+                                    v-model="form.buildedDate"
+                                    type="datetime"
+                                    format="yyyy-MM-dd"
+                                    style="width: 250px"
+                                    placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="交付日期" label-width="100px">
+                            <el-date-picker
+                                    v-model="form.deliverDate"
+                                    type="datetime"
+                                    format="yyyy-MM-dd"
+                                    style="width: 250px"
+                                    placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="地址" label-width="100px">
                             <el-cascader
                                     v-model="partyOrganId"
                                     ref="cascaderAddr"
@@ -273,44 +224,202 @@
                                   }"
                                     :options="cascaderData"
                                     placeholder="请选择省市区"
+                                    style="width: 250px"
                                     @change="handleChange"
                             ></el-cascader>
                         </el-form-item>
                     </el-col>
+                    <el-col :span="16">
+                        <el-form-item label="详细地址" label-width="100px">
+                            <el-input v-model="form.detailedAddress" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
                 </el-row>
-                <el-form-item label="详细地址" label-width="100px">
-                    <el-input v-model="form.detailedAddress"></el-input>
-                </el-form-item>
-                <el-form-item label="经度" label-width="100px">
-                    <el-input v-model="form.latitude"></el-input>
-                </el-form-item>
-                <el-form-item label="纬度" label-width="100px">
-                    <el-input v-model="form.longitude"></el-input>
-                </el-form-item>
-                <el-form-item label="地图地址" label-width="100px">
-                    <el-input v-model="form.mapAddress"></el-input>
-                </el-form-item>
-                <el-form-item label="电话" label-width="100px">
-                    <el-input v-model="form.tel"></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱" label-width="100px">
-                    <el-input v-model="form.email"></el-input>
-                </el-form-item>
-                <el-form-item label="建造日期" label-width="100px">
-                    <el-input v-model="form.buildedDate"></el-input>
-                </el-form-item>
-                <el-form-item label="交付日期" label-width="100px">
-                    <el-input v-model="form.deliverDate"></el-input>
-                </el-form-item>
-                <el-form-item label="社区简介" label-width="100px">
-                    <el-input v-model="form.introduction"></el-input>
-                </el-form-item>
-                <el-form-item label="社区图标" label-width="100px">
-                    <el-input v-model="form.iconPath"></el-input>
-                </el-form-item>
-                <el-form-item label="备注" label-width="100px">
-                    <el-input v-model="form.remark"></el-input>
-                </el-form-item>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="社区图标" label-width="100px">
+                            <el-input v-model="form.iconPath" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="16">
+                        <el-form-item label="地图地址" label-width="100px">
+                            <el-input v-model="form.mapAddress" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="电话" label-width="100px">
+                            <el-input v-model="form.tel" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="邮箱" label-width="100px">
+                            <el-input v-model="form.email" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="社区简介" label-width="100px">
+                            <el-input v-model="form.introduction"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submit()">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="editVisible" width="60%" :before-close="closeEdit">
+            <el-form ref="editForm" :model="form" label-width="70px">
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="公司名称" label-width="100px" prop="compId"
+                                      :rules="[
+                    { required: true, message: '请选择公司名称', trigger: 'blur' },
+                ]">
+                            <template>
+                                <el-select v-model="form.compId" style="width: 250px" filterable placeholder="请选择"
+                                           @change="selectComp1(form.compId)" clearable>
+                                    <el-option
+                                            v-for="item in options"
+                                            :key="item.value"
+                                            :label="item.name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="社区名" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入社区名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name" style="width: 250px"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="用途类型" label-width="100px">
+                            <child style="width: 250px" @child1="checkInForm" :distId="useTypeDistId"
+                                   :distName="useType" :change="useTypeChange"></child>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="状态" label-width="100px">
+                            <child @child1="checkInForm" style="width: 250px" :distId="commStateDistId"
+                                   :distName="commState" :change="commStateChange"></child>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="经度" label-width="100px">
+                            <el-input v-model="form.latitude" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="纬度" label-width="100px">
+                            <el-input v-model="form.longitude" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="建造日期" label-width="100px">
+                            <el-date-picker
+                                    v-model="form.buildedDate"
+                                    type="datetime"
+                                    format="yyyy-MM-dd"
+                                    style="width: 250px"
+                                    placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="交付日期" label-width="100px">
+                            <el-date-picker
+                                    v-model="form.deliverDate"
+                                    type="datetime"
+                                    format="yyyy-MM-dd"
+                                    style="width: 250px"
+                                    placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="地址" label-width="100px">
+                            <el-cascader
+                                    v-model="partyOrganId"
+                                    ref="cascaderAddr"
+                                    :props="{
+                                    value: 'id',
+                                    label: 'name',
+                                    children: 'childList'
+                                  }"
+                                    :options="cascaderData"
+                                    placeholder="请选择省市区"
+                                    style="width: 250px"
+                                    @change="handleChange"
+                            ></el-cascader>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="16">
+                        <el-form-item label="详细地址" label-width="100px">
+                            <el-input v-model="form.detailedAddress" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="社区图标" label-width="100px">
+                            <el-input v-model="form.iconPath" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="16">
+                        <el-form-item label="地图地址" label-width="100px">
+                            <el-input v-model="form.mapAddress" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="电话" label-width="100px">
+                            <el-input v-model="form.tel" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="邮箱" label-width="100px">
+                            <el-input v-model="form.email" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="社区简介" label-width="100px">
+                            <el-input v-model="form.introduction"></el-input>
+                            <!--                    <quill-editor ref="myTextEditor" v-model="form.introduction" :options="editorOption"></quill-editor>-->
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+
+                <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="closeEdit">取 消</el-button>
@@ -454,22 +563,26 @@
     </div>
 </template>
 <script>
-    import {listCommunity, addComm, updateComm, deleteComm,getListUser,getListArea} from '../../api/community'
+    import {listCommunity, addComm, updateComm, deleteComm, getListUser, getListArea} from '../../api/community'
     import {getComp} from "../../api/user";
     import {getCityDict, getProvinces} from "../../api/index";
     import {getCityList, getDistList} from "../../api/dist"
     import child from "./child"
+    import commPage from '../common/commPage';
+    import {quillEditor} from 'vue-quill-editor';
 
     export default {
         components: {
-            child
+            child, commPage, quillEditor
         },
         data() {
             return {
-                userVisible:false,
-                areaVisible:false,
-                listUser:[],
-                listArea:[],
+                editorOption: {placeholder: 'Hello World'},
+                status: 0,
+                userVisible: false,
+                areaVisible: false,
+                listUser: [],
+                listArea: [],
                 commStateDistId: '20',
                 commState: 'commState',
                 commStateChange: '',
@@ -513,12 +626,14 @@
                 this.init();
             },
             addComm() {
+                this.status=0;
                 this.addVisible = true;
                 this.partyOrganId = [];
                 this.form = {};
                 this.title = "添加社区";
             },
             editComm(index, row) {
+                this.status = 1;
                 this.useTypeChange = '';
                 this.commStateChange = '';
                 this.form = {};
@@ -660,15 +775,14 @@
 
             },
             checkIn(value, name) {
-                console.log(value+"<---->"+name);
+                console.log(value + "<---->" + name);
                 if (name === 'usableType') {
                     this.form.usableType = value;
                 }
                 if (name === 'commState') {
                     this.form.state = value;
                 }
-            },checkInForm(value, name) {
-                console.log(value+"<---->"+name);
+            }, checkInForm(value, name) {
                 if (name === 'usableType') {
                     this.form.usableType = value;
                 }
@@ -676,24 +790,24 @@
                     this.form.state = value;
                 }
             },
-            checkInQuery(value, name){
+            checkInQuery(value, name) {
                 this.query.usableType = value;
             },
             closeEdit() {
                 this.editVisible = false;
                 this.init();
             },
-            listUsers(id){
+            listUsers(id) {
                 this.userVisible = true;
                 this.title = '下属用户';
-                getListUser(id).then(res=>{
+                getListUser(id).then(res => {
                     this.listUser = res.data;
                 });
             },
-            areaComm(id){
+            areaComm(id) {
                 this.areaVisible = true;
                 this.title = '社区协议';
-                getListArea(id).then(res=>{
+                getListArea(id).then(res => {
                     this.listArea = res.data;
                 });
             }
@@ -745,5 +859,9 @@
 
     .el-table--small td {
         padding: 1px 0;
+    }
+
+    .editor-btn {
+        margin-top: 20px;
     }
 </style>
