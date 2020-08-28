@@ -13,7 +13,7 @@ module.exports = {
         },
         proxy: {
             '/api':{
-                target:'http://192.168.0.107:9000/',
+                target:'http://192.168.0.105:9000/',
                 changeOrigin: true,
                 ws: true,
                 write: {

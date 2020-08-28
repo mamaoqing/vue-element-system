@@ -1,12 +1,9 @@
 <template>
     <div>
-        <el-row>
-            <el-col :span="12">
+
                 <el-form-item label="录入人" label-width="150px">
-                    <el-input v-model="commForm.createdName" style="width: 350px" disabled></el-input>
+                    <el-input v-model="commForm.createdName"  disabled></el-input>
                 </el-form-item>
-            </el-col>
-            <el-col :span="12">
                 <el-form-item label="录入时间" prop="createdAt" label-width="150px" disabled>
                     <el-date-picker
                             v-model="commForm.createdAt"
@@ -18,15 +15,9 @@
                             disabled
                     />
                 </el-form-item>
-            </el-col>
-        </el-row>
-        <el-row>
-            <el-col :span="12">
                 <el-form-item label="修改人" label-width="150px">
-                    <el-input v-model="commForm.modifiedName" style="width: 350px" disabled></el-input>
+                    <el-input v-model="commForm.modifiedName"  disabled></el-input>
                 </el-form-item>
-            </el-col>
-            <el-col :span="12">
                 <el-form-item label="修改时间" prop="modifiedAt" label-width="150px">
                     <el-date-picker
                             v-model="commForm.modifiedAt"
@@ -38,8 +29,6 @@
                             disabled
                     />
                 </el-form-item>
-            </el-col>
-        </el-row>
     </div>
 </template>
 
@@ -88,5 +77,47 @@
 </script>
 
 <style scoped>
+    .handle-box {
+        margin-bottom: 20px;
+    }
 
+    .handle-select {
+        width: 120px;
+    }
+
+    .handle-input {
+        width: 300px;
+        display: inline-block;
+    }
+    .table {
+        width: 100%;
+        font-size: 14px;
+    }
+    .red {
+        color: #ff0000;
+    }
+    .mr10 {
+        margin-right: 10px;
+    }
+    .table-td-thumb {
+        display: block;
+        margin: auto;
+        width: 40px;
+        height: 40px;
+    }
+    .el-form{
+        overflow: hidden;
+    }
+    .el-form-item{
+        width: 45%;
+        float: left;
+    }
+    .el-table--small td{
+        padding: 1px 0;
+    }
+    .el-input--small .el-input__inner {
+        height: 32px;
+        width: 200px;
+        line-height: 32px;
+    }
 </style>
