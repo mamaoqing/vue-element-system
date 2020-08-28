@@ -45,6 +45,7 @@
                     coordinateType: 'BD09',
                 },
                 header:{},
+                url:'',
                 fileList: [],
             }
         },
@@ -60,7 +61,7 @@
         methods: {
             //导入接口地址
             uploadUrl: function() {
-                return 'http://localhost:8900/api/rRoom/upload'  //接口
+                return this.url; //接口
                     },
             getData() {
                 debugger
@@ -118,6 +119,9 @@
             //表单取消
             onCancel(form){
                 this.$refs.form.resetFields();
+            },
+            dataInitializationUpload(uploadUrl){
+                this.url = uploadUrl;
             }
 
 
