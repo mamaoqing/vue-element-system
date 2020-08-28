@@ -117,7 +117,7 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form')" v-if="detail">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -187,6 +187,7 @@ export default {
             cmpVisible:false,
             form: {},
             idx: -1,
+            detail:false,
             title:'',
             id: -1,
             rules:{
@@ -261,6 +262,7 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
+            this.detail=true;
             this.title="编辑单元型号"
             this.$refs.form.clearValidate();
         },
@@ -271,7 +273,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看单元型号"
-
+            this.detail=false;
         },
         // 保存编辑
         saveEditOrAdd(title,form) {
