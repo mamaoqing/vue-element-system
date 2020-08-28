@@ -54,7 +54,7 @@ export const listMeterNum = query => {
 };
 export const checkMeterNo = query => {
     return request({
-        url: '/api/rBuilding/checkBulidingNameNo',
+        url: '/api/fMeter/checkMeterNo',
         method: 'post',
         data: query
     });
