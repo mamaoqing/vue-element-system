@@ -145,7 +145,7 @@
                     <el-form-item class="item" label="社区名称" v-if="editshow" label-width="150px" prop="commId" :rules="[
                         { required: true, message: '请输入单元名称', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm" :class="myWidth">
+                        <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm">
                             <el-option v-for="item in commArr" :key="item.id" :label="item.name"
                                        :value="item.id"></el-option>
                         </el-select>
@@ -154,7 +154,7 @@
                                   :rules="[
                         { required: true, message: '请输入分区名称', trigger: 'blur' },
                     ]">
-                        <el-select v-model.number="form.commAreaId" placeholder="请选择" @change="handleGetArea" ref="areaselect" :class="myWidth">
+                        <el-select v-model.number="form.commAreaId" placeholder="请选择" @change="handleGetArea" ref="areaselect">
                             <el-option v-for="item in areaArr" :key="item.id" :label="item.name"
                                        :value="item.id"></el-option>
                         </el-select>
@@ -345,7 +345,7 @@
                 <el-form-item label="房型" prop="roomModelName" :rules="[
                         { required: true, message: '请选择房型', trigger: 'blur' },
                     ]">
-                    <el-select v-model="formPl.roomModelName" placeholder="请选择" :class="myWidth" >
+                    <el-select v-model="formPl.roomModelName" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
@@ -808,8 +808,5 @@
 
     .el-table--small td {
         padding: 1px 0;
-    }
-    .myWidth {
-        width: 200px;
     }
 </style>
