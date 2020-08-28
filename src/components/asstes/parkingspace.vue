@@ -763,16 +763,29 @@
                         s += d[i]+",";
                     }
                     validaIsOwner(s).then(res=>{
-                        this.$confirm('车位编号'+res.data+'存在业主关系，确认删除吗？', '提示', {
-                            type: 'warning'
-                        }).then(() => {
-                            deleteAllPark(this.deleteIds).then(res => {
-                                if (res.code === 0 && res.data) {
-                                    this.$message.success(`批量删除成功！`);
-                                    this.init();
-                                }
+                        if(res.data === '' || res.data === null){
+                            this.$confirm('确认删除吗？', '提示', {
+                                type: 'warning'
+                            }).then(() => {
+                                deleteAllPark(this.deleteIds).then(res => {
+                                    if (res.code === 0 && res.data) {
+                                        this.$message.success(`批量删除成功！`);
+                                        this.init();
+                                    }
+                                });
                             });
-                        });
+                        }else{
+                            this.$confirm('车位编号'+res.data+'存在业主关系，确认删除吗？', '提示', {
+                                type: 'warning'
+                            }).then(() => {
+                                deleteAllPark(this.deleteIds).then(res => {
+                                    if (res.code === 0 && res.data) {
+                                        this.$message.success(`批量删除成功！`);
+                                        this.init();
+                                    }
+                                });
+                            });
+                        }
                     });
                 } else {
                     this.$message.error(`请选择需要删除的数据`);
