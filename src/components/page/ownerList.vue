@@ -15,24 +15,25 @@
                         class="handle-del mr10"
                         @click="delAllSelection"
                 >批量删除</el-button>
-                <!--<el-select v-model="query.compId" placeholder="请选择" @change="compChange">
+                <el-select v-model="query.compId" placeholder="请选择" @change="compChange">
                     <el-option key="qxz" label="请选择物业公司" value=""></el-option>
-                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in compList">
+                    <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in compList">
                         {{types.name}}
                     </el-option>
                 </el-select>
                 <el-select v-model="query.commId" placeholder="请选择" @change="commChange">
                     <el-option key="qxz" label="请选择社区名称" value=""></el-option>
-                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in commList">
+                    <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in commList">
                         {{types.name}}
                     </el-option>
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
-                </el-button>-->
+                </el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增业主
                 </el-button>
-                <!--<el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
-                </el-button>-->
+                <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
+                </el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -45,8 +46,8 @@
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-<!--                <el-table-column prop="compName" label="公司名称" min-width="125" min-height="55"-->
-<!--                                 align="center"></el-table-column>-->
+                <el-table-column prop="compName" label="公司名称" min-width="125" min-height="55"
+                                 align="center"></el-table-column>
                 <el-table-column prop="ownerType" label="业主类型" min-width="90" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
@@ -105,14 +106,6 @@
                                 >删除
                                 </el-button>
                             </el-button-group>
-<!--                            <el-button
-                                    type="text"
-                                    icon="el-icon-lx-text"
-                                    class="green"
-                                    @click.stop
-                                    @click="handleProp(scope.row.id)"
-                            >物业关系
-                            </el-button>-->
                             <el-button
                                     type="text"
                                     icon="el-icon-lx-text"
@@ -290,11 +283,6 @@
         <el-dialog :visible.sync="oiiVisible" append-to-body>
             <ownerInvoiceInfo v-if="oiiVisible" ref="ownerInvoiceInfo"></ownerInvoiceInfo>
         </el-dialog>
-
-       <!-- &lt;!&ndash; 物业关系弹出框   &ndash;&gt;
-        <el-dialog :visible.sync="propVisible" append-to-body>
-            <ownerProperty v-if="propVisible" ref="ownerProperty"></ownerProperty>
-        </el-dialog>-->
     </div>
 </template>
 
@@ -304,7 +292,7 @@
         getComp
 
     } from '../../api/unit';
-    import { addOwner, deleteIds, deleteOwner, getCount, getOwenerByRoom, update,exportXlsByT } from '../../api/owner';
+    import { addOwner, deleteIds, deleteOwner, getCount, getOwenList, update,exportXlsByT } from '../../api/owner';
     import { listCompAll } from '../../api/role';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
     import ownerInvoiceInfo from './ownerInvoiceInfo';
@@ -378,16 +366,16 @@
         methods: {
             // 获取数据
             getData() {
-                // getOwenList(this.query).then(res => {
-                //     console.log(res);
-                //     this.tableData = res;
-                //     // this.pageTotal = res.data.pageTotal || 0;
-                // });
-                getOwenerByRoom(this.query).then(res => {
+                getOwenList(this.query).then(res => {
                     console.log(res);
                     this.tableData = res;
                     // this.pageTotal = res.data.pageTotal || 0;
                 });
+                // getOwenerByRoom(this.query).then(res => {
+                //     console.log(res);
+                //     this.tableData = res;
+                //     // this.pageTotal = res.data.pageTotal || 0;
+                // });
                 getDictItemByDictId(12).then(res => {//12是业主类型的id
                     // debugger
                     this.ownerTypes = res.data;
@@ -593,7 +581,7 @@
                 }
 
             },
-/*            compChange(val) {
+            compChange(val) {
                 if (this.form.compId != undefined || val != undefined) {
                     var compId;
                     if (val == undefined) {
@@ -621,7 +609,7 @@
                         this.query.commName = commId;
                     }
                 }
-            },*/
+            },
             dataInitialization(row){
               this.query.roomId = row.id
               this.row = row
@@ -635,7 +623,20 @@
                 });
 
             },
+            handleProp(id){
+                let linkID = id;
+                this.propVisible = true;
+                this.$nextTick(() => {
+                    this.$refs.ownerProperty.dataInitialization(linkID);
+                });
+            },
+            // 分页导航
+            handlePageChange(val) {
+                this.$set(this.query, 'pageNo', val);
+                this.getData();
+            },
             exportXls(){
+                console.log(this.query)
                 exportXlsByT(this.query).then(res => {
                     var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
                     if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
@@ -655,18 +656,6 @@
                         window.URL.revokeObjectURL(href); //释放掉blob对象
                     }
                 });
-            },
-            handleProp(id){
-                let linkID = id;
-                this.propVisible = true;
-                this.$nextTick(() => {
-                    this.$refs.ownerProperty.dataInitialization(linkID);
-                });
-            },
-            // 分页导航
-            handlePageChange(val) {
-                this.$set(this.query, 'pageNo', val);
-                this.getData();
             }
         }
     };

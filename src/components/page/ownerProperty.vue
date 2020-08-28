@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 开票信息
+                    <i class="el-icon-lx-cascades"></i> 业主与物业关系对应
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -22,12 +22,11 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="taxpayerType" label="纳税人类型"  align="center"></el-table-column>
-                <el-table-column prop="name" label="开票名称" align="center"></el-table-column>
-                <el-table-column prop="identificationNo" label="识别号" align="center"></el-table-column>
-                <el-table-column prop="bank" label="开票银行" align="center"></el-table-column>
-                <el-table-column prop="registerTel" label="注册电话" align="center" min-width="125"></el-table-column>
-                <el-table-column prop="registerAddr" label="注册地址" align="center"></el-table-column>
+                <el-table-column prop="compName" label="物业公司"  align="center"></el-table-column>
+                <el-table-column prop="commName" label="社区名称" align="center"></el-table-column>
+                <el-table-column prop="commAreaName" label="分区名称" align="center"></el-table-column>
+                <el-table-column prop="buildingName" label="楼栋名称" align="center"></el-table-column>
+                <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="remark" label="备注" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center"></el-table-column>
                 <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155"></el-table-column>
@@ -48,7 +47,7 @@
                                 icon="el-icon-delete"
                                 class="red"
                                 @click.stop
-                                @click="handleDelete( scope.row.id)"
+                                @click="handleDelete(scope.row.id)"
                         >删除
                         </el-button>
 
@@ -69,58 +68,51 @@
 
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="50%" append-to-body>
-            <el-form ref="form" :model="form" label-width="70px" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="70px">
                 <el-form-item label="ID" v-show="false">
                     <el-input v-model="form.id"></el-input>
                 </el-form-item>
                 <el-form-item label="业主ID" v-show="false">
                     <el-input v-model="query.ownerId" ></el-input>
                 </el-form-item>
-                <el-form-item label="纳税人类型" prop="taxpayerType" label-width="150px"
-                              :rules="[
-                    { required: true, message: '请选择纳税人类型', trigger: 'blur' },
-                ]">
-                    <el-select v-model="form.taxpayerType" placeholder="请选择">
-                        <el-option :value="types.name" :key="types.id" :label="types.name"
-                                   v-for="types in taxpayerType"></el-option>
+                <el-form-item class="item" label="公司名称"  label-width="150px">
+                    <el-input v-model="compName" disabled></el-input>
+                </el-form-item>
+                <el-form-item class="item" v-show="false" label-width="150px">
+                    <el-input v-model="form.compId" disabled></el-input>
+                </el-form-item>
+                <el-form-item class="item" label="社区名称" v-if="editshow" label-width="150px" prop="commId" :rules="[
+                        { required: true, message: '请输入单元名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm">
+                        <el-option v-for="item in commArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="识别号" prop="identificationNo" label-width="150px"
+                <el-form-item class="item" label="分区名称" v-if="editshow" prop="name" label-width="150px"
                               :rules="[
-                    { required: true, message: '请输入识别号', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.identificationNo" @input="getInfo"></el-input>
+                        { required: true, message: '请输入分区名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model.number="form.commAreaId" placeholder="请选择" @change="handleGetArea" ref="areaselect">
+                        <el-option v-for="item in areaArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="开票名称" prop="name" label-width="150px"
+                <el-form-item class="item" label="建筑名称" v-if="editshow" prop="name" label-width="150px"
                               :rules="[
-                    { required: true, message: '请输入开票名称', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.name"></el-input>
+                        { required: true, message: '请输入建筑名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model.number="form.buildingId" placeholder="请选择" ref="buildselect"
+                               @change="handleGetBuild">
+                        <el-option v-for="item in buidlArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="开票银行" prop="bank" label-width="150px"
-                              :rules="[
-                    { required: true, message: '请输入开票银行', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.bank"></el-input>
+                <el-form-item label="物业类型" label-width="150px">
+                    <el-input v-model="form.propertyType"></el-input>
                 </el-form-item>
-                <el-form-item label="开票银行账户" prop="bankAccountNo" label-width="150px"
-                              :rules="[
-                    { required: true, message: '请输入开票银行账户', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.bankAccountNo"></el-input>
-                </el-form-item>
-                <el-form-item label="注册电话" prop="registerTel" label-width="150px"
-                              :rules="[
-                     { required: true, message: '请输入电话', trigger: 'blur' },
-                    { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                ]">
-                    <el-input v-model="form.registerTel"></el-input>
-                </el-form-item>
-                <el-form-item label="注册地址" prop="registerAddr" label-width="150px"
-                              :rules="[
-                    { required: true, message: '请输入注册地址', trigger: 'blur' },
-                ]">
-                    <el-input v-model="form.registerAddr"></el-input>
+                <el-form-item label="备注" label-width="150px">
+                    <el-input v-model="form.remark"></el-input>
                 </el-form-item>
                 <el-form-item label="备注" label-width="150px">
                     <el-input v-model="form.remark"></el-input>
@@ -162,10 +154,12 @@
 </template>
 
 <script>
-    import { deleteLinkData, fetchLinkData, addLinkData, updateLinkData, getInfo } from '../../api/owner';
+
+    import { getOwnerProp, addLinkData, updateLinkData, getInfo } from '../../api/owner';
     import { getDictItemByDictId } from '../../api/building';
+    import { getArea, getBuild, getComm, getComp } from '../../api/unit';
     export default {
-        name: 'ownerInvoiceInfo',
+        name: 'ownerProperty',
         data() {
             return {
                 query: {
@@ -178,9 +172,13 @@
                 multipleSelection: [],
                 delList: [],
                 editVisible: false,
+                editshow:true,
                 taxpayerType:[],
                 pageTotal: 0,
-                disable: false,
+                compName: '',
+                commArr: [],
+                areaArr: [],
+                buidlArr: [],
                 form: {},
                 idx: -1,
                 id: -1
@@ -188,12 +186,20 @@
         },
         methods: {
             getData() {
-                fetchLinkData(this.query).then(res => {
+                getComm(this.query).then(res => {
+                    this.commArr = res.data;
+                });
+                getOwnerProp(this.query.ownerId).then(res => {
+                    console.log(res)
                     this.tableData = this.tableData = res.data;
                     this.pageTotal = res.data.pageTotal || 0;
                 });
                 getDictItemByDictId(8).then(res => {
                     this.taxpayerType = res.data;
+                });
+                getComp().then(res => {
+                    this.compName = res.data.name;
+                    this.$set(this.form, 'compId', res.data.id);
                 });
             },
             //初始化数据
@@ -207,15 +213,15 @@
                 this.form = row;
                 this.disable = true;
                 this.editVisible = true;
-                this.title = '查看开票信息';
+                this.title = '查看物业对应信息';
 
             },
             //新增操作
             handleAdd() {
                 this.editVisible = true;
-                this.title = '新增开票信息';
+                this.title = '新增物业对应信息';
                 this.form = {};
-                this.disable = false;
+                this.editshow=true;
                 this.form.ownerId = this.query.ownerId;
             },
             // 触发搜索按钮
@@ -269,18 +275,18 @@
             handleEdit(index, row) {
                 this.idx = index;
                 this.form = row;
-                this.title = '编辑开票信息';
-                this.disable = false;
+                this.title = '编辑物业对应信息';
                 this.editVisible = true;
+                this.editshow=false;
             },
             // 保存编辑
             saveEditOrAdd(title) {
-                if (title === '新增开票信息') {
+                if (title === '新增物业对应信息') {
                     this.$refs['form'].validate(valid => {
                         if (valid){
                             this.editVisible = false;
                             addLinkData(this.form).then(res => {
-                                this.$message.success(`新增开票信息成功`);
+                                this.$message.success(`新增物业对应信息成功`);
                                 this.getData();
                             });
                         }
@@ -302,6 +308,29 @@
             handlePageChange(val) {
                 this.$set(this.query, 'pageNo', val);
                 this.getData();
+            },
+            handleGetComm(val) {
+                getArea(val).then(res => {
+                    this.areaArr = [];
+                    this.buidlArr = [];
+                    this.form.commAreaId = '';
+                    this.form.buildingId = '';
+                    this.query.commAreaId = '';
+                    this.query.buildingId = '';
+                    this.areaArr = res.data;
+                });
+            },
+            handleGetArea(val) {
+
+                getBuild(val).then(res => {
+                    this.buidlArr = [];
+                    this.form.buildingId = '';
+                    this.query.buildingId = '';
+                    this.buidlArr = res.data;
+                });
+            },
+            handleGetBuild(val) {
+                this.$forceUpdate();
             }
         }
     };
@@ -333,6 +362,13 @@
     .mr10 {
         margin-right: 10px;
     }
+
+    .table-td-thumb {
+        display: block;
+        margin: auto;
+        width: 40px;
+        height: 40px;
+    }
     .el-form {
         overflow: hidden;
     }
@@ -340,12 +376,6 @@
     .el-form-item {
         width: 45%;
         float: left;
-    }
-    .table-td-thumb {
-        display: block;
-        margin: auto;
-        width: 40px;
-        height: 40px;
     }
     .el-input{
         width: 200px;
