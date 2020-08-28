@@ -860,7 +860,7 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改房间"
+            this.title="编辑房间"
             this.$refs.form.clearValidate();
         },
         upload(){
