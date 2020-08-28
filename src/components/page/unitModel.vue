@@ -261,7 +261,7 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.edit=true;
-            this.title="修改单元型号"
+            this.title="编辑单元型号"
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
