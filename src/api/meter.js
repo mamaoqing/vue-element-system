@@ -52,4 +52,10 @@ export const listMeterNum = query => {
         params: query
     });
 };
-
+export const checkMeterNo = query => {
+    return request({
+        url: '/api/rBuilding/checkBulidingNameNo',
+        method: 'post',
+        data: query
+    });
+};
