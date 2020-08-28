@@ -62,3 +62,18 @@ export const deleteAllPark = query => {
     });
 };
 
+export const validaIsOwner = query => {
+    return request({
+        url: '/api/rParkingSpace/validaIsOwner/',
+        method: 'get',
+        params:{ids : query}
+    });
+};
+
+export const validaIsOwnerid = query => {
+    return request({
+        url: '/api/rParkingSpace/validaIsOwner/'+query,
+        method: 'get'
+    });
+};
+
