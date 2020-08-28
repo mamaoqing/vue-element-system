@@ -64,6 +64,11 @@
                 <el-table-column prop="no" label="仪表编号"></el-table-column>
                 <el-table-column prop="name" label="仪表名称"></el-table-column>
 
+                <el-table-column prop="newNum" label="抄表刻度"></el-table-column>
+                <el-table-column prop="meterReadTime" label="抄表时间"></el-table-column>
+                <el-table-column prop="billNum" label="账单刻度"></el-table-column>
+                <el-table-column prop="billDate" label="账单日期"></el-table-column>
+
                 <el-table-column prop="state" label="状态"></el-table-column>
                 <el-table-column prop="createdName" label="创建人"></el-table-column>
                 <el-table-column prop="createdAt" label="创建日期"></el-table-column>
@@ -154,27 +159,27 @@
                 <el-form-item label="仪表名称"  prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
-               <el-form-item label="抄表刻度" prop="newNum" >
+               <el-form-item label="抄表刻度" >
                     <el-input v-model="form.newNum" ></el-input>
                 </el-form-item>
                 <el-form-item label="抄表时间" prop="meterReadTime">
                     <el-date-picker
                             v-model="form.meterReadTime"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
                     />
                 </el-form-item>
-                <el-form-item label="账单刻度"  prop="billNum">
+                <el-form-item label="账单刻度" >
                     <el-input v-model="form.billNum" ></el-input>
                 </el-form-item>
                 <el-form-item label="账单日期" prop="billDate">
                     <el-date-picker
                             v-model="form.billDate"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
                     />
                 </el-form-item>
@@ -561,7 +566,7 @@ export default {
                     var href = window.URL.createObjectURL(blob); //创建下载的链接
 
                     downloadElement.href = href;
-                    downloadElement.download = unescape('仪表信息.xls'); //下载后文件名
+                    downloadElement.download = unescape('仪表信息'+this.getTime()+'.xls'); //下载后文件名
 
                     document.body.appendChild(downloadElement);
                     downloadElement.click(); //点击下载
@@ -571,6 +576,33 @@ export default {
                     window.URL.revokeObjectURL(href); //释放掉blob对象
                 }
             });
+        },
+        getTime(){
+            let date = new Date();
+            let yy = date.getFullYear();
+            let mm = date.getMonth() + 1;
+            if(mm<10){
+                mm = '0'+mm;
+            }
+            let dd = date.getDate();
+            if(dd<10){
+                dd = '0'+dd;
+            }
+            let h = date.getHours();
+            if(h<10){
+                h = '0'+h;
+            }
+            let m = date.getMinutes();
+            if(m<10){
+                m = '0'+m;
+            }
+            let s = date.getSeconds();
+            if(s<10){
+                s = '0'+s;
+            }
+            let ms = date.getMilliseconds();
+            let time = yy+""+mm+""+dd+""+h+""+m+""+s+""+ms;
+            return time;
         },
         select_status(val){
             this.$forceUpdate();
@@ -664,8 +696,11 @@ export default {
             let yy = date.getFullYear();
             let mm = date.getMonth() + 1;
             let dd = date.getDate();
-            this.form.meterReadTime = yy+"-"+mm+"-"+dd;
-            this.form.billDate = yy+"-"+mm+"-"+dd;
+            let h = date.getHours();
+            let m = date.getMinutes();
+            let s = date.getSeconds();
+            this.form.meterReadTime = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
+            this.form.billDate = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
             this.edit=false;
             this.$refs.form.clearValidate();
         },
