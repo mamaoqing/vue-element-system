@@ -4,8 +4,6 @@
         <el-tree :data="data" :props="defaultProps" show-checkbox @node-click="handleNodeClick"
                  @check-change="handleCheckChange" class="trees"
                  ref="tree"
-
-
         ></el-tree>
     </div>
 </template>

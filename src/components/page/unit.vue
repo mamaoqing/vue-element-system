@@ -159,7 +159,7 @@
                                        :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="建筑名称" v-if="editshow" prop="name" label-width="150px"
+                    <el-form-item class="item" label="楼栋名称" v-if="editshow" prop="name" label-width="150px"
                                   :rules="[
                         { required: true, message: '请输入建筑名称', trigger: 'blur' },
                     ]">
@@ -262,9 +262,9 @@
                                        :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="建筑名称" prop="name" label-width="150px"
+                    <el-form-item class="item" label="楼栋名称" prop="name" label-width="150px"
                                   :rules="[
-                        { required: true, message: '请输入建筑名称', trigger: 'blur' },
+                        { required: true, message: '请输入楼栋名称', trigger: 'blur' },
                     ]">
                         <el-select v-model.number="form.buildingId" placeholder="请选择" ref="buildselect"
                                    @change="handleGetBuild">
@@ -345,7 +345,7 @@
                 <el-form-item label="房型" prop="roomModelName" :rules="[
                         { required: true, message: '请选择房型', trigger: 'blur' },
                     ]">
-                    <el-select v-model="formPl.roomModelName" placeholder="请选择"  >
+                    <el-select v-model="formPl.roomModelName" placeholder="请选择" >
                         <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
@@ -379,9 +379,6 @@
                         <el-input v-model.number="formPl.end" oninput="if(isNaN(value)) { value = null } if(value.indexOf('.')>0){value=value.slice(0,value.indexOf('.')+3)}"
                                   maxLength='2'></el-input>
                     </el-col>
-                </el-form-item>
-                <el-form-item label="前缀" >
-                    <el-input v-model="formPl.prefix" ></el-input>
                 </el-form-item>
                 <el-form-item label="分割符"  >
                     <el-input v-model="formPl.separator" placeholder="楼层与后缀分割符"></el-input>
@@ -610,7 +607,7 @@
             },
             handleAdd() {
                 this.editVisible = true;
-                this.title = '新增';
+                this.title = '新增单元';
                 this.form = {};
                 this.editshow = true
                 this.status = 0
@@ -641,7 +638,7 @@
                 })
                 this.editVisible = true;
                 this.disable = false;
-                this.title = '修改';
+                this.title = '编辑单元';
                 // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
                 // this.$set(this.form, 'modifiedAt', new Date());
 
@@ -670,7 +667,7 @@
                 })
                 this.copyVisible = true;
                 this.disable = false;
-                this.title = '复制';
+                this.title = '复制单元';
             },
             //表格行点击事件
             openDetails(row) {
@@ -693,47 +690,64 @@
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-                this.title = '查看';
+                this.title = '查看单元';
 
             },
             // 保存编辑
             saveEditOrAdd(title) {
-                if (title === '新增') {
+                if (title === '新增单元') {
                     this.$refs['form'].validate(valid => {
                         if (valid) {
                             // this.$delete(this.form, 'createdName');
                             // this.$delete(this.form, 'createdAt');
                             // this.$delete(this.form, 'modifiedName');
                             // this.$delete(this.form, 'modifiedAt');
-                            this.editVisible = false;
-                            this.copyVisible = false;
+
                             addUnit(this.form).then(res => {
-                                this.$message.success(`新增成功`);
-                                this.getData();
+                                if(res.code===0){
+                                    this.editVisible = false;
+                                    this.copyVisible = false;
+                                    this.$message.success(`新增单元成功`);
+                                    this.getData();
+                                }else{
+                                    this.$message.error(res.msg);
+                                }
+
                             });
                         }
                     });
 
-                }else if(title === '复制'){
+                }else if(title === '复制单元'){
                     this.$refs['form'].validate(valid => {
                         if (valid) {
-                            this.editVisible = false;
-                            this.copyVisible = false;
+
                             copyUnit(this.form).then(res => {
-                                this.$message.success(`复制成功`);
-                                this.getData();
+                                if (res.code===0){
+                                    this.editVisible = false;
+                                    this.copyVisible = false;
+                                    this.$message.success(`复制单元成功`);
+                                    this.getData();
+                                }else{
+                                    this.$message.error(res.msg);
+                                }
                             });
                         }
                     });
                 } else {
                     this.$refs['form'].validate(valid => {
                         if (valid) {
-                            this.editVisible = false;
+
                             // this.$delete(this.form, 'modifiedName');
                             // this.$delete(this.form, 'modifiedAt');
                             updateData(this.form).then(res => {
-                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                                this.$set(this.tableData, this.idx, this.form);
+                                if (res.code===0){
+                                    this.editVisible = false;
+                                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                    this.getData();
+                                }else{
+                                    this.$message.error(res.msg);
+                                }
+
                             });
                         }
                     });
@@ -795,5 +809,4 @@
     .el-table--small td {
         padding: 1px 0;
     }
-
 </style>

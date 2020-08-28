@@ -12,6 +12,19 @@ export const getOwenList = query => {
 
 };
 
+
+export const getOwenerByRoom = query => {
+    return request({
+        url: '/api/rOwner/getOwenerByRoom',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+
+};
+
 export const addOwner = query => {
     return request({
         url: '/api/rOwner/insert',
@@ -39,24 +52,43 @@ export const getCount = query => {
 
 export const deleteOwner = id => {
     return request({
-        url: '/api/rOwner/delete/'+id,
-        method: 'delete',
+        url: '/api/rOwner/delete/' + id,
+        method: 'delete'
     });
 };
 
+export const deleteIds = delIds => {
+    return request({
+        url: '/api/rOwner/deleteIds',
+        method: 'delete',
+        params: delIds
+    });
+};
+
+export const exportXlsByT = query => {
+    return request({
+        url: '/api/rOwner/getExcel',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query,
+        responseType: 'blob'
+    });
+};
 
 export const fetchLinkData = query => {
     return request({
         url: '/api/rOwnerInvoiceInfo/getListByOwnerId',
         method: 'get',
-        params: query,
+        params: query
     });
 };
 
 export const deleteLinkData = id => {
     return request({
-        url: '/api/rOwnerInvoiceInfo/delete/'+id,
-        method: 'delete',
+        url: '/api/rOwnerInvoiceInfo/delete/' + id,
+        method: 'delete'
     });
 };
 
@@ -72,7 +104,7 @@ export const updateLinkData = query => {
     return request({
         url: '/api/rOwnerInvoiceInfo/update',
         method: 'post',
-        data: query,
+        data: query
     });
 };
 
@@ -80,6 +112,14 @@ export const getInfo = query => {
     return request({
         url: '/api/rOwnerInvoiceInfo/getInfo',
         method: 'post',
-        data: query,
+        data: query
+    });
+};
+
+
+export const getOwnerProp = id => {
+    return request({
+        url: '/api/rOwnerProperty/getOwnerProp/' + id,
+        method: 'get'
     });
 };

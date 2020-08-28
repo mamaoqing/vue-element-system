@@ -58,7 +58,7 @@
                 <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center">
+                <el-table-column label="操作" width="250" align="center">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -95,24 +95,38 @@
         </div>
         <el-dialog :title="title" :visible.sync="editVisible" width="60%">
             <el-form ref="editForm" :model="form" label-width="70px">
-                <el-form-item label="公司名称" label-width="100px">
-                    <el-input v-model="form.compName" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="社区名称" label-width="100px">
-                    <el-input v-model="form.commName" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="分区名称" label-width="100px">
-                    <el-input v-model="form.areaName" disabled></el-input>
-                </el-form-item>
-                <el-form-item label="编号" label-width="100px" prop="no"
-                              :rules="[
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="公司名称" label-width="100px">
+                            <el-input v-model="form.compName" disabled></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="社区名称" label-width="100px">
+                            <el-input v-model="form.commName" disabled></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="分区名称" label-width="100px">
+                            <el-input v-model="form.areaName" disabled></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="编号" label-width="100px" prop="no"
+                                      :rules="[
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
-                    <el-input v-model="form.no"></el-input>
-                </el-form-item>
-                <el-form-item label="位置" label-width="100px">
-                    <el-input v-model="form.position"></el-input>
-                </el-form-item>
+                            <el-input v-model="form.no" style="width: 350px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="位置" label-width="100px">
+                            <el-input v-model="form.position" style="width: 350px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="建筑类型" label-width="100px">
@@ -174,6 +188,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -271,29 +286,44 @@
         </el-dialog>
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
-                <el-form-item label="公司名称" label-width="100px" prop="compId"
-                              :rules="[
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="公司名称" label-width="100px" prop="compId"
+                                      :rules="[
                     { required: true, message: '请输入公司名称', trigger: 'blur' },
                 ]">
-                    <comp-util @comp="formCompValue" :on-change="form.compId"></comp-util>
-                </el-form-item>
-                <template v-if="true">
-                    <el-form-item label="社区名称" label-width="100px">
-                        <comm-util @comm="formCommValue" :comp-ids="child.compId" :change="child.commId"></comm-util>
-                    </el-form-item>
-                </template>
-                <el-form-item label="分区名称" label-width="100px">
-                    <area-util @area="areaValue" :comm-ids="child.commId"></area-util>
-                </el-form-item>
-                <el-form-item label="编号" label-width="100px" prop="no"
-                              :rules="[
+                            <comp-util @comp="formCompValue" :on-change="form.compId"></comp-util>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <template v-if="true">
+                            <el-form-item label="社区名称" label-width="100px">
+                                <comm-util @comm="formCommValue" :comp-ids="child.compId"
+                                           :change="child.commId"></comm-util>
+                            </el-form-item>
+                        </template>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="分区名称" label-width="100px">
+                            <area-util @area="areaValue" :comm-ids="child.commId"></area-util>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="编号" label-width="100px" prop="no"
+                                      :rules="[
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
-                    <el-input v-model="form.no"></el-input>
-                </el-form-item>
-                <el-form-item label="位置" label-width="100px">
-                    <el-input v-model="form.position"></el-input>
-                </el-form-item>
+                            <el-input v-model="form.no" style="width: 350px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="位置" label-width="100px">
+                            <el-input v-model="form.position"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="建筑类型" label-width="100px">
@@ -344,7 +374,8 @@
                     </el-col>
                     <el-col :span="8">
                         <el-form-item label="重用状态" label-width="100px">
-                            <dist-util @child1="checkForm" :distId="dist.occupyPropId" :distName="dist.occupyPropName"
+                            <dist-util @child1="checkForm" :distId="dist.occupyPropId"
+                                       :distName="dist.occupyPropName"
                                        :title="dist.occupyProp" :change="form.occupyState"></dist-util>
                         </el-form-item>
                     </el-col>
@@ -355,6 +386,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addVisible = false">取 消</el-button>
@@ -406,6 +438,7 @@
     import compUtil from '../common/comp'
     import commUtil from '../common/commutil'
     import areaUtil from "../common/areautil";
+    import commPage from '../common/commPage';
 
     import {
         listPark,
@@ -415,13 +448,14 @@
         upload,
         exportExcel,
         listOwner,
-        deleteAllPark
+        deleteAllPark,
+        validaIsOwner,validaIsOwnerid
     } from "../../api/asstes/parkingspace";
     import axios from 'axios'
 
     export default {
         components: {
-            distUtil, compUtil, commUtil, areaUtil
+            distUtil, compUtil, commUtil, areaUtil, commPage
         },
         data() {
             return {
@@ -430,6 +464,7 @@
                 },
                 listOwner: [],
                 deleteIds: [],
+                status:0,
                 ownerVisible: false,
                 addVisible: false,
                 editVisible: false,
@@ -447,7 +482,7 @@
                 form: {
                     child: {}
                 },
-                query: {pageNo: 1, size: 10,className: 'com.estate.sdzy.asstes.entity.RParkingSpace',pageTotal:0,},
+                query: {pageNo: 1, size: 10, className: 'com.estate.sdzy.asstes.entity.RParkingSpace', pageTotal: 0,},
                 dist: {
                     buildProp: '请选择建筑属性',
                     buildPropName: 'build',
@@ -476,6 +511,7 @@
                     intoProp: '请选择入位方式',
                     intoPropId: '42',
                     intoPropName: 'into',
+                    nos:'',
                 },
                 pageTotal: 0,
 
@@ -496,6 +532,7 @@
                 this.init();
             },
             add() {
+                this.status = 0;
                 this.form = {};
                 this.addVisible = !this.addVisible;
                 this.title = '添加停车位';
@@ -505,6 +542,7 @@
                 this.child.commId = parseInt(window.localStorage.getItem('commId'));
             },
             editPark(index, row) {
+                this.status = 1;
                 this.form = row;
                 this.title = '修改车位信息';
                 this.disabled = !this.disabled;
@@ -550,17 +588,34 @@
                 }
             },
             deletePark(id) {
-                this.$confirm('删除后，该车位与业主关系也会删除。确定要删除吗？', '提示', {
-                    type: 'warning'
-                }).then(() => {
-                    deletePark(id).then(res => {
-                        if (res.code === 0 && res.data) {
-                            this.$message.success(`删除成功`);
-                        } else {
-                            this.$message.success(`删除失败`);
-                        }
-                        this.init();
-                    });
+                validaIsOwnerid(id).then(res=>{
+                    if(!res.data){
+                        this.$confirm('该车位存在业主。确定要删除吗？', '提示', {
+                            type: 'warning'
+                        }).then(() => {
+                            deletePark(id).then(res => {
+                                if (res.code === 0 && res.data) {
+                                    this.$message.success(`删除成功`);
+                                } else {
+                                    this.$message.success(`删除失败`);
+                                }
+                                this.init();
+                            });
+                        });
+                    }else{
+                        this.$confirm('确定要删除吗？', '提示', {
+                            type: 'warning'
+                        }).then(() => {
+                            deletePark(id).then(res => {
+                                if (res.code === 0 && res.data) {
+                                    this.$message.success(`删除成功`);
+                                } else {
+                                    this.$message.success(`删除失败`);
+                                }
+                                this.init();
+                            });
+                        });
+                    }
                 });
             },
             checkIn(value, name) {
@@ -654,8 +709,8 @@
                 this.inputVusible = !this.inputVusible;
             },
             fileOutput() {
-                exportExcel(this.query).then(res=>{
-                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                exportExcel(this.query).then(res => {
+                    var blob = new Blob([res], {type: 'application/octet-stream'}, 'sheet.xlsx')
                     if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
                         window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
                     } else {
@@ -684,11 +739,11 @@
                 fd.append('file', file);
                 fd.append('className', this.query.className);
                 upload(fd).then(res => {
-                    if(res.code === 0 && res.data){
+                    if (res.code === 0 && res.data) {
                         this.$message.success(`文件导入成功！`);
                         this.init();
                         this.inputVusible = !this.inputVusible;
-                    }else{
+                    } else {
                         this.$message.error(res.msg);
                     }
                 })
@@ -702,15 +757,35 @@
             },
             deleteAll() {
                 if (this.deleteIds.length > 0) {
-                    this.$confirm('删除后，该车位与业主关系也会删除。确定要删除吗？', '提示', {
-                        type: 'warning'
-                    }).then(() => {
-                        deleteAllPark(this.deleteIds).then(res => {
-                            if (res.code === 0 && res.data) {
-                                this.$message.success(`批量删除成功！`);
-                                this.init();
-                            }
-                        });
+                    var d = this.deleteIds;
+                    var s = "";
+                    for (var i=0;i<d.length;i++){
+                        s += d[i]+",";
+                    }
+                    validaIsOwner(s).then(res=>{
+                        if(res.data === '' || res.data === null){
+                            this.$confirm('确认删除吗？', '提示', {
+                                type: 'warning'
+                            }).then(() => {
+                                deleteAllPark(this.deleteIds).then(res => {
+                                    if (res.code === 0 && res.data) {
+                                        this.$message.success(`批量删除成功！`);
+                                        this.init();
+                                    }
+                                });
+                            });
+                        }else{
+                            this.$confirm('车位编号'+res.data+'存在业主关系，确认删除吗？', '提示', {
+                                type: 'warning'
+                            }).then(() => {
+                                deleteAllPark(this.deleteIds).then(res => {
+                                    if (res.code === 0 && res.data) {
+                                        this.$message.success(`批量删除成功！`);
+                                        this.init();
+                                    }
+                                });
+                            });
+                        }
                     });
                 } else {
                     this.$message.error(`请选择需要删除的数据`);

@@ -5,7 +5,7 @@
                 v-for="item in data"
                 :key="item.value"
                 :label="item.name"
-                :value="item.id">
+                :value="item.name">
         </el-option>
     </el-select>
 </template>
@@ -52,7 +52,7 @@
         props: {
             distId: String,
             distName: String,
-            change: Number,
+            change: String,
         },
         methods: {
 

@@ -903,7 +903,7 @@ export default {
 
         },
         ownerDetail(index, row){
-            let linkID = row.id;
+            let linkID = row;
             this.ownerVisible = true;
             this.$nextTick(()=>{
                 this.$refs.ownerVisible.dataInitialization(linkID);
@@ -990,7 +990,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .handle-box {
     margin-bottom: 20px;
 }
@@ -1028,5 +1028,10 @@ export default {
 }
 .el-table--small td{
     padding: 1px 0;
+}
+.el-input--small .el-input__inner {
+    height: 32px;
+    width: 200px;
+    line-height: 32px;
 }
 </style>
