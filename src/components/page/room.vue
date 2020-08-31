@@ -60,35 +60,40 @@
                 elt
                 @row-click="openDetails"
                 @selection-change="handleSelectionChange"
+                cell-style="min-height:55"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="compName" label="物业公司"></el-table-column>
-                <el-table-column prop="commName" label="社区名称"></el-table-column>
-                <el-table-column prop="commAreaName" label="社区分区名称"></el-table-column>
-                <el-table-column prop="buildingName" label="建筑名称"></el-table-column>
-                <el-table-column prop="unitName" label="单元名称"></el-table-column>
-                <el-table-column prop="name" label="房间名称"></el-table-column>
-                <el-table-column prop="roomNo" label="房间号"></el-table-column>
-                <el-table-column prop="floor" label="楼层"></el-table-column>
-                <el-table-column prop="floorNum" label="楼层数"></el-table-column>
-                <el-table-column prop="elevatorNum" label="电梯数"></el-table-column>
-                <el-table-column prop="roomNum" label="每层房间数"></el-table-column>
-                <el-table-column prop="roomModel" label="房型"></el-table-column>
-                <el-table-column prop="roomType" label="房屋类型"></el-table-column>
-                <el-table-column prop="propertyRightNature" label="产权性质"></el-table-column>
-                <el-table-column prop="direction" label="朝向"></el-table-column>
-                <el-table-column prop="renovationLevel" label="装修程度"></el-table-column>
-                <el-table-column prop="usable" label="用途"></el-table-column>
-                <el-table-column prop="titleDeedNo" label="产权证号"></el-table-column>
-                <el-table-column prop="landDeedNo" label="土地证号"></el-table-column>
-                <el-table-column prop="contractNo" label="购房合同号"></el-table-column>
-                <el-table-column prop="state" label="状态"></el-table-column>
-                <el-table-column prop="createdName" label="创建人"></el-table-column>
-                <el-table-column prop="createdAt" label="创建日期"></el-table-column>
-                <el-table-column prop="modifiedName" label="修改人"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改日期"></el-table-column>
-                <el-table-column label="操作" width="180" align="center">
+                <el-table-column type="selection" width="55" align="center" min-height="55"></el-table-column>
+                <el-table-column prop="id" label="ID" width="55" align="center" min-height="55"></el-table-column>
+                <el-table-column prop="compName" label="物业公司" width="130" min-height="55"></el-table-column>
+                <el-table-column prop="commName" label="社区名称" width="120" min-height="55"></el-table-column>
+                <el-table-column prop="commAreaName" label="社区分区名称" width="120" min-height="55"></el-table-column>
+                <el-table-column prop="buildingName" label="建筑名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="unitName" label="单元名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="name" label="房间名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="roomNo" label="房间号" min-height="55"></el-table-column>
+                <el-table-column prop="floor" label="楼层" min-height="55"></el-table-column>
+                <el-table-column prop="floorNum" label="楼层数" min-height="55"></el-table-column>
+                <el-table-column prop="elevatorNum" label="电梯数" min-height="55"></el-table-column>
+                <el-table-column prop="roomNum" label="每层房间数" min-height="55"></el-table-column>
+                <el-table-column prop="roomModel" label="房型" min-height="55"></el-table-column>
+                <el-table-column prop="roomType" label="房屋类型" min-height="55"></el-table-column>
+                <el-table-column prop="propertyRightNature" label="产权性质" min-height="55"></el-table-column>
+                <el-table-column prop="direction" label="朝向" min-height="55"></el-table-column>
+                <el-table-column prop="renovationLevel" label="装修程度" min-height="55"></el-table-column>
+                <el-table-column prop="usable" label="用途" min-height="55"></el-table-column>
+                <el-table-column prop="buildingArea" label="建筑面积" min-height="55"></el-table-column>
+                <el-table-column prop="usableArea" label="使用面积" min-height="55"></el-table-column>
+                <el-table-column prop="heatingArea" label="暖气计费面积" min-height="55"></el-table-column>
+                <el-table-column prop="gardenArea" label="花园面积" min-height="55"></el-table-column>
+                <el-table-column prop="titleDeedNo" label="产权证号" min-height="55"></el-table-column>
+                <el-table-column prop="landDeedNo" label="土地证号" min-height="55"></el-table-column>
+                <el-table-column prop="contractNo" label="购房合同号" min-height="55"></el-table-column>
+                <el-table-column prop="state" label="状态" min-height="55"></el-table-column>
+                <el-table-column prop="createdName" label="创建人" min-height="55"></el-table-column>
+                <el-table-column prop="createdAt" label="创建日期" width="155" min-height="55"></el-table-column>
+                <el-table-column prop="modifiedName" label="修改人" min-height="55"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改日期" width="155" min-height="55"></el-table-column>
+                <el-table-column label="操作" width="280" align="center" min-height="55">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
@@ -713,9 +718,10 @@ export default {
                 } else {
                     var downloadElement = document.createElement('a');
                     var href = window.URL.createObjectURL(blob); //创建下载的链接
-
+                    debugger
                     downloadElement.href = href;
-                    downloadElement.download = unescape('房间信息.xls'); //下载后文件名
+
+                    downloadElement.download = unescape('房间信息'+this.getTime()+'.xls'); //下载后文件名
 
                     document.body.appendChild(downloadElement);
                     downloadElement.click(); //点击下载
@@ -725,6 +731,33 @@ export default {
                     window.URL.revokeObjectURL(href); //释放掉blob对象
                 }
             });
+        },
+        getTime(){
+            let date = new Date();
+            let yy = date.getFullYear();
+            let mm = date.getMonth() + 1;
+            if(mm<10){
+                mm = '0'+mm;
+            }
+            let dd = date.getDate();
+            if(dd<10){
+                dd = '0'+dd;
+            }
+            let h = date.getHours();
+            if(h<10){
+                h = '0'+h;
+            }
+            let m = date.getMinutes();
+            if(m<10){
+                m = '0'+m;
+            }
+            let s = date.getSeconds();
+            if(s<10){
+                s = '0'+s;
+            }
+            let ms = date.getMilliseconds();
+            let time = yy+""+mm+""+dd+""+h+""+m+""+s+""+ms;
+            return time;
         },
         select_status(val){
             this.$forceUpdate();

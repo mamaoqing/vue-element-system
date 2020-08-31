@@ -1,61 +1,55 @@
 import request from '../utils/request';
 
-export const insertMeter = query => {
+export const insertMeterRecord = query => {
     return request({
-        url: '/api/fMeter/insertMeter',
+        url: '/api/fMeterRecord/insertMeterRecord',
         method: 'post',
         data: query
     });
 };
 export const exportXlsByT = query => {
     return request({
-        url: '/api/fMeter/export',
+        url: '/api/fMeterRecord/export',
         method: 'post',
         params: query,
         responseType: 'blob'
     });
 };
-export const deleteMeter = id => {
+export const deleteMeterRecord = id => {
 
     return request({
-        url: '/api/fMeter/'+id,
+        url: '/api/fMeterRecord/'+id,
         method: 'delete'
     });
 };
 export const upload = file => {
 
     return request({
-        url: '/api/fMeter/upload',
+        url: '/api/fMeterRecord/upload',
         method: 'post',
         data: file
     });
 };
-export const updateMeter = query => {
+export const updateMeterRecord = query => {
 
     return request({
-        url: '/api/fMeter/updateMeter',
+        url: '/api/fMeterRecord/updateMeterRecord',
         method: 'put',
         data: query
     });
 };
-export const listMeter = query => {
+export const listMeterRecord = query => {
     return request({
-        url: '/api/fMeter/listMeter',
+        url: '/api/fMeterRecord/listMeterRecord',
         method: 'get',
         params: query
     });
 };
-export const listMeterNum = query => {
+export const listMeterRecordNum = query => {
     return request({
-        url: '/api/fMeter/listMeterNum',
+        url: '/api/fMeterRecord/listMeterRecordNum',
         method: 'get',
         params: query
     });
 };
-export const checkMeterNo = query => {
-    return request({
-        url: '/api/fMeter/checkMeterNo',
-        method: 'post',
-        data: query
-    });
-};
+

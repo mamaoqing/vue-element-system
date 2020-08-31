@@ -43,8 +43,11 @@
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="名称"></el-table-column>
                 <el-table-column prop="compName" label="物业公司"></el-table-column>
+                <el-table-column prop="compId" label="社区名称" v-if="false"></el-table-column>
                 <el-table-column prop="commName" label="社区名称"></el-table-column>
+                <el-table-column prop="commId" label="社区名称" v-if="false"></el-table-column>
                 <el-table-column prop="commAreaName" label="社区分区名称"></el-table-column>
+                <el-table-column prop="commAreaId" label="社区名称" v-if="false"></el-table-column>
                 <el-table-column prop="type" label="建筑类型"></el-table-column>
                 <el-table-column prop="no" label="建筑编号"></el-table-column>
                 <el-table-column prop="buildedDate" label="建造日期"></el-table-column>
@@ -251,18 +254,18 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
-                <el-form-item label="物业公司" prop="compId">
+                <el-form-item label="物业公司" >
                     <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="社区名称" prop="commId">
+                <el-form-item label="社区名称" >
                     <el-select v-model="form.commName" placeholder="请选择" @change="commChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="社区分区名称" prop="commAreaId">
-                    <el-select v-model="form.commAreaName" placeholder="请选择" @change="commAreaChange" :disabled="edit">
+                <el-form-item label="社区分区名称" prop="commAreaName">
+                    <el-select v-model="form.commAreaName" placeholder="请选择" @change="commAreaChange" >
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
@@ -317,7 +320,8 @@
 
 <script>
 
-import { insertBuilding,deleteBuilding,updateBuilding,listBuilding,getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,listBuildingNum,checkBuildingRoomUnit,copyBuilding,checkBulidingNameNo } from '../../api/building';
+import { insertBuilding,deleteBuilding,updateBuilding,listBuilding,getUserComm,getCommArea,getCommAreaContent,
+    getDictItemByDictId,listBuildingNum,checkBuildingRoomUnit,copyBuilding,checkBulidingNameNo,checkBulidingNameNoCopy } from '../../api/building';
 import { checkRoleMenuUser, deleteRole, listCompAll } from '../../api/role';
 
 
@@ -452,6 +456,8 @@ export default {
             pageTotal:0,
             disable:false,
             cmpVisible:false,
+            commAreaName:'',
+            commAreaId:'',
             compList:[],
             commList:[],
             commAreaList:[],
@@ -660,14 +666,18 @@ export default {
 
         },
         copyEdit(index, row) {
+            debugger
             this.idx = index;
             this.form = row;
             this.buildingName = row.name;
             this.buildingNo = row.no;
+            this.commAreaName = row.commAreaName;
+            this.commAreaId = row.commAreaId;
             this.copyVisible = true;
             this.disable=false;
             this.edit=true;
             this.title="复制建筑"
+            this.commChange(row.commId);
             this.$refs.form.clearValidate();
         },
         //表格行点击事件
@@ -732,10 +742,18 @@ export default {
         },
         saveCopy(title,buildingName,buildingNo,form){
             //需要判断是否修改了建筑的名称和编号
-            if(this.buildingName != this.form.name&&this.buildingNo != this.form.no){
+            if(this.buildingName != this.form.name&&this.buildingNo != this.form.no||this.commAreaName!=this.form.commAreaName){
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        checkBulidingNameNo(this.form).then(res => {
+                        debugger
+                        console.log(this.commAreaName);
+                        console.log(this.form.commAreaName);
+                        if(this.commAreaName==this.form.commAreaName){
+                            this.form.commAreaId = this.commAreaId;
+                        }else{
+                            this.form.commAreaId = this.form.commAreaName;
+                        }
+                        checkBulidingNameNoCopy(this.form).then(res => {
                             if (res.data == '') {
                                 copyBuilding(this.form).then(res => {
                                     this.copyVisible = false;

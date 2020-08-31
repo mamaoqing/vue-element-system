@@ -245,15 +245,17 @@
                     <el-form-item class="item" v-show="false" label-width="150px">
                         <el-input v-model="form.compId" disabled></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="社区名称" v-show="false" label-width="150px" prop="commId" :rules="[
+                    <el-form-item class="item" label="社区名称" label-width="150px" prop="commId" :rules="[
                         { required: true, message: '请输入单元名称', trigger: 'blur' },
                     ]">
                         <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm">
                             <el-option v-for="item in commArr" :key="item.id" :label="item.name"
                                        :value="item.id"></el-option>
+                            <el-option v-for="item in commArr" :key="item.id" :label="item.name"
+                                       :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="分区名称" v-show="false" prop="name" label-width="150px"
+                    <el-form-item class="item" label="分区名称" prop="name" label-width="150px"
                                   :rules="[
                         { required: true, message: '请输入分区名称', trigger: 'blur' },
                     ]">
@@ -285,11 +287,11 @@
                     ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="单元类型" prop="model" label-width="150px"
+                    <el-form-item label="单元类型" prop="modelId" label-width="150px"
                                   :rules="[
                         { required: true, message: '请选择单元类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model.number="form.model" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
+                        <el-select v-model.number="form.modelId" placeholder="请选择" ref="modelse" @change="handleChangeModel" >
                             <el-option v-for="item in modelArr" :key="item.id" :label="item.name" :value="item.id"></el-option>
                         </el-select>
                     </el-form-item>
@@ -647,17 +649,17 @@
             handleCopy(index, row) {
                 this.idx = index;
                 this.form = row;
-                console.log(row)
                 this.form.no = '';
                 this.form.name = '';
+                this.form.commAreaId = '';
+                this.form.buildingId = '';
+                this.form.commId = '';
+                let that = this
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-                getBuild(row.commAreaId).then(res => {
-                    this.buidlArr = res.data;
-                });
-                let that = this
+
                 this.modelArr.forEach(function(value,key,arr){
 
                     if(arr[key].name==that.form.model){
@@ -720,7 +722,6 @@
                 }else if(title === '复制单元'){
                     this.$refs['form'].validate(valid => {
                         if (valid) {
-
                             copyUnit(this.form).then(res => {
                                 if (res.code===0){
                                     this.editVisible = false;
@@ -808,5 +809,10 @@
 
     .el-table--small td {
         padding: 1px 0;
+    }
+    .el-select .el-input__inner {
+
+        width: 360px;
+
     }
 </style>

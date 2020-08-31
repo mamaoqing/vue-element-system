@@ -14,6 +14,13 @@ export const checkBulidingNameNo = query => {
         data: query
     });
 };
+export const checkBulidingNameNoCopy = query => {
+    return request({
+        url: '/api/rBuilding/checkBulidingNameNoCopy',
+        method: 'post',
+        data: query
+    });
+};
 export const copyBuilding = query => {
     return request({
         url: '/api/rBuilding/copyBuilding',
