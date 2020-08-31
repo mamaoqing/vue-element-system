@@ -60,36 +60,40 @@
                 elt
                 @row-click="openDetails"
                 @selection-change="handleSelectionChange"
-                cell-style="height:85"
+                cell-style="min-height:55"
             >
-                <el-table-column type="selection" width="55" align="center" height="85"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center" height="85"></el-table-column>
-                <el-table-column prop="compName" label="物业公司" width="130" height="85"></el-table-column>
-                <el-table-column prop="commName" label="社区名称" width="120" height="85"></el-table-column>
-                <el-table-column prop="commAreaName" label="社区分区名称" width="120" height="85"></el-table-column>
-                <el-table-column prop="buildingName" label="建筑名称" height="85"></el-table-column>
-                <el-table-column prop="unitName" label="单元名称" height="85"></el-table-column>
-                <el-table-column prop="name" label="房间名称" height="85"></el-table-column>
-                <el-table-column prop="roomNo" label="房间号" height="85"></el-table-column>
-                <el-table-column prop="floor" label="楼层" height="85"></el-table-column>
-                <el-table-column prop="floorNum" label="楼层数" height="85"></el-table-column>
-                <el-table-column prop="elevatorNum" label="电梯数" height="85"></el-table-column>
-                <el-table-column prop="roomNum" label="每层房间数" height="85"></el-table-column>
-                <el-table-column prop="roomModel" label="房型" height="85"></el-table-column>
-                <el-table-column prop="roomType" label="房屋类型" height="85"></el-table-column>
-                <el-table-column prop="propertyRightNature" label="产权性质" height="85"></el-table-column>
-                <el-table-column prop="direction" label="朝向" height="85"></el-table-column>
-                <el-table-column prop="renovationLevel" label="装修程度" height="85"></el-table-column>
-                <el-table-column prop="usable" label="用途" height="85"></el-table-column>
-                <el-table-column prop="titleDeedNo" label="产权证号" height="85"></el-table-column>
-                <el-table-column prop="landDeedNo" label="土地证号" height="85"></el-table-column>
-                <el-table-column prop="contractNo" label="购房合同号" height="85"></el-table-column>
-                <el-table-column prop="state" label="状态" height="85"></el-table-column>
-                <el-table-column prop="createdName" label="创建人" height="85"></el-table-column>
-                <el-table-column prop="createdAt" label="创建日期" width="155" height="85"></el-table-column>
-                <el-table-column prop="modifiedName" label="修改人" height="85"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改日期" width="155" height="85"></el-table-column>
-                <el-table-column label="操作" width="280" align="center" height="85">
+                <el-table-column type="selection" width="55" align="center" min-height="55"></el-table-column>
+                <el-table-column prop="id" label="ID" width="55" align="center" min-height="55"></el-table-column>
+                <el-table-column prop="compName" label="物业公司" width="130" min-height="55"></el-table-column>
+                <el-table-column prop="commName" label="社区名称" width="120" min-height="55"></el-table-column>
+                <el-table-column prop="commAreaName" label="社区分区名称" width="120" min-height="55"></el-table-column>
+                <el-table-column prop="buildingName" label="建筑名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="unitName" label="单元名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="name" label="房间名称" min-height="55" width="120"></el-table-column>
+                <el-table-column prop="roomNo" label="房间号" min-height="55"></el-table-column>
+                <el-table-column prop="floor" label="楼层" min-height="55"></el-table-column>
+                <el-table-column prop="floorNum" label="楼层数" min-height="55"></el-table-column>
+                <el-table-column prop="elevatorNum" label="电梯数" min-height="55"></el-table-column>
+                <el-table-column prop="roomNum" label="每层房间数" min-height="55"></el-table-column>
+                <el-table-column prop="roomModel" label="房型" min-height="55"></el-table-column>
+                <el-table-column prop="roomType" label="房屋类型" min-height="55"></el-table-column>
+                <el-table-column prop="propertyRightNature" label="产权性质" min-height="55"></el-table-column>
+                <el-table-column prop="direction" label="朝向" min-height="55"></el-table-column>
+                <el-table-column prop="renovationLevel" label="装修程度" min-height="55"></el-table-column>
+                <el-table-column prop="usable" label="用途" min-height="55"></el-table-column>
+                <el-table-column prop="buildingArea" label="建筑面积" min-height="55"></el-table-column>
+                <el-table-column prop="usableArea" label="使用面积" min-height="55"></el-table-column>
+                <el-table-column prop="heatingArea" label="暖气计费面积" min-height="55"></el-table-column>
+                <el-table-column prop="gardenArea" label="花园面积" min-height="55"></el-table-column>
+                <el-table-column prop="titleDeedNo" label="产权证号" min-height="55"></el-table-column>
+                <el-table-column prop="landDeedNo" label="土地证号" min-height="55"></el-table-column>
+                <el-table-column prop="contractNo" label="购房合同号" min-height="55"></el-table-column>
+                <el-table-column prop="state" label="状态" min-height="55"></el-table-column>
+                <el-table-column prop="createdName" label="创建人" min-height="55"></el-table-column>
+                <el-table-column prop="createdAt" label="创建日期" width="155" min-height="55"></el-table-column>
+                <el-table-column prop="modifiedName" label="修改人" min-height="55"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改日期" width="155" min-height="55"></el-table-column>
+                <el-table-column label="操作" width="280" align="center" min-height="55">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
