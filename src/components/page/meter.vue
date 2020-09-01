@@ -138,15 +138,19 @@
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="物业编号"  prop="propertyId" :disabled="false">
-                    <el-input v-model="form.propertyName" :disabled="true"></el-input>
-                    <el-button
-                            type="text"
-                            icon="el-icon-search"
-                            @click.stop
-                            @click="roomParkingSearch()"
-                    >选择</el-button>
-                </el-form-item>
+                <el-row>
+                    <el-form-item label="物业编号"  prop="propertyId" :disabled="false" >
+                            <el-input v-model="form.propertyName" :disabled="true" ></el-input>
+                    </el-form-item>
+                    <el-col span="8">
+                        <el-button
+                                type="text"
+                                icon="el-icon-search"
+                                @click.stop
+                                @click="roomParkingSearch()"
+                        >选择</el-button>
+                    </el-col>
+                </el-row>
                 <el-form-item label="仪表类型" prop="type" >
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
