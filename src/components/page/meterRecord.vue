@@ -133,7 +133,7 @@
                         <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="仪表类型" prop="type" >
+                <!--<el-form-item label="仪表类型" prop="type" >
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
                         <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
@@ -146,8 +146,28 @@
                         @click.stop
                         @click="meterSearch()"
                 >选择</el-button>
-                </el-form-item>
-               <el-form-item label="抄表刻度" prop="newNum" >
+                </el-form-item>-->
+                <el-row>
+                    <el-form-item label="仪表类型" prop="type" >
+                        <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
+                            <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="仪表编号" prop="no" >
+                        <el-input v-model="form.no" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-col span="8">
+                        <el-button
+                                type="text"
+                                icon="el-icon-search"
+                                @click.stop
+                                @click="meterSearch()"
+                        >选择</el-button>
+                    </el-col>
+                </el-row>
+                <el-form-item label="抄表刻度" prop="newNum" >
                     <el-input v-model="form.newNum" ></el-input>
                 </el-form-item>
                 <el-form-item label="抄表时间" prop="modifiedAt">
