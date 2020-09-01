@@ -148,7 +148,7 @@
                 <el-form-item label="协议类型" label-width="100px">
                     <child @child1="checkInForm" :distId="agreementId" :distName="agreementType"></child>
                 </el-form-item>
-                <el-form-item label="协议开始时间" label-width="100px" prop="beginDate"
+                <el-form-item label="开始时间" label-width="100px" prop="beginDate"
                               :rules="[
                     { required: true, message: '请选择协议开始时间', trigger: 'blur' },
                 ]">
@@ -159,7 +159,7 @@
                             placeholder="选择协议开始日期">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="协议结束时间" label-width="100px" prop="endDate"
+                <el-form-item label="结束时间" label-width="100px" prop="endDate"
                               :rules="[
                     { required: true, message: '请选择协议结束时间', trigger: 'blur' },
                 ]">
@@ -236,7 +236,7 @@
                 <el-form-item label="协议类型" label-width="100px">
                     <child @child1="checkInForm" :distId="agreementId" :distName="agreementType" :change="agreementChange"></child>
                 </el-form-item>
-                <el-form-item label="协议开始时间" label-width="100px" prop="beginDate"
+                <el-form-item label="开始时间" label-width="100px" prop="beginDate"
                               :rules="[
                     { required: true, message: '请选择协议开始时间', trigger: 'blur' },
                 ]">
@@ -247,7 +247,7 @@
                             placeholder="选择协议开始日期">
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="协议结束时间" label-width="100px" prop="endDate"
+                <el-form-item label="结束时间" label-width="100px" prop="endDate"
                               :rules="[
                     { required: true, message: '请选择协议结束时间', trigger: 'blur' },
                 ]">
@@ -346,7 +346,7 @@
             },
             addAgreement() {
                 this.form = {};
-                this.title = '新增协议';
+                this.title = '新增社区协议';
                 this.addVisible = true;
             },
             editAgree(index, row) {
@@ -354,7 +354,7 @@
                 this.form = row;
                 this.agreementChange = Number(row.type);
                 this.form.roleValue = row.roleId;
-                this.title = '修改协议';
+                this.title = '修改社区协议';
                 this.editVisible = true;
             },
             deleteAgree(id) {
@@ -370,12 +370,12 @@
                 });
             },
             submit() {
-                if (this.title === '新增协议') {
+                if (this.title === '新增社区协议') {
                     this.$refs['addForm'].validate(valid => {
                         if (valid) {
                             insertAgreement(this.form).then(res => {
                                 if (res.code === 0 && res.data) {
-                                    this.$message.success('协议添加成功！！');
+                                    this.$message.success('社区协议添加成功！！');
                                     this.addVisible = false;
                                     this.form = {};
                                     this.init();
@@ -388,7 +388,7 @@
                         if (valid) {
                             updateAgreement(this.form).then(res => {
                                 if (res.code === 0 && res.data) {
-                                    this.$message.success('协议修改成功！！');
+                                    this.$message.success('社区协议修改成功！！');
                                     this.editVisible = false;
                                     this.init();
                                 }
