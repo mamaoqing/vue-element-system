@@ -71,3 +71,25 @@ export const getParkIds = query => {
         method: 'get'
     });
 };
+
+export const getCostPark = query => {
+    return request({
+        url: '/order/fCostRuleRoom/costPark/'+query,
+        method: 'get'
+    });
+};
+
+export const deletparkById = query => {
+    return request({
+        url: '/order/fCostRuleRoom/'+query,
+        method: 'delete'
+    });
+};
+
+export const deleteAllPark = query => {
+    return request({
+        url: '/order/fCostRuleRoom/deleteAllParks',
+        method: 'delete',
+        params:query
+    });
+};

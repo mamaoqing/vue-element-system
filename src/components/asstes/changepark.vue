@@ -152,11 +152,10 @@
         },
         created() {
             this.init();
-
         },
         props:{
             shows : Boolean,
-            change : Array
+            change : Array,
         },
         watch:{
             shows : {
@@ -283,6 +282,7 @@
             selectRow(selection, row) {
             },
             selectChange(selection) {
+                console.log(123);
                 this.deleteIds = [];
                 this.parentuse = [];
                 for (var i = 0; i < selection.length; i++) {
