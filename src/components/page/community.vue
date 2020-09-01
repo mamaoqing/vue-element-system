@@ -130,7 +130,7 @@
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
                                       :rules="[
                     { required: true, message: '请选择公司名称', trigger: 'blur' },
@@ -148,7 +148,7 @@
                             </template>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="社区名" label-width="100px" prop="name"
                                       :rules="[
                     { required: true, message: '请输入社区名称', trigger: 'blur' },
@@ -157,7 +157,7 @@
                         </el-form-item>
 
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="用途类型" label-width="100px">
                             <child style="width: 250px" @child1="checkInForm" :distId="useTypeDistId"
                                    :distName="useType"></child>
@@ -165,25 +165,25 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="状态" label-width="100px">
                             <child @child1="checkInForm" style="width: 250px" :distId="commStateDistId"
                                    :distName="commState"></child>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="经度" label-width="100px">
                             <el-input v-model="form.latitude" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="纬度" label-width="100px">
                             <el-input v-model="form.longitude" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="建造日期" label-width="100px">
                             <el-date-picker
                                     v-model="form.buildedDate"
@@ -194,7 +194,7 @@
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="交付日期" label-width="100px">
                             <el-date-picker
                                     v-model="form.deliverDate"
@@ -205,14 +205,21 @@
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="8">
-                        <el-form-item label="备注" label-width="100px">
-                            <el-input v-model="form.remark" style="width: 250px"></el-input>
+                </el-row>
+                <el-row>
+                    <el-col :span="7">
+                        <el-form-item label="电话" label-width="100px">
+                            <el-input v-model="form.tel" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="邮箱" label-width="100px">
+                            <el-input v-model="form.email" style="width: 450px"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="地址" label-width="100px">
                             <el-cascader
                                     v-model="partyOrganId"
@@ -236,7 +243,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="7">
                         <el-form-item label="社区图标" label-width="100px">
                             <el-input v-model="form.iconPath" style="width: 250px"></el-input>
                         </el-form-item>
@@ -248,28 +255,21 @@
                     </el-col>
                 </el-row>
 
-
-                <el-row>
-                    <el-col :span="8">
-                        <el-form-item label="电话" label-width="100px">
-                            <el-input v-model="form.tel" style="width: 250px"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                        <el-form-item label="邮箱" label-width="100px">
-                            <el-input v-model="form.email" style="width: 450px"></el-input>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
                 <el-row>
                     <el-col :span="24">
                         <el-form-item label="社区简介" label-width="100px">
-                            <el-input v-model="form.introduction"></el-input>
+                            <el-input v-model="form.introduction" style="width: 450px"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
-
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input v-model="form.remark" style="width: 450px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <div style="border-top: solid 1px #ccc;width: 100%;height: 1px;margin-bottom: 15px;"></div>
                 <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -278,7 +278,7 @@
             </span>
         </el-dialog>
         <el-dialog :title="title" :visible.sync="editVisible" width="60%" :before-close="closeEdit">
-            <el-form ref="editForm" :model="form" label-width="70px">
+            <el-form ref="editForm" :model="form" style="text-align: center" label-width="70px">
                 <el-row>
                     <el-col :span="8">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
@@ -419,6 +419,7 @@
                 </el-row>
 
 
+                <div style="border-top: solid 1px #ccc;width: 100%;height: 1px;margin-bottom: 15px;"></div>
                 <commPage :form="form" :status="status" :editVisible="addVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -517,8 +518,7 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submit()">确 定</el-button>
+                <el-button @click="detailVisible = false">确 定</el-button>
             </span>
         </el-dialog>
         <el-dialog :title="title" :visible.sync="userVisible" width="30%">
@@ -864,4 +864,5 @@
     .editor-btn {
         margin-top: 20px;
     }
+
 </style>

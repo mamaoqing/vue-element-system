@@ -13,7 +13,7 @@ module.exports = {
         },
         proxy: {
             '/api':{
-                target:'http://192.168.0.105:9000/',
+                target:'http://localhost:9000/',
                 changeOrigin: true,
                 ws: true,
                 write: {
@@ -24,7 +24,7 @@ module.exports = {
                 }
             },
             '/order': {
-                target: 'http://192.168.0.107:9001/',
+                target: 'http://localhost:9001/',
                 changeOrigin: true,
                 ws: true,
                 pathRewrite: {

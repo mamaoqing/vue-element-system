@@ -58,7 +58,7 @@
                 <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
-                <el-table-column label="操作" width="250" align="center">
+                <el-table-column label="操作" width="250" align="center" class-name="show-par">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -481,11 +481,14 @@
         },
         data() {
             return {
+                changepark : [],
+                isshow:true,
                 header: {
                     'Authentication-Token': localStorage.getItem('token')
                 },
                 listOwner: [],
                 deleteIds: [],
+                parentuse: [],
                 status:0,
                 ownerVisible: false,
                 addVisible: false,
@@ -541,14 +544,34 @@
         },
         created() {
             this.init();
+
+        },
+        props:{
+            shows : Boolean,
+            change : Array
+        },
+        watch:{
+            shows : {
+                immediate: true,
+                handler: function (newVal) {
+                    this.isshow = newVal;
+                }
+            },
+            change : {
+                immediate: true,
+                handler: function (newVal) {
+                    this.changepark = newVal;
+                }
+            }
         },
         methods: {
             init() {
+                this.isshow = true;
                 listPark(this.query).then(res => {
                     this.parkData = res.data.records;
                     this.pageTotal = res.data.total;
                     this.query.pageTotal = res.data.total;
-                })
+                });
             },
             search() {
                 this.init();
@@ -819,11 +842,21 @@
             },
             selectChange(selection) {
                 this.deleteIds = [];
+                this.parentuse = [];
                 for (var i = 0; i < selection.length; i++) {
                     this.deleteIds.push(selection[i].id);
+                    this.parentuse.push(selection[i].id)
                 }
+
+                this.$emit("park", this.parentuse);
             },
+
 
         }
     }
 </script>
+<style scoped>
+    .show-par{
+        display: block;
+    }
+</style>

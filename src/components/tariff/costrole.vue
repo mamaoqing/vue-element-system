@@ -9,6 +9,7 @@
         </div>
         <div class="container">
             <div class="handle-box">
+                <comp-util @comp="compValue"></comp-util>
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="add">新增</el-button>
             </div>
@@ -39,7 +40,7 @@
                 <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75" min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155" min-height="55"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="255">
+                <el-table-column label="操作" width="" align="center" width="325">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -57,7 +58,13 @@
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
-                                @click="addUnit(scope.row.id)">添加物业单位
+                                @click="addUnit(scope.row.id)">添加住宅
+                        </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="addPark(scope.row.id)">添加车位
                         </el-button>
                     </template>
                 </el-table-column>
@@ -148,18 +155,18 @@
                 </el-row>
                 <el-row>
                     <el-col :span="24">
+                    <el-form-item label="计费方式" label-width="100px" prop="billingMethod"
+                                                          :rules="[
+                                        { required: true, message: '请选择计费方式', trigger: 'blur' },
+                                    ]">
+                                            <dist-util @child1="checkForm" :distId="dist.estateId" :distName="dist.estateName"
+                                                       :title="dist.estateProp" :change="form.billingMethod"></dist-util>
+                                            </el-form-item>
                         <el-form-item label="价格" label-width="100px" prop="price"
                                       :rules="[
                     { required: true, message: '请输入价格', trigger: 'blur' },
                 ]">
                             <el-input v-model="form.price" type='number' style="width: 150px"></el-input>
-                        </el-form-item>
-                        <el-form-item label="价格单位" label-width="100px" prop="priceUnit"
-                                      :rules="[
-                    { required: true, message: '请选择结束日期', trigger: 'blur' },
-                ]">
-                            <dist-util @child1="checkForm" :distId="dist.priceId" :distName="dist.priceName"
-                                       :title="dist.priceProp" :change="form.priceUnit"></dist-util>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -183,6 +190,13 @@
                 </el-row>
                 <el-row>
                     <el-col :span="24">
+                    <el-form-item label="价格单位" label-width="100px" prop="priceUnit"
+                                                          :rules="[
+                                        { required: true, message: '请选择结束日期', trigger: 'blur' },
+                                    ]">
+                                                <dist-util @child1="checkForm" :distId="dist.priceId" :distName="dist.priceName"
+                                                           :title="dist.priceProp" :change="form.priceUnit"></dist-util>
+                                            </el-form-item>
                         <el-form-item label="账单周期" label-width="100px" prop="billCycle"
                                       :rules="[
                     { required: true, message: '请输入账单周期', trigger: 'blur' },
@@ -190,29 +204,29 @@
                             <dist-util @child1="checkForm" :distId="dist.billId" :distName="dist.billName"
                               :title="dist.billProp" :change="form.billCycle"></dist-util>
                         </el-form-item>
-                        <el-form-item label="账单天数" label-width="100px" prop="billDay"
-                                      :rules="[
-                    { required: true, message: '请输入账单天数', trigger: 'blur' },
-                ]">
-                            <el-input v-model="form.billDay" placeholder="有正负之分，+表示之后，-表示之前" style="width: 250px"></el-input>
-                        </el-form-item>
                     </el-col>
                 </el-row>
 
                 <el-row>
                     <el-col :span="24">
+                    <el-form-item label="账单天数" label-width="100px" prop="billDay"
+                                                          :rules="[
+                                        { required: true, message: '请输入账单天数', trigger: 'blur' },
+                                    ]">
+                                                <el-input v-model="form.billDay" placeholder="有正负之分，+表示之后，-表示之前" style="width: 250px"></el-input>
+                                            </el-form-item>
                         <el-form-item label="付款期" label-width="100px" prop="billCycle"
                                       :rules="[
                     { required: true, message: '请输入付款期', trigger: 'blur' },
                 ]">
                            <el-input type="Integer" v-model="form.payTime" placeholder="" style="width: 250px"></el-input>
                         </el-form-item>
-                        <el-form-item label="计费方式" label-width="100px" prop="billingMethod"
-                                      :rules="[
-                    { required: true, message: '请选择计费方式', trigger: 'blur' },
-                ]">
-                        <dist-util @child1="checkForm" :distId="dist.estateId" :distName="dist.estateName"
-                                   :title="dist.estateProp" :change="form.billingMethod"></dist-util>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="备注" label-width="100px">
+                            <el-input  v-model="form.remark" placeholder="" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -378,17 +392,37 @@
                 <el-button type="primary" @click="submitUnit()">确 定</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="addParkVisible" width="80%">
+            <parkingSpace v-if="addParkVisible" @park="park" :shows="false" ref="parkingSpace" :change="[1,10]"></parkingSpace>
+            <span slot="footer" class="dialog-footer">
+
+                <el-button @click="addParkVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitPark()">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import {listCostRule, insertCostRule, updateCostRule, deleteCostRule, listCostItem,insertRuleRoom,getRoomIds} from '../../api/tariff/costrule'
+    import {
+        listCostRule,
+        insertCostRule,
+        updateCostRule,
+        deleteCostRule,
+        listCostItem,
+        insertRuleRoom,
+        getRoomIds,
+        insertRulePark,
+        getParkIds
+    } from '../../api/tariff/costrule'
+    import compUtil from '../common/comp'
     import {getComp} from "../../api/user";
     import distUtil from "../common/distutil"
     import trees from '../common/tree'
+    import parkingSpace from '../asstes/changepark'
     export default {
         components: {
-            distUtil,trees
+            distUtil,trees,parkingSpace,compUtil
         },
         data() {
             return {
@@ -413,6 +447,7 @@
                 addForm:{
                     rooms:'',
                     ruleId:'',
+                    parks:'',
                 },
                 ruleData: [],
                 changeRoom:[],
@@ -424,9 +459,11 @@
                     size: 10,
                 },
                 addVisible: false,
+                addParkVisible: false,
                 editVisible: false,
                 addUnitVisible: false,
                 pageTotal: 0,
+                parkIds:'',
             }
         },
         created() {
@@ -436,7 +473,6 @@
         methods: {
             init() {
                 listCostRule(this.query).then(res => {
-                    console.log(res);
                     this.ruleData = res.data.records;
                     this.pageTotal = res.data.total;
                 });
@@ -462,12 +498,28 @@
                 })
             },
             addUnit(id){
+
                 getRoomIds(id).then(res=>{
                    this.changeRoom = res.data;
+                    this.addUnitVisible = !this.addUnitVisible;
                 });
                 this.addForm.ruleId = id;
-                this.addUnitVisible = !this.addUnitVisible;
                 this.title='选择物业单位';
+
+            },
+            addPark(id){
+                this.title = '请选择车位';
+                let linkID = id;
+                let ids = '';
+                this.addForm.ruleId = id;
+                // 查询费用标准下的停车位信息
+                getParkIds(id).then(res=>{
+                    ids=res.data;
+                    this.addParkVisible = !this.addParkVisible;
+                    this.$nextTick(() => {
+                        this.$refs.parkingSpace.init(ids);
+                    });
+                });
 
             },
             submitUnit(){
@@ -476,6 +528,16 @@
                         this.$message.success(`设置成功`);
                         this.addUnitVisible = !this.addUnitVisible;
                         this.changeRoom = [];
+                    }else{
+                        this.$message.error(`设置失败！`);
+                    }
+                });
+            },
+            submitPark(){
+                insertRulePark(this.addForm).then(res=>{
+                    if(res.code === 0 && res.data){
+                        this.$message.success(`设置成功`);
+                        this.addParkVisible = !this.addParkVisible;
                     }else{
                         this.$message.error(`设置失败！`);
                     }
@@ -575,6 +637,24 @@
                 }else{
                     this.addForm.rooms = '';
                 }
+            },
+            park(value){
+                this.unique(value);
+            },
+            unique(arr) {
+                this.addForm.parks = '';
+                var arrs=[];    //定义一个临时数组
+                for(var i = 0; i < arr.length; i++){    //循环遍历当前数组
+                    if(arrs.indexOf(arr[i]) == -1){
+                        arrs.push(arr[i]);
+                    }
+                }
+                for(var i = 0; i < arrs.length; i++){
+                    this.addForm.parks += arrs[i]+',';
+                }
+            },
+            compValue(value) {
+                this.query.compId = value;
             },
 
         }
