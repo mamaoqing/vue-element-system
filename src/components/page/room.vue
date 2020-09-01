@@ -101,6 +101,12 @@
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
+                                @click="addOwner(scope.$index, scope.row)"
+                        >添加业主</el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
                                 @click="ownerDetail(scope.$index, scope.row)"
                         >查看业主</el-button>
                         <el-button
@@ -360,6 +366,112 @@
         <el-dialog  :visible.sync="ownerVisible" append-to-body width="75%" >
             <ownerVisible v-if="ownerVisible" ref="ownerVisible"></ownerVisible>
         </el-dialog>
+        <el-dialog  :visible.sync="ownerListVisible" append-to-body width="25%" >
+            <el-form ref="formOwner" :model="formOwner" label-width="100px" :disabled="disable">
+                <el-form-item label="选择业主" style="float: none;margin-left: 50px" prop="ownerId" :rules="[
+                        { required: true, message: '请选择业主', trigger: 'blur' },
+                    ]">
+                    <el-input v-model="formOwner.ownerId" v-show="false"></el-input>
+                    <el-input v-model="ownerName" :disabled="true" style="width: 150px"></el-input>
+                    <el-button
+                            type="text"
+                            icon="el-icon-search"
+                            @click.stop
+                            @click="selectOwner()"
+                    >选择</el-button>
+                </el-form-item>
+                <el-form-item label="关系类型" style="float: none;margin-left: 50px" prop="type" :rules="[
+                        { required: true, message: '请选择关系', trigger: 'blur' },
+                    ]">
+                    <el-select v-model="formOwner.type" placeholder="请选择" style="width: 150px">
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in types" >{{types.name}}</el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="备注" style="float: none;margin-left: 50px">
+                    <el-input v-model="formOwner.remark" style="width: 150px"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                    <el-button @click="ownerListVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="saveOwnerAdd(title,'formOwner')">确 定</el-button>
+                </span>
+        </el-dialog>
+        <!--   选择业主弹出框     -->
+        <el-dialog  :visible.sync="selectOwnerVis" append-to-body>
+            <div class="container">
+                <div class="crumbs">
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item>
+                            <i class="el-icon-lx-cascades"></i> 点击选择业主
+                        </el-breadcrumb-item>
+                    </el-breadcrumb>
+                </div>
+                <el-table
+                        :data="tableData2"
+                        border
+                        class="table"
+                        ref="multipleTable"
+                        header-cell-class-name="table-header"
+                        @selection-change="handleSelection"
+                >
+                    <el-table-column type="selection" width="55" align="center"></el-table-column>
+                    <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
+                    <el-table-column prop="ownerType" label="业主类型" min-width="90" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="ownerAddr" label="业主地址" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="tel" label="电话" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="email" label="邮箱" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="certType" label="证件类型" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="certNumber" label="证件号码" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="industry" label="行业" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="sex" label="性别" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="nativePlace" label="籍贯" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="education" label="学历" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="state" label="状态" min-width="55" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkName" label="联系人" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkTel" label="联系电话" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkAddr" label="联系人地址" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="createdName" label="创建人" align="center" min-width="75"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
+                                     min-height="55"></el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <span slot="footer" class="dialog-footer" style="float: left">
+                        <el-button @click="ownerNo()">取 消</el-button>
+                        <el-button type="primary" @click="ownerYes()">确 定</el-button>
+                    </span>
+                    <el-pagination
+                            background
+                            layout="total, prev, pager, next"
+                            :current-page="query2.pageNo"
+                            :page-size="query2.size"
+                            :total="pageTotal2"
+                            @current-change="handlePageChange"
+                    ></el-pagination>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -370,6 +482,7 @@ import { listCompAll } from '../../api/role';
 import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload,exportXlsByT} from '../../api/room';
 import menu1 from './roomUpload';
 import ownerVisible from './owner';
+import { getOwenList, insertRoomOwner } from '../../api/owner';
 export default {
     name:"roomlistpage",
     props:{
@@ -535,17 +648,32 @@ export default {
                 heatingArea:'',
                 pageNo: 1,
                 size: 10
+            }
+            ,
+            query2: {
+                compId: '',
+                commId: '',
+                roomId:'',
+                delIds:'',
+                pageNo: 1,
+                size: 10
             },
             tableData: [],
+            tableData2: [],
+            formOwner: {},
             multipleSelection: [],
             delList: [],
             editVisible: false,
             updateVisible:false,
+            selectOwnerVis:false,
+            ownerListVisible:false,
+            ownerName:'',
             uploadVisible:false,
             copyVisible:false,
             edit:false,
             unitDisable:true,
             pageTotal:0,
+            pageTotal2:0,
             disable:false,
             cmpVisible:false,
             ownerVisible:false,
@@ -565,6 +693,7 @@ export default {
             formCopy:{},
             unitForm:{},
             idx: -1,
+            types:[],
             title:'',
             buildingName:'',
             buildingNo:'',
@@ -659,6 +788,14 @@ export default {
                     }
                 });
             }
+        },
+        ownerYes(){
+            this.selectOwnerVis = false
+        },
+        ownerNo(){
+            this.formOwner.ownerId = ''
+            this.ownerName = ''
+            this.selectOwnerVis = false
         },
         commAreaChange(val){
             if(this.form.commAreaId!=undefined||val!=undefined){
@@ -803,6 +940,9 @@ export default {
             getDictItemByDictId(31).then(res => {//7是装修程度的id
                 this.renovationLevelList = res.data;
             });
+            getDictItemByDictId(11).then(res => {//11是业主与房屋关系类型的id
+                this.types = res.data;
+            });
         },
 
         // 触发搜索按钮
@@ -910,6 +1050,15 @@ export default {
             })
 
         },
+        addOwner(index, row){
+            this.formOwner.compId = row.compId;
+            this.formOwner.commId = row.commId;
+            this.formOwner.commAreaId = row.commAreaId;
+            this.formOwner.buildingId = row.buildingId;
+            this.formOwner.roomId = row.id;
+            this.ownerListVisible = true
+
+        },
         copyEdit(index, row) {
             this.idx = index;
             this.form = row;
@@ -965,6 +1114,22 @@ export default {
             }
 
         },
+        saveOwnerAdd(title,form) {
+            this.$refs[form].validate((valid)=>{
+                if(valid) {
+                    console.log(this.formOwner)
+                    insertRoomOwner(this.formOwner).then(res => {
+                        if (res.code===0){
+                            this.$message.success(`添加成功`);
+                            this.ownerListVisible = false;
+                        }else{
+                            this.$message.error(res.msg);
+                        }
+                    });
+                }
+            });
+        },
+
         // 分页导航
         handlePageChange(val) {
             this.$set(this.query, 'pageNo', val);
@@ -985,6 +1150,29 @@ export default {
 
             this.unitDisable = false
             this.getData();
+        },
+        selectOwner(){
+            this.selectOwnerVis = true
+            getOwenList(this.query2).then(res => {
+                this.tableData2 = res.data.data;
+                this.pageTotal2 = res.data.pageTotal || 0;
+            });
+        },
+        handleSelection(val){
+            this.ownerName = '';
+            const length = val.length;
+            let str = '';
+            for (let i = 0; i < length; i++) {
+                if (i===length-1){
+                    str +=val[i].id;
+                }else{
+                    str +=val[i].id+',';
+                }
+                this.ownerName +=  val[i].name + ';';
+            }
+            this.formOwner.ownerId = str
+            console.log(this.ownerName)
+            console.log(this.formOwner.ownerId)
         }
     }
 };
