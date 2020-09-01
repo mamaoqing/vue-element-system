@@ -17,8 +17,8 @@
                 <el-option key="qxz" label="请选择单元名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.roomNo" placeholder="房间编号" class="handle-input mr10" ></el-input>
-            <el-input v-model="query.name" placeholder="房间名称" class="handle-input mr10" ></el-input>
+            <el-input v-model="query.roomNo" placeholder="房间编号" class="handle-input mr10" style="width: 130px;"></el-input>
+            <el-input v-model="query.name" placeholder="房间名称" class="handle-input mr10" style="width: 150px;"></el-input>
 
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
@@ -34,10 +34,10 @@
                 @selection-change="handleSelectionChange"
                 highlight-current-row
             >
-                <el-table-column prop="commAreaName" label="社区分区名称"></el-table-column>
-                <el-table-column prop="buildingName" label="建筑名称"></el-table-column>
-                <el-table-column prop="unitName" label="单元名称"></el-table-column>
-                <el-table-column prop="name" label="房间名称"></el-table-column>
+                <el-table-column prop="commAreaName" label="社区分区名称" width="120"></el-table-column>
+                <el-table-column prop="buildingName" label="建筑名称" width="120"></el-table-column>
+                <el-table-column prop="unitName" label="单元名称" width="120"></el-table-column>
+                <el-table-column prop="name" label="房间名称" width="120"></el-table-column>
                 <el-table-column prop="roomNo" label="房间号"></el-table-column>
                 <el-table-column prop="floor" label="楼层"></el-table-column>
                 <el-table-column prop="floorNum" label="楼层数"></el-table-column>
@@ -54,9 +54,9 @@
                 <el-table-column prop="contractNo" label="购房合同号"></el-table-column>
                 <el-table-column prop="state" label="状态"></el-table-column>
                 <el-table-column prop="createdName" label="创建人"></el-table-column>
-                <el-table-column prop="createdAt" label="创建日期"></el-table-column>
+                <el-table-column prop="createdAt" label="创建日期" width="155"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改日期"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改日期" width="155"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
