@@ -359,7 +359,7 @@
             </span>
         </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
-            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
+            <menu1 v-on:childByValueUpload="childByValueUpload" ref="menu1"></menu1>
         </el-dialog>
         <el-dialog  :visible.sync="ownerVisible" append-to-body width="75%" >
             <ownerVisible v-if="ownerVisible" ref="ownerVisible"></ownerVisible>
@@ -622,7 +622,10 @@ export default {
         ownerVisible
      },
     methods: {
-
+        childByValueUpload(){
+            this.cmpVisible=false;
+            this.getData();
+        },
         compChange(val){
             if(this.form.compId!=undefined||val!=undefined){
                 var compId;
