@@ -25,12 +25,12 @@
                 <el-option key="qxz" label="请选择物业类型" value=""></el-option>
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" ></el-input>
+            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" style="width: 130px;"></el-input>
             <el-select v-model="query.type" placeholder="请选择" v-show="false">
                 <el-option key="qxz" label="请选择仪表类型" value=""></el-option>
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" ></el-input>
+            <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" style="width: 130px;"></el-input>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" >搜索</el-button>
             </div>
