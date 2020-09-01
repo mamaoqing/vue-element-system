@@ -55,9 +55,9 @@
             >
 
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="compName" label="物业公司"></el-table-column>
-                <el-table-column prop="commName" label="社区"></el-table-column>
-                <el-table-column prop="commAreaName" label="社区分区"></el-table-column>
+                <el-table-column prop="compName" label="物业公司" width="130"></el-table-column>
+                <el-table-column prop="commName" label="社区" width="120"></el-table-column>
+                <el-table-column prop="commAreaName" label="社区分区" width="120"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型"></el-table-column>
                 <el-table-column prop="propertyName" label="物业编号"></el-table-column>
                 <el-table-column prop="type" label="仪表类型"></el-table-column>
@@ -65,15 +65,15 @@
                 <el-table-column prop="name" label="仪表名称"></el-table-column>
 
                 <el-table-column prop="newNum" label="抄表刻度"></el-table-column>
-                <el-table-column prop="meterReadTime" label="抄表时间"></el-table-column>
+                <el-table-column prop="meterReadTime" label="抄表时间" width="155"></el-table-column>
                 <el-table-column prop="billNum" label="账单刻度"></el-table-column>
-                <el-table-column prop="billDate" label="账单日期"></el-table-column>
+                <el-table-column prop="billDate" label="账单日期" width="155"></el-table-column>
 
                 <el-table-column prop="state" label="状态"></el-table-column>
                 <el-table-column prop="createdName" label="创建人"></el-table-column>
-                <el-table-column prop="createdAt" label="创建日期"></el-table-column>
+                <el-table-column prop="createdAt" label="创建日期" width="155"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改日期"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改日期" width="155"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
@@ -145,7 +145,6 @@
                             icon="el-icon-search"
                             @click.stop
                             @click="roomParkingSearch()"
-
                     >选择</el-button>
                 </el-form-item>
                 <el-form-item label="仪表类型" prop="type" >
@@ -540,7 +539,6 @@ export default {
             }
         },
         commChange(val){
-            debugger
             if(this.form.commId!=undefined||val!=undefined){
                 var commId;
                 if(this.form.commId!=undefined&&this.form.commId!=''){
@@ -694,13 +692,13 @@ export default {
 
             let date = new Date();
             let yy = date.getFullYear();
-            let mm = date.getMonth() + 1;
+            let mm = date.getMonth();
             let dd = date.getDate();
             let h = date.getHours();
             let m = date.getMinutes();
             let s = date.getSeconds();
-            this.form.meterReadTime = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
-            this.form.billDate = new Date(yy, mm, dd, h, m,s);//yy+"-"+mm+"-"+dd+""+h+":"+m+":"+s;
+            this.$set(this.form, "meterReadTime", new Date(yy, mm, dd, h, m,s));
+            this.$set(this.form, "billDate", new Date(yy, mm, dd, h, m,s));
             this.edit=false;
             this.$refs.form.clearValidate();
         },
@@ -777,14 +775,27 @@ export default {
             this.updateVisible = true;
             this.title="查看仪表";
         },
+        format(val){
+            let read = new Date(val);
+            let yy = read.getFullYear();
+            let mm = read.getMonth()+1;
+            let dd = read.getDate();
+            let h = read.getHours();
+            let m = read.getMinutes();
+            let s = read.getSeconds();
+            return yy+"-"+mm+"-"+dd+" "+h+":"+m+":"+s;
+        },
+
         // 保存编辑
         saveEditOrAdd(title,form) {
             if(title==='新增仪表'){
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
+                        this.form.meterReadTime = this.format(this.form.meterReadTime);
+                        this.form.billDate = this.format(this.form.billDate);
                         checkMeterNo(this.form).then(res => {
-                            if(res.data==''){
+                            if(res.data==''||res.data==null){
                                 insertMeter(this.form).then(res => {
                                     this.editVisible = false;
                                     this.$message.success(`新增成功`);
