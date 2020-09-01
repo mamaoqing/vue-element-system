@@ -286,7 +286,7 @@
             </span>
         </el-dialog>
         <el-dialog  :visible.sync="cmpVisible" append-to-body>
-            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
+            <menu1 v-on:childByValueUpload="childByValueUpload" ref="menu1"></menu1>
         </el-dialog>
         <el-dialog  :visible.sync="roomVisible" append-to-body width="55%" >
             <roomVisible v-on:childByValue="childByValue" v-if="roomVisible" ref="roomVisible"></roomVisible>
@@ -520,7 +520,10 @@ export default {
         parkingVisible,
      },
     methods: {
-
+        childByValueUpload(){
+            this.cmpVisible=false;
+            this.getData();
+        },
         compChange(val){
             debugger
             if(this.form.compId!=undefined||val!=undefined){
