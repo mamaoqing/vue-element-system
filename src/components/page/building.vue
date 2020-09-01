@@ -42,23 +42,23 @@
                 <!--<el-table-column type="selection" width="55" align="center"></el-table-column>-->
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="name" label="名称"></el-table-column>
-                <el-table-column prop="compName" label="物业公司"></el-table-column>
+                <el-table-column prop="compName" label="物业公司" width="130"></el-table-column>
                 <el-table-column prop="compId" label="社区名称" v-if="false"></el-table-column>
-                <el-table-column prop="commName" label="社区名称"></el-table-column>
+                <el-table-column prop="commName" label="社区名称" width="120"></el-table-column>
                 <el-table-column prop="commId" label="社区名称" v-if="false"></el-table-column>
-                <el-table-column prop="commAreaName" label="社区分区名称"></el-table-column>
+                <el-table-column prop="commAreaName" label="社区分区名称" width="120"></el-table-column>
                 <el-table-column prop="commAreaId" label="社区名称" v-if="false"></el-table-column>
                 <el-table-column prop="type" label="建筑类型"></el-table-column>
                 <el-table-column prop="no" label="建筑编号"></el-table-column>
-                <el-table-column prop="buildedDate" label="建造日期"></el-table-column>
-                <el-table-column prop="deliverDate" label="交付日期"></el-table-column>
+                <el-table-column prop="buildedDate" label="建造日期" width="100"></el-table-column>
+                <el-table-column prop="deliverDate" label="交付日期" width="100"></el-table-column>
                 <el-table-column prop="floorNum" label="楼层数"></el-table-column>
                 <el-table-column prop="unitNum" label="单元数"></el-table-column>
                 <el-table-column prop="state" label="状态"></el-table-column>
                 <el-table-column prop="createdName" label="创建人"></el-table-column>
-                <el-table-column prop="createdAt" label="创建日期"></el-table-column>
+                <el-table-column prop="createdAt" label="创建日期" width="155"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改日期"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改日期" width="155"></el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button

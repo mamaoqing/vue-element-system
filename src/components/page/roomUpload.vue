@@ -76,6 +76,8 @@
                         message: '导入成功',
                         type: 'success'
                     });
+                    //导入成功后关闭页面
+                    this.$emit('childByValueUpload','');
                 }else {
                     this.$message({
                         message: response.msg,
