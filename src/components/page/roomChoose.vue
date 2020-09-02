@@ -11,11 +11,11 @@
 
             <el-select v-model="query.buildingName" placeholder="请选择" @change="buildingChange" >
                 <el-option key="qxz" label="请选择建筑名称" value=""></el-option>
-                <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
+                <el-option :value="types.id" :key="'ino11-'+types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
             </el-select>
             <el-select v-model="query.unitName" placeholder="请选择" @change="select_status" >
                 <el-option key="qxz" label="请选择单元名称" value=""></el-option>
-                <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
+                <el-option :value="types.id" :key="'info12-'+types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.roomNo" placeholder="房间编号" class="handle-input mr10" style="width: 130px;"></el-input>
             <el-input v-model="query.name" placeholder="房间名称" class="handle-input mr10" style="width: 150px;"></el-input>
@@ -31,7 +31,6 @@
                 header-cell-class-name="table-header"
                 elt
                 @row-click="chooseDetails"
-                @selection-change="handleSelectionChange"
                 highlight-current-row
             >
                 <el-table-column prop="commAreaName" label="社区分区名称" width="120"></el-table-column>
@@ -84,28 +83,28 @@
         <el-dialog :title="title" :visible.sync="updateVisible" width="30%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId">
-                    <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
+                    <el-select v-model="form.compName" placeholder="请选择"  :disabled="edit">
+                        <el-option :value="types.id" :key="'info-'+types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="社区名称" prop="commId">
-                    <el-select v-model="form.commName" placeholder="请选择" @change="commChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
+                    <el-select v-model="form.commName" placeholder="请选择"  :disabled="edit">
+                        <el-option :value="types.id" :key="'info1-'+types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="社区分区名称" prop="commAreaId" >
-                    <el-select v-model="form.commAreaName" placeholder="请选择" @change="commAreaChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
+                    <el-select v-model="form.commAreaName" placeholder="请选择"  :disabled="edit">
+                        <el-option :value="types.id" :key="'info2-'+types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="建筑名称" prop="buildingId" >
-                    <el-select v-model="form.buildingName" placeholder="请选择" @change="buildingChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
+                    <el-select v-model="form.buildingName" placeholder="请选择"  :disabled="edit">
+                        <el-option :value="types.id" :key="'info3-'+types.name"  :label="types.name" v-for="types in buildingList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="单元名称" prop="unitId" >
                     <el-select v-model="form.unitName" placeholder="请选择" @change="select_status" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
+                        <el-option :value="types.id" :key="'info4-'+types.name"  :label="types.name" v-for="types in unitList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="名称" prop="name" >
@@ -119,32 +118,32 @@
                 </el-form-item>
                 <el-form-item label="房型" prop="form.roomModel">
                     <el-select v-model="form.roomModel" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'info5-'+types.name" :label="types.name" v-for="types in roomModelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="房屋类型" prop="form.roomType">
                     <el-select v-model="form.roomType" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'info6-'+types.name" :label="types.name" v-for="types in roomTypeList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权性质" prop="form.propertyRightNature">
                     <el-select v-model="form.propertyRightNature" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'inf7-'+types.name" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="朝向" prop="form.direction">
                     <el-select v-model="form.direction" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'inf8-'+types.name" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="装修程度" prop="form.renovationLevel">
                     <el-select v-model="form.renovationLevel" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'info9-'+types.name" :label="types.name" v-for="types in renovationLevelList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="用途" prop="form.usable">
                     <el-select v-model="form.usable" placeholder="请选择" >
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
+                        <el-option :value="types.name" :key="'inf10-'+types.name" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="产权证号"  >
@@ -203,9 +202,8 @@
 
 <script scope>
 
-import { getUserComm,getCommArea,getCommAreaContent,getDictItemByDictId,getBuildingsByCommId,getUnits } from '../../api/building';
-import { listCompAll } from '../../api/role';
-import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload,exportXlsByT} from '../../api/room';
+import { getUnits,getBuildings } from '../../api/building';
+import { listRoom,listRoomNum} from '../../api/room';
 import menu1 from './roomUpload';
 import ownerVisible from './owner';
 export default {
@@ -264,6 +262,13 @@ export default {
             ownerVisible:false,
             compList:[],
             commList:[],
+            commAreaList:[],
+            roomModelList:[],//房型
+            usableList:[],//用途类型
+            roomTypeList:[],// 房屋类型
+            propertyRightNatureList:[],// 产权性质
+            directionList:[],//朝向
+            renovationLevelList:[],// 装修程度
             buildingList:[],
             unitList:[],
             form: {},
@@ -288,11 +293,9 @@ export default {
      },
     methods: {
         getBuildings(){
-            getBuildingsByCommId(this.query.commName).then(res => {
+            getBuildings(this.query.commName).then(res => {
                 if(res.data){
-                    this.form.buildingId=undefined;
-                    this.query.buildingName="请选择建筑名称";
-                    this.query.unitName="请选择单元名称";
+                    this.query.buildingId=undefined;
                     console.log(this.form.commId);
                     this.buildingList = res.data;
                 }
@@ -309,8 +312,7 @@ export default {
                 }
                 getUnits(buildingId).then(res => {
                     if(res.data){
-                        this.form.unitId=undefined;
-                        this.query.unitName="请选择单元名称";
+                        this.query.unitId=undefined;
                         this.unitList = res.data;
                     }
                 });

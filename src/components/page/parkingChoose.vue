@@ -26,7 +26,7 @@
                     @row-click="chooseDetails"
                     header-cell-class-name="table-header"
             >
-                <el-table-column prop="areaName" label="分区名称" align="center"></el-table-column>
+                <el-table-column prop="areaName" label="分区名称" align="center" width="130"></el-table-column>
                 <el-table-column prop="no" label="编号" align="center"></el-table-column>
                 <el-table-column prop="position" label="位置" align="center"></el-table-column>
                 <el-table-column prop="buildingProperty" label="建筑属性" align="center"></el-table-column>
@@ -39,9 +39,9 @@
                 <el-table-column prop="occupyState" label="占用状态" align="center"></el-table-column>
                 <el-table-column prop="inMode" label="入位方式" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="录入人" align="center"></el-table-column>
-                <el-table-column prop="createdAt" label="录入时间" align="center"></el-table-column>
+                <el-table-column prop="createdAt" label="录入时间" align="center" width="155"></el-table-column>
                 <el-table-column prop="modifiedName" label="修改人" align="center"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改时间" align="center"></el-table-column>
+                <el-table-column prop="modifiedAt" label="修改时间" align="center" width="155"></el-table-column>
                 <el-table-column label="操作" width="" align="center">
                     <template slot-scope="scope">
                         <el-button

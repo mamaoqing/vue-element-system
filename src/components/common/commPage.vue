@@ -2,10 +2,11 @@
     <div>
 
                 <el-form-item label="录入人" label-width="150px">
-                    <el-input v-model="commForm.createdName"  disabled></el-input>
+                    <el-input v-model="commForm.createdName"  disabled class="myWidth" ></el-input>
                 </el-form-item>
                 <el-form-item label="录入时间" prop="createdAt" label-width="150px" disabled>
                     <el-date-picker
+                            class="myWidth"
                             v-model="commForm.createdAt"
                             type="datetime"
                             placeholder="选择日期时间"
@@ -16,10 +17,11 @@
                     />
                 </el-form-item>
                 <el-form-item label="修改人" label-width="150px">
-                    <el-input v-model="commForm.modifiedName"  disabled></el-input>
+                    <el-input v-model="commForm.modifiedName"  disabled class="myWidth"></el-input>
                 </el-form-item>
                 <el-form-item label="修改时间" prop="modifiedAt" label-width="150px">
                     <el-date-picker
+                            class="myWidth"
                             v-model="commForm.modifiedAt"
                             type="datetime"
                             placeholder="选择日期时间"
@@ -119,5 +121,8 @@
         height: 32px;
         width: 200px;
         line-height: 32px;
+    }
+    .myWidth{
+        width: 200px;
     }
 </style>

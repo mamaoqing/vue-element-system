@@ -27,7 +27,7 @@
                 <el-input v-model="query.name" placeholder="单元名称" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
                 </el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增单元
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>
@@ -248,11 +248,9 @@
                     <el-form-item class="item" label="社区名称" label-width="150px" prop="commId" :rules="[
                         { required: true, message: '请输入单元名称', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm">
+                        <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm" disabled>
                             <el-option v-for="item in commArr" :key="item.id" :label="item.name"
-                                       :value="item.id"></el-option>
-                            <el-option v-for="item in commArr" :key="item.id" :label="item.name"
-                                       :value="item.id"></el-option>
+                                       :value="item.id" ></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="分区名称" prop="name" label-width="150px"
@@ -358,11 +356,29 @@
                         <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in usableList" >{{types.name}}</el-option>
                     </el-select>
                 </el-form-item>
-
+                <el-form-item label="朝向" prop="direction" :rules="[
+                        { required: true, message: '请输入朝向', trigger: 'blur' },
+                    ]">
+                    <el-select v-model="formPl.direction" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in directionList" >{{types.name}}</el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="产权性质" prop="propertyRightNature" :rules="[
+                        { required: true, message: '请输入产权性质', trigger: 'blur' },
+                    ]">
+                    <el-select v-model="formPl.propertyRightNature" placeholder="请选择" >
+                        <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in propertyRightNatureList" >{{types.name}}</el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="建筑面积" prop="buildingArea" :rules="[
                         { required: true, message: '请输入建筑面积', trigger: 'blur' },
                     ]">
                     <el-input v-model="formPl.buildingArea" ></el-input>
+                </el-form-item>
+                <el-form-item label="计费面积" prop="heatingArea" :rules="[
+                        { required: true, message: '请输入计费面积', trigger: 'blur' },
+                    ]">
+                    <el-input v-model="formPl.heatingArea" ></el-input>
                 </el-form-item>
                 <el-form-item label="使用面积" prop="usableArea" :rules="[
                         { required: true, message: '请输入使用面积', trigger: 'blur' },
@@ -451,6 +467,8 @@
                 formCpoyVisable:false,
                 status:0,
                 form: {},
+                propertyRightNatureList: [],
+                directionList: [],
                 formPl: {},
                 idx: -1,
                 title: '',
@@ -479,6 +497,12 @@
             });
             getDictItemByDictId(7).then(res => {//7是用途的id
                 this.usableList = res.data;
+            });
+            getDictItemByDictId(27).then(res => {//7是产权性质的id
+                this.propertyRightNatureList = res.data;
+            });
+            getDictItemByDictId(30).then(res => {//7是朝向的id
+                this.directionList = res.data;
             });
         },
 
@@ -522,7 +546,6 @@
                 })
             },
             handleGetArea(val) {
-
                 getBuild(val).then(res => {
                     this.buidlArr = [];
                     this.form.buildingId = '';
@@ -653,13 +676,20 @@
                 this.form.name = '';
                 this.form.commAreaId = '';
                 this.form.buildingId = '';
-                this.form.commId = '';
                 let that = this
                 getComp().then(res => {
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
-
+                getArea(this.form.commId).then(res => {
+                    this.areaArr = [];
+                    this.buidlArr = [];
+                    this.form.commAreaId = '';
+                    this.form.buildingId = '';
+                    this.query.commAreaId = '';
+                    this.query.buildingId = '';
+                    this.areaArr = res.data;
+                });
                 this.modelArr.forEach(function(value,key,arr){
 
                     if(arr[key].name==that.form.model){

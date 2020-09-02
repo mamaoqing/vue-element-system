@@ -80,7 +80,7 @@
                               :rules="[
                     { required: true, message: '请选择纳税人类型', trigger: 'blur' },
                 ]">
-                    <el-select v-model="form.taxpayerType" placeholder="请选择">
+                    <el-select v-model="form.taxpayerType" placeholder="请选择" class="myWidth">
                         <el-option :value="types.name" :key="types.id" :label="types.name"
                                    v-for="types in taxpayerType"></el-option>
                     </el-select>
@@ -126,32 +126,7 @@
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
 
-                <el-form-item label="录入人" label-width="150px">
-                    <el-input v-model="form.createdName"></el-input>
-                </el-form-item>
-                <el-form-item label="录入时间" prop="establishmentDate" label-width="150px">
-                    <el-date-picker
-                            v-model="form.createdAt"
-                            type="datetime"
-                            placeholder="选择日期时间"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            default-time="00:00:00"
-                    />
-                </el-form-item>
-                <el-form-item label="修改人" label-width="150px">
-                    <el-input v-model="form.modifiedName"></el-input>
-                </el-form-item>
-                <el-form-item label="修改时间" prop="establishmentDate" label-width="150px">
-                    <el-date-picker
-                            v-model="form.modifiedAt"
-                            type="datetime"
-                            placeholder="选择日期时间"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-dd HH:mm:ss"
-                            default-time="00:00:00"
-                    />
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -164,6 +139,7 @@
 <script>
     import { deleteLinkData, fetchLinkData, addLinkData, updateLinkData, getInfo } from '../../api/owner';
     import { getDictItemByDictId } from '../../api/building';
+    import commPage from '../common/commPage';
     export default {
         name: 'ownerInvoiceInfo',
         data() {
@@ -182,10 +158,15 @@
                 pageTotal: 0,
                 disable: false,
                 form: {},
+                status:0,
                 idx: -1,
                 id: -1
             };
         },
+        components: {
+            commPage,
+        }
+        ,
         methods: {
             getData() {
                 fetchLinkData(this.query).then(res => {
@@ -206,6 +187,7 @@
                 //具体操作
                 this.form = row;
                 this.disable = true;
+                this.status = 2;
                 this.editVisible = true;
                 this.title = '查看开票信息';
 
@@ -215,6 +197,7 @@
                 this.editVisible = true;
                 this.title = '新增开票信息';
                 this.form = {};
+                this.status = 0;
                 this.disable = false;
                 this.form.ownerId = this.query.ownerId;
             },
@@ -271,6 +254,7 @@
                 this.form = row;
                 this.title = '编辑开票信息';
                 this.disable = false;
+                this.status = 1;
                 this.editVisible = true;
             },
             // 保存编辑
@@ -351,6 +335,9 @@
         width: 200px;
     }
     .el-input__inner{
+        width: 200px;
+    }
+    .myWidth{
         width: 200px;
     }
 </style>
