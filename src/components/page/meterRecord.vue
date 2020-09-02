@@ -17,29 +17,34 @@
                 <el-option key="qxz" label="请选择社区名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.propertyType" placeholder="请选择物业类型" >
+            <el-select v-model="query.propertyType" placeholder="请选择物业类型">
                 <el-option key="qxz" label="请选择物业类型" value=""></el-option>
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" ></el-input>
+            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" style="width: 130px;"></el-input>
             <el-select v-model="query.type" placeholder="请选择" >
                 <el-option key="qxz" label="请选择仪表类型" value=""></el-option>
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" ></el-input>
-
-                <div class="block">
-                    <span class="demonstration"></span>
-                    <el-date-picker
-                            v-model="modifiedAt"
-                            type="datetimerange"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            @change="dateChange"
-                            name="modifiedAt"
-                            >
-                    </el-date-picker>
-                </div>
+            <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" style="width: 130px;"></el-input>
+            <el-date-picker
+                    v-model="query.modifiedAtBegin"
+                    placeholder="抄表开始日期"
+                    name="modifiedAt"
+                    type="datetime"
+                    format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
+            <el-date-picker
+                    v-model="query.modifiedAtEnd"
+                    placeholder="抄表结束日期"
+                    name="modifiedAt"
+                    type="datetime"
+                    format="yyyy-MM-dd HH:mm:ss"
+                    value-format="yyyy-MM-dd HH:mm:ss"
+            >
+            </el-date-picker>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" >搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
@@ -51,6 +56,7 @@
                 >批量删除</el-button>-->
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload" >导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXlsTemplate">导出模板</el-button>
             </div>
             <el-table
                 :data="tableData"
@@ -271,7 +277,7 @@
 <script scope>
     import { getUserComm, getDictItemByDictId, } from '../../api/building';
 import { listCompAll } from '../../api/role';
-import {insertMeterRecord,exportXlsByT,deleteMeterRecord,upload,updateMeterRecord,listMeterRecord,listMeterRecordNum} from '../../api/meterRecord';
+import {insertMeterRecord,exportXlsByT,exportXlsTemplateByT,deleteMeterRecord,upload,updateMeterRecord,listMeterRecord,listMeterRecordNum,checkMeterRecord} from '../../api/meterRecord';
 import menu1 from './roomUpload';
 import meterVisible from './meterChoose';
 export default {
@@ -441,14 +447,6 @@ export default {
             this.cmpVisible=false;
             this.getData();
         },
-        dateChange(val) {
-            console.log(val);
-            let modifiedAtBegin = val[0];
-            let modifiedAtEnd = val[1];
-            this.query.modifiedAtBegin = this.format(modifiedAtBegin);
-            this.query.modifiedAtEnd = this.format(modifiedAtEnd);
-
-        },
         compChange(val){
             debugger
             if(this.form.compId!=undefined||val!=undefined){
@@ -485,6 +483,27 @@ export default {
         },*/
         exportXls(){
             exportXlsByT(this.query).then(res => {
+                var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                    window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                } else {
+                    var downloadElement = document.createElement('a');
+                    var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                    downloadElement.href = href;
+                    downloadElement.download = unescape('仪表抄表信息'+this.getExportAt()+'.xls'); //下载后文件名
+
+                    document.body.appendChild(downloadElement);
+                    downloadElement.click(); //点击下载
+
+                    document.body.removeChild(downloadElement); //下载完成移除元素
+
+                    window.URL.revokeObjectURL(href); //释放掉blob对象
+                }
+            });
+        },
+        exportXlsTemplate(){
+            exportXlsTemplateByT(this.query).then(res => {
                 var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
                 if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
                     window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
@@ -685,38 +704,41 @@ export default {
                 //this.editVisible = false;
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        let mod = new Date(this.form.modifiedAt);
-                        let yy = mod.getFullYear();
-                        let mm = mod.getMonth()+1;
-                        let dd = mod.getDate();
-                        let h = mod.getHours();
-                        let m = mod.getMinutes();
-                        let s = mod.getSeconds();
-                        this.form.modifiedAt = yy+"-"+mm+"-"+dd+" "+h+":"+m+":"+s;
-                        insertMeterRecord(this.form).then(res => {
-                            this.editVisible = false;
-                            this.$message.success(`新增成功`);
-                            this.getData();
+                        this.form.modifiedAt = this.format(this.form.modifiedAt);
+                        //保存之前检查抄表刻度不能低于仪表中的账单刻度
+                        checkMeterRecord(this.form).then(res => {
+                            if (res.data == null) {
+                                insertMeterRecord(this.form).then(res => {
+                                    this.editVisible = false;
+                                    this.$message.success(`新增成功`);
+                                    this.getData();
+                                });
+                            }else{
+                                this.$message.info(res.data);
+                            }
                         });
+
                     }
                 });
             }else {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-
+                        //保存之前检查抄表刻度不能低于仪表中的账单刻度
+                        checkMeterRecord(this.form).then(res => {
+                            if (res.data == null) {
                                 updateMeterRecord(this.form).then(res => {
                                     this.updateVisible = false;
                                     this.$message.success(`修改第 ${this.idx + 1} 行成功`);
                                     this.$set(this.tableData, this.idx, this.form);
                                     this.getData();
                                 });
-
+                            }else{
+                                this.$message.info(res.data);
+                            }
+                        });
                     }
                 });
             }
-
-        },
-        modifiedAt(){
 
         },
         // 分页导航
