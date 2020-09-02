@@ -241,8 +241,8 @@
                     <el-date-picker
                             v-model="form.meterReadTime"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
                     />
                 </el-form-item>
@@ -253,8 +253,8 @@
                     <el-date-picker
                             v-model="form.billDate"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
                     />
                 </el-form-item>
