@@ -15,6 +15,15 @@ export const exportXlsByT = query => {
         responseType: 'blob'
     });
 };
+export const exportXlsTemplateByT = query => {
+    return request({
+        url: '/api/fMeterRecord/exportTemplate',
+        method: 'post',
+        params: query,
+        responseType: 'blob'
+    });
+};
+
 export const deleteMeterRecord = id => {
 
     return request({
@@ -34,6 +43,15 @@ export const updateMeterRecord = query => {
 
     return request({
         url: '/api/fMeterRecord/updateMeterRecord',
+        method: 'put',
+        data: query
+    });
+};
+
+export const checkMeterRecord = query => {
+
+    return request({
+        url: '/api/fMeterRecord/checkMeterRecord',
         method: 'put',
         data: query
     });

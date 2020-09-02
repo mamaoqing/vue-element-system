@@ -197,10 +197,7 @@
                             <dist-util @child1="checkForm" :distId="dist.isTrueId" :distName="dist.isTrueName"
                                        :title="dist.isTrueProp" :change="form.isLiquidatedDamages"></dist-util>
                         </el-form-item>
-                        <el-form-item label="违约金计费" label-width="100px" prop="liquidatedDamagesMethod"
-                                      :rules="[
-                    { required: true, message: '请输入违约金计费方式', trigger: 'blur' },
-                ]">
+                        <el-form-item label="违约金计费" label-width="100px">
                             <dist-util @child1="checkForm" :distId="dist.deditId" :distName="dist.deditName"
                                        :title="dist.deditProp" :change="form.liquidatedDamagesMethod"></dist-util>
                         </el-form-item>

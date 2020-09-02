@@ -56,8 +56,11 @@
 
                 <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
                 <el-table-column prop="compName" label="物业公司" width="130"></el-table-column>
+                <el-table-column prop="compId" label="物业公司id" width="130" v-if="false"></el-table-column>
                 <el-table-column prop="commName" label="社区" width="120"></el-table-column>
+                <el-table-column prop="commId" label="社区id" width="120" v-if="false"></el-table-column>
                 <el-table-column prop="commAreaName" label="社区分区" width="120"></el-table-column>
+                <el-table-column prop="commAreaId" label="社区分区id" width="120" v-if="false"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型"></el-table-column>
                 <el-table-column prop="propertyName" label="物业编号"></el-table-column>
                 <el-table-column prop="type" label="仪表类型"></el-table-column>
@@ -159,7 +162,7 @@
                         <el-input v-model="form.name" ></el-input>
                     </el-form-item>
                    <el-form-item label="抄表刻度" >
-                        <el-input v-model="form.newNum" ></el-input>
+                        <el-input v-model="form.newNum" @blur="checkBillNumNewNum"></el-input>
                     </el-form-item>
                     <el-form-item label="抄表时间" prop="meterReadTime">
                         <el-date-picker
@@ -168,10 +171,11 @@
                                 format="yyyy-MM-dd HH:mm:ss"
                                 value-format="yyyy-MM-d HH:mm:ss"
                                 :disabled="edit"
+                                style="width: 205px;"
                         />
                     </el-form-item>
                     <el-form-item label="账单刻度" >
-                        <el-input v-model="form.billNum" ></el-input>
+                        <el-input v-model="form.billNum" @blur="checkBillNumNewNum"></el-input>
                     </el-form-item>
                     <el-form-item label="账单日期" prop="billDate">
                         <el-date-picker
@@ -180,6 +184,7 @@
                                 format="yyyy-MM-dd HH:mm:ss"
                                 value-format="yyyy-MM-d HH:mm:ss"
                                 :disabled="edit"
+                                style="width: 205px;"
                         />
                     </el-form-item>
                     <el-form-item label="状态" prop="state">
@@ -221,7 +226,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="物业编号" >
-                    <el-input v-model="form.propertyName" :disabled="edit"></el-input>
+                    <el-input v-model="form.propertyName" :disabled="true" style="width: 130px;"></el-input>
+                    <el-button
+                            type="text"
+                            icon="el-icon-search"
+                            @click.stop
+                            @click="roomParkingSearch()"
+                            :disabled="!updateChoose"
+                    >选择</el-button>
                 </el-form-item>
                 <el-form-item label="仪表类型">
                     <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
@@ -241,9 +253,10 @@
                     <el-date-picker
                             v-model="form.meterReadTime"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="账单刻度" >
@@ -253,9 +266,10 @@
                     <el-date-picker
                             v-model="form.billDate"
                             type="datetime"
-                            format="yyyy-MM-dd"
-                            value-format="yyyy-MM-d"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="状态" prop="state">
@@ -453,6 +467,7 @@ export default {
             commAreaList:[],
             propertyTypeList:[],//物业类型
             typeList:[],//仪表类型
+            updateChoose:false,
             form: {},
             no:'',
             formCopy:{},
@@ -520,6 +535,20 @@ export default {
         parkingVisible,
      },
     methods: {
+        checkBillNumNewNum(){
+            if(this.form.billNum!=''&&this.form.billNum!=undefined){//判断账单刻度不为空
+                if(this.form.newNum!=''&&this.form.newNum!=undefined){//判断抄表刻度不为空
+                    if(this.form.billNum>this.form.newNum){
+                        //this.form.newNum = this.form.billNum;
+                        this.$set(this.form, 'newNum', this.form.billNum);
+                        this.$message.info('抄表刻度小于账单刻度，将用账单刻度覆盖抄表刻度');
+                    }
+                }else{
+                    this.$set(this.form, 'newNum', this.form.billNum);
+                    this.$message.info('抄表刻度小于账单刻度，将用账单刻度覆盖抄表刻度');
+                }
+            }
+        },
         childByValueUpload(){
             this.cmpVisible=false;
             this.getData();
@@ -732,6 +761,11 @@ export default {
             this.updateVisible = true;
             this.disable=false;
             this.no = row.no;
+            if(row.propertyName==''||row.propertyName==undefined){
+                this.updateChoose=true;
+            }else{
+                this.updateChoose=false;
+            }
             this.edit=true;
             this.title="编辑仪表";
             this.$refs.form.clearValidate();
