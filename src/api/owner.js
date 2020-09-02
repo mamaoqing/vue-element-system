@@ -158,6 +158,17 @@ export const deleteOwnerProp = id => {
     });
 };
 
+export const updateOwnerProp = query => {
+    return request({
+        url: '/api/rOwnerProperty/update',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+};
+
 export const getAllProp = query => {
     return request({
         url: '/api/rOwnerProperty/getAllProp',
