@@ -171,6 +171,7 @@
                                 format="yyyy-MM-dd HH:mm:ss"
                                 value-format="yyyy-MM-d HH:mm:ss"
                                 :disabled="edit"
+                                style="width: 205px;"
                         />
                     </el-form-item>
                     <el-form-item label="账单刻度" >
@@ -183,6 +184,7 @@
                                 format="yyyy-MM-dd HH:mm:ss"
                                 value-format="yyyy-MM-d HH:mm:ss"
                                 :disabled="edit"
+                                style="width: 205px;"
                         />
                     </el-form-item>
                     <el-form-item label="状态" prop="state">
@@ -254,6 +256,7 @@
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="账单刻度" >
@@ -266,6 +269,7 @@
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-d HH:mm:ss"
                             :disabled="edit"
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="状态" prop="state">
