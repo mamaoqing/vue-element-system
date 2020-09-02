@@ -56,7 +56,7 @@
                 >批量删除</el-button>-->
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload" >导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="exportXlsTemplate">导出模板</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXlsTemplate">导入模板</el-button>
             </div>
             <el-table
                 :data="tableData"
