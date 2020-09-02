@@ -42,6 +42,18 @@ export const insertRuleRoom = query => {
     return request({
         url: '/order/fCostRuleRoom/insertRoomRule',
         method: 'post',
+
+        data: query
+    });
+};
+
+export const insertRulePark = query => {
+    return request({
+        url: '/order/fCostRuleRoom/insertRoomPark',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
         data: query
     });
 };
@@ -50,5 +62,34 @@ export const getRoomIds = query => {
     return request({
         url: '/order/fCostRuleRoom/'+query,
         method: 'get'
+    });
+};
+
+export const getParkIds = query => {
+    return request({
+        url: '/order/fCostRuleRoom/getParkIds/'+query,
+        method: 'get'
+    });
+};
+
+export const getCostPark = query => {
+    return request({
+        url: '/order/fCostRuleRoom/costPark/'+query,
+        method: 'get'
+    });
+};
+
+export const deletparkById = query => {
+    return request({
+        url: '/order/fCostRuleRoom/'+query,
+        method: 'delete'
+    });
+};
+
+export const deleteAllPark = query => {
+    return request({
+        url: '/order/fCostRuleRoom/deleteAllParks',
+        method: 'delete',
+        params:query
     });
 };

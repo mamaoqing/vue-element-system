@@ -123,50 +123,32 @@
         <!-- 新增弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
-                <el-form-item label="物业公司" prop="compId" >
-                    <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="社区名称" prop="commId" >
-                    <el-select v-model="form.commId" placeholder="请选择"  @change="select_status" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <!--<el-form-item label="仪表类型" prop="type" >
-                    <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="仪表编号" prop="no" >
-                    <el-input v-model="form.no" :disabled="true"></el-input>
-                    <el-button
-                        type="text"
-                        icon="el-icon-search"
-                        @click.stop
-                        @click="meterSearch()"
-                >选择</el-button>
-                </el-form-item>-->
-                <el-row>
+                    <el-form-item label="物业公司" prop="compId" >
+                        <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="社区名称" prop="commId" >
+                        <el-select v-model="form.commId" placeholder="请选择"  @change="select_status" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="仪表类型" prop="type" >
                         <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
                             <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                         </el-select>
                     </el-form-item>
-                </el-row>
-                <el-row>
-                    <el-form-item label="仪表编号" prop="no" >
-                        <el-input v-model="form.no" :disabled="true"></el-input>
+                    <el-form-item label="仪表编号" prop="no">
+                        <el-input v-model="form.no" :disabled="true" style="width: 130px;"></el-input>
+
+                            <el-button
+                                    type="text"
+                                    icon="el-icon-search"
+                                    @click.stop
+                                    @click="meterSearch()"
+                            >选择</el-button>
+
                     </el-form-item>
-                    <el-col span="8">
-                        <el-button
-                                type="text"
-                                icon="el-icon-search"
-                                @click.stop
-                                @click="meterSearch()"
-                        >选择</el-button>
-                    </el-col>
-                </el-row>
                 <el-form-item label="抄表刻度" prop="newNum" >
                     <el-input v-model="form.newNum" ></el-input>
                 </el-form-item>

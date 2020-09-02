@@ -48,7 +48,18 @@
             arr: {
                 immediate: true,
                 handler: function (newVal) {
-                   this.checkdata = newVal;
+                    console.log(newVal);
+                    this.checkdata = newVal;
+                   if(newVal){
+                       this.$nextTick(() => {
+                           this.$refs.tree.setCheckedKeys(this.checkdata);
+                       });
+                   }else{
+                       this.checkdata = [];
+                       this.$nextTick(() => {
+                           this.$refs.tree.setCheckedKeys(this.checkdata);
+                       });
+                   }
                 }
             },
 
@@ -66,7 +77,7 @@
             handleCheckChange() {
                 var arr = this.$refs.tree.getCheckedNodes();
                 var s = this.child(arr);
-                this.$emit("child1", s,'room');
+                this.$emit("child1", s, 'room');
             },
             child(arr) {
                 var result = '';
@@ -74,8 +85,8 @@
                     if (arr[i].childList) {
                         this.child(arr[i].childList);
                     } else {
-                        if(arr[i].type === 'room'){
-                            result +=arr[i].id+',';
+                        if (arr[i].type === 'room') {
+                            result += arr[i].id + ',';
                         }
                     }
                 }

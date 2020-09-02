@@ -118,80 +118,76 @@
         <!-- 新增弹出框 -->
         <el-dialog :title="title" :visible.sync="editVisible" width="40%" append-to-body>
             <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
-                <el-form-item label="物业公司" prop="compId" >
-                    <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="社区名称" prop="commId" >
-                    <el-select v-model="form.commId" placeholder="请选择"  @change="commChange" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="社区分区名称" prop="commAreaId" >
-                    <el-select v-model="form.commAreaId" placeholder="请选择" @change="select_status" :disabled="edit">
-                        <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="物业类型" prop="commId">
-                    <el-select v-model="form.propertyType" placeholder="请选择" :disabled="edit" @blur="propertyTypeChage">
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-row>
-                    <el-form-item label="物业编号"  prop="propertyId" :disabled="false" >
-                            <el-input v-model="form.propertyName" :disabled="true" ></el-input>
+                    <el-form-item label="物业公司" prop="compId" >
+                        <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-col span="8">
+                    <el-form-item label="社区名称" prop="commId" >
+                        <el-select v-model="form.commId" placeholder="请选择"  @change="commChange" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="社区分区名称" prop="commAreaId" >
+                        <el-select v-model="form.commAreaId" placeholder="请选择" @change="select_status" :disabled="edit">
+                            <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commAreaList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="物业类型" prop="commId">
+                        <el-select v-model="form.propertyType" placeholder="请选择" :disabled="edit" @blur="propertyTypeChage">
+                            <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="物业编号"  prop="propertyId" :disabled="false" >
+                            <el-input v-model="form.propertyName" :disabled="true" style="width: 130px;"></el-input>
                         <el-button
                                 type="text"
                                 icon="el-icon-search"
                                 @click.stop
                                 @click="roomParkingSearch()"
                         >选择</el-button>
-                    </el-col>
-                </el-row>
-                <el-form-item label="仪表类型" prop="type" >
-                    <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
-                        <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="仪表编号" prop="no" >
-                    <el-input v-model="form.no" ></el-input>
-                </el-form-item>
-                <el-form-item label="仪表名称"  prop="name">
-                    <el-input v-model="form.name" ></el-input>
-                </el-form-item>
-               <el-form-item label="抄表刻度" >
-                    <el-input v-model="form.newNum" ></el-input>
-                </el-form-item>
-                <el-form-item label="抄表时间" prop="meterReadTime">
-                    <el-date-picker
-                            v-model="form.meterReadTime"
-                            type="datetime"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-d HH:mm:ss"
-                            :disabled="edit"
-                    />
-                </el-form-item>
-                <el-form-item label="账单刻度" >
-                    <el-input v-model="form.billNum" ></el-input>
-                </el-form-item>
-                <el-form-item label="账单日期" prop="billDate">
-                    <el-date-picker
-                            v-model="form.billDate"
-                            type="datetime"
-                            format="yyyy-MM-dd HH:mm:ss"
-                            value-format="yyyy-MM-d HH:mm:ss"
-                            :disabled="edit"
-                    />
-                </el-form-item>
-                <el-form-item label="状态" prop="state">
-                    <el-select v-model="form.state" placeholder="请选择" >
-                        <el-option key="bbk" label="在用" value="在用"></el-option>
-                        <el-option key="xtc" label="不在用" value="不在用"></el-option>
-                    </el-select>
-                </el-form-item>
+                    </el-form-item>
+                    <el-form-item label="仪表类型" prop="type" >
+                        <el-select v-model="form.type" placeholder="请选择" :disabled="edit">
+                            <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="仪表编号" prop="no" >
+                        <el-input v-model="form.no" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="仪表名称"  prop="name">
+                        <el-input v-model="form.name" ></el-input>
+                    </el-form-item>
+                   <el-form-item label="抄表刻度" >
+                        <el-input v-model="form.newNum" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="抄表时间" prop="meterReadTime">
+                        <el-date-picker
+                                v-model="form.meterReadTime"
+                                type="datetime"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-d HH:mm:ss"
+                                :disabled="edit"
+                        />
+                    </el-form-item>
+                    <el-form-item label="账单刻度" >
+                        <el-input v-model="form.billNum" ></el-input>
+                    </el-form-item>
+                    <el-form-item label="账单日期" prop="billDate">
+                        <el-date-picker
+                                v-model="form.billDate"
+                                type="datetime"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                value-format="yyyy-MM-d HH:mm:ss"
+                                :disabled="edit"
+                        />
+                    </el-form-item>
+                    <el-form-item label="状态" prop="state">
+                        <el-select v-model="form.state" placeholder="请选择" >
+                            <el-option key="bbk" label="在用" value="在用"></el-option>
+                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
+                        </el-select>
+                    </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
