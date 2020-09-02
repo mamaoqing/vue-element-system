@@ -123,3 +123,49 @@ export const getOwnerProp = id => {
         method: 'get'
     });
 };
+
+export const upload = file => {
+
+    return request({
+        url: '/api/rOwner/upload',
+        method: 'post',
+        data: file
+    });
+};
+
+export const listProvincesAndCity = id => {
+    return request({
+        url: '/api/rProvince/listProvincesAndCity',
+        method: 'get'
+    });
+};
+
+export const insertRoomOwnerOrPark = query => {
+    return request({
+        url: '/api/rOwnerProperty/insertRoomOwnerOrPark',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+};
+
+export const deleteOwnerProp = id => {
+    return request({
+        url: '/api/rOwnerProperty/deleteOwnerProp/' + id,
+        method: 'delete'
+    });
+};
+
+export const getAllProp = query => {
+    return request({
+        url: '/api/rOwnerProperty/getAllProp',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+};
+

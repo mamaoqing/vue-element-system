@@ -3,54 +3,23 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 业主列表
+                    <i class="el-icon-lx-cascades"></i> 房间业主
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="container">
-            <div class="handle-box">
-                <el-button
-                        type="primary"
-                        icon="el-icon-delete"
-                        class="handle-del mr10"
-                        @click="delAllSelection"
-                >批量删除</el-button>
-                <!--<el-select v-model="query.compId" placeholder="请选择" @change="compChange">
-                    <el-option key="qxz" label="请选择物业公司" value=""></el-option>
-                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in compList">
-                        {{types.name}}
-                    </el-option>
-                </el-select>
-                <el-select v-model="query.commId" placeholder="请选择" @change="commChange">
-                    <el-option key="qxz" label="请选择社区名称" value=""></el-option>
-                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in commList">
-                        {{types.name}}
-                    </el-option>
-                </el-select>
-                <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
-                </el-button>-->
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增业主
-                </el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;" v-if="ownerDisable">新增
-                </el-button>
-                <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
-                </el-button>
-                <!--<el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
-                </el-button>-->
-            </div>
             <el-table
                     :data="tableData"
                     border
                     class="table"
                     ref="multipleTable"
                     header-cell-class-name="table-header"
-                    @row-click="openDetails"
-                    @selection-change="handleSelectionChange"
             >
-                <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-<!--                <el-table-column prop="compName" label="公司名称" min-width="125" min-height="55"-->
-<!--                                 align="center"></el-table-column>-->
+                <el-table-column prop="propId" label="propId" min-width="90" min-height="55" v-if="false"
+                                 align="center"></el-table-column>
+                <el-table-column prop="propTypes" label="关系" min-width="90" min-height="55"
+                                 align="center"></el-table-column>
                 <el-table-column prop="ownerType" label="业主类型" min-width="90" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
@@ -89,202 +58,91 @@
                                  min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column label="操作" width="320" align="center">
+                <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-row>
-                            <el-button-group>
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-edit"
-                                        @click.stop
-                                        @click="handleEdit(scope.$index, scope.row)"
-                                >编辑
-                                </el-button>
-                                <el-button
-                                        type="text"
-                                        icon="el-icon-delete"
-                                        class="red"
-                                        @click.stop
-                                        @click="handleDelete(scope.row.id)"
-                                >删除
-                                </el-button>
-                            </el-button-group>
-                            <el-button
-                                    type="text"
-                                    icon="el-icon-lx-text"
-                                    class="green"
-                                    @click.stop
-                                    @click="handleoii(scope.row.id)"
-                            >开票信息
-                            </el-button>
-                        </el-row>
-
+                        <el-button
+                                type="text"
+                                icon="el-icon-delete"
+                                class="red"
+                                @click.stop
+                                @click="handleDelete(scope.row.propId)"
+                        >移除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="pagination">
-                <el-pagination
-                        background
-                        layout="total, prev, pager, next"
-                        :current-page="query.pageNo"
-                        :page-size="query.size"
-                        :total="pageTotal"
-                        @current-change="handlePageChange"
-                ></el-pagination>
-            </div>
         </div>
-        <!-- 编辑弹出框 -->
-        <el-dialog :title="title" :visible.sync="editVisible" width="55%" append-to-body>
-            <el-form ref="form" :model="form" label-width="70px" :disabled="disable" :inline="true">
-                <div>
-                    <el-form-item label="id" v-show="false">
-                        <el-input v-model="form.id"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="公司名称" label-width="150px">
-                        <el-input v-model="compName" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="公司id"  v-show="false" label-width="150px">
-                        <el-input v-model="form.compId" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="社区id"  v-show="false" label-width="150px">
-                        <el-input v-model="form.commId" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="分区id"  v-show="false" label-width="150px">
-                        <el-input v-model="form.commAreaId" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="建筑id"  v-show="false" label-width="150px">
-                        <el-input v-model="form.buildingId" disabled></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="房间id"  v-show="false" label-width="150px">
-                        <el-input v-model="form.roomId" disabled></el-input>
-                    </el-form-item>
-
-                    <el-form-item class="item" label="业主类型" label-width="150px" prop="ownerType"
-                                  :rules="[
-                        { required: true, message: '请选择业主类型', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="form.ownerType" placeholder="请选择业主类型">
-                            <el-option :value="types.name" :key="types.name" :label="types.name"
-                                       v-for="types in ownerTypes"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="证件类型" label-width="150px" prop="certType"
-                                  :rules="[
-                        { required: true, message: '请选择证件类型', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="form.certType" placeholder="请选择">
-                            <el-option :value="types.name" :key="types.id" :label="types.name"
-                                       v-for="types in certTypes"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="证件号码" label-width="150px" prop="certNumber" :rules="[
-                        { required: true, message: '请输入证件号码', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.certNumber" @input="getCount"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="业主名称" label-width="150px" prop="name"
-                                  :rules="[
-                        { required: true, message: '请输入业主名称', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.name"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="业主地址" label-width="150px" prop="ownerAddr"
-                                  :rules="[
-                        { required: true, message: '请输入业主地址', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.ownerAddr"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="业主电话" label-width="150px" prop="tel"
-                                  :rules="[
-                        { required: true, message: '请输入业主电话', trigger: 'blur' },
-                        { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                    ]">
-                        <el-input v-model="form.tel"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="业主邮箱" label-width="150px" prop="email"
-                                  :rules="[
-                        { required: true, message: '请输入业主邮箱', trigger: 'blur' },
-                        { type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change']},
-                    ]">
-                        <el-input v-model="form.email"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="行业" label-width="150px" prop="industry"
-                                  :rules="[
-                        { required: true, message: '请输入行业', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="form.industry" placeholder="请选择行业">
-                            <el-option :value="types.name" :key="types.id" :label="types.name"
-                                       v-for="types in hys"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="性别" label-width="150px" prop="sex"
-                                  :rules="[
-                        { required: true, message: '请选择性别', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="form.sex" placeholder="请选择性别">
-                            <el-option key="male" label="男" value="男"></el-option>
-                            <el-option key="female" label="女" value="女"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="籍贯" label-width="150px" prop="nativePlace"
-                                  :rules="[
-                        { required: true, message: '请选择籍贯', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.nativePlace"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="学历" label-width="150px">
-                        <el-input v-model="form.education"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="房屋关系" label-width="150px">
-                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系">
-                            <el-option :value="types.name" :key="types.id" :label="types.name"
-                                       v-for="types in propTypes"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="状态" prop="state" label-width="150px"
-                                  :rules="[
-                        { required: true, message: '请选择状态', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="form.state" placeholder="请选择">
-                            <el-option key="bbk" label="在用" value="在用"></el-option>
-                            <el-option key="xtc" label="不在用" value="不在用"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="联系人" label-width="150px" prop="linkName"
-                                  :rules="[
-                        { required: true, message: '请输入联系人', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.linkName"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="联系人电话" label-width="150px" prop="linkTel"
-                                  :rules="[
-                        { required: true, message: '请输入电话', trigger: 'blur' },
-                        { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                    ]">
-                        <el-input v-model="form.linkTel"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="联系人地址" label-width="150px" prop="linkAddr"
-                                  :rules="[
-                        { required: true, message: '请输入联系人地址', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="form.linkAddr"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="备注" label-width="150px">
-                        <el-input v-model="form.remark"></el-input>
-                    </el-form-item>
-                    <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
+        <el-dialog  :visible.sync="cmpVisible" append-to-body>
+            <div class="container">
+                <div class="crumbs">
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item>
+                            <i class="el-icon-lx-cascades"></i> 点击选择业主
+                        </el-breadcrumb-item>
+                    </el-breadcrumb>
                 </div>
-
-
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button v-if="!disable" type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
-            </span>
-        </el-dialog>
-        <!-- 开票弹出框   -->
-        <el-dialog :visible.sync="oiiVisible" append-to-body>
-            <ownerInvoiceInfo v-if="oiiVisible" ref="ownerInvoiceInfo"></ownerInvoiceInfo>
+                <el-table
+                        :data="tableData2"
+                        border
+                        class="table"
+                        ref="multipleTable"
+                        header-cell-class-name="table-header"
+                        @row-click="test"
+                >
+                    <el-table-column type="selection" width="55" align="center"></el-table-column>
+                    <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
+                    <el-table-column prop="ownerType" label="业主类型" min-width="90" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="propId" label="propId" min-width="90" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="ownerAddr" label="业主地址" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="tel" label="电话" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="email" label="邮箱" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="certType" label="证件类型" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="certNumber" label="证件号码" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="industry" label="行业" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="sex" label="性别" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="nativePlace" label="籍贯" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="education" label="学历" min-width="75" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="state" label="状态" min-width="55" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkName" label="联系人" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkTel" label="联系电话" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="linkAddr" label="联系人地址" min-width="125" min-height="55"
+                                     align="center"></el-table-column>
+                    <el-table-column prop="createdName" label="创建人" align="center" min-width="75"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75"
+                                     min-height="55"></el-table-column>
+                    <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
+                                     min-height="55"></el-table-column>
+                </el-table>
+                <div class="pagination">
+                    <el-pagination
+                            background
+                            layout="total, prev, pager, next"
+                            :current-page="query2.pageNo"
+                            :page-size="query2.size"
+                            :total="pageTotal2"
+                            @current-change="handlePageChange"
+                    ></el-pagination>
+                </div>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -295,13 +153,17 @@
         getComp
 
     } from '../../api/unit';
-    import { addOwner, deleteIds, deleteOwner, getCount, getOwenerByRoom, update,exportXlsByT } from '../../api/owner';
+    import {
+        listProvincesAndCity, getOwenerByRoom, getOwenList, deleteOwner, deleteOwnerProp
+    } from '../../api/owner';
     import { listCompAll } from '../../api/role';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
     import ownerInvoiceInfo from './ownerInvoiceInfo';
     import ownerProperty from './ownerProperty';
     import { getCityDict } from '../../api';
     import commPage from '../common/commPage';
+    import { upload } from '../../api/owner';
+    import menu1 from './roomUpload';
     export default {
         name: 'basetable',
         data() {
@@ -314,13 +176,22 @@
                     pageNo: 1,
                     size: 10
                 },
+                query2: {
+                    compId: '',
+                    commId: '',
+                    roomId:'',
+                    delIds:'',
+                    pageNo: 1,
+                    size: 10
+                },
                 tableData: [],
+                tableData2: [],
                 multipleSelection: [],
                 delList: [],
                 usableList: [],
                 editVisible: false,
-                ownerDisable:true,
                 pageTotal: 0,
+                pageTotal2: 0,
                 disable: false,
                 oiiVisible: false,
                 form: {},
@@ -329,15 +200,19 @@
                 compName: '',
                 commArr: [],
                 ownerTypes: [],
+                nativePlace:'',
                 sexTypes: [],
                 propTypes: [],
+                cmpVisible:false,
                 certTypes: [],
                 hys: [],
                 areaArr: [],
                 eleNum: '',
                 status:0,
+                provinces:[],
                 propVisible:false,
                 compList: [],
+
                 commList: [],
                 modelArr: [],
                 row:{},
@@ -360,232 +235,58 @@
                 }
 
             });
+
         },
         components: {
             ownerInvoiceInfo,
             commPage,
+            menu1,
             ownerProperty
         }
         ,
         methods: {
             // 获取数据
             getData() {
-                // getOwenList(this.query).then(res => {
-                //     console.log(res);
-                //     this.tableData = res;
-                //     // this.pageTotal = res.data.pageTotal || 0;
-                // });
                 getOwenerByRoom(this.query).then(res => {
                     console.log(res);
                     this.tableData = res;
                     // this.pageTotal = res.data.pageTotal || 0;
                 });
-                getDictItemByDictId(12).then(res => {//12是业主类型的id
-                    // debugger
-                    this.ownerTypes = res.data;
-                });
-                getDictItemByDictId(14).then(res => {//14是性别的id
-                    // debugger
-                    this.sexTypes = res.data;
-                });
-                getDictItemByDictId(47).then(res => {//47是的证件类型id
-                    // debugger
-                    this.certTypes = res.data;
-                });
-                getDictItemByDictId(49).then(res => {//47是的id
-                    // debugger
-                    this.hys = res.data;
-                });
-                getDictItemByDictId(11).then(res => {//业主与房屋关系类型
-                    // debugger
-                    this.propTypes = res.data;
-                });
-                getCityDict(this.query).then(res => {
-                    this.cascaderData = res.data;
+                listProvincesAndCity(this.query).then(res => {
+                    this.provinces = res.data;
+                    console.log(this.provinces)
                 });
 
             },
-            getCount() {
-                if(this.form.ownerType&&this.form.certType&&this.form.certNumber){
-                    getCount(this.form).then(res => {
-                        if (res.data != null){
-                            this.$set(this.form, 'education', res.data.education);
-                            this.$set(this.form, 'name', res.data.name);
-                            this.$set(this.form, 'email', res.data.email);
-                            this.$set(this.form, 'industry', res.data.industry);
-                            this.$set(this.form, 'likes', res.data.likes);
-                            this.$set(this.form, 'linkAddr', res.data.linkAddr);
-                            this.$set(this.form, 'linkName', res.data.linkName);
-                            this.$set(this.form, 'linkTel', res.data.linkTel);
-                            this.$set(this.form, 'nativePlace', res.data.nativePlace);
-                            this.$set(this.form, 'ownerAddr', res.data.ownerAddr);
-                            this.$set(this.form, 'remark', res.data.remark);
-                            this.$set(this.form, 'sex', res.data.sex);
-                            this.$set(this.form, 'state', res.data.state);
-                            this.$set(this.form, 'tel', res.data.tel);
-                        }
-                    });
-                }
-            },
+
             // 触发搜索按钮
             handleSearch() {
                 this.$set(this.query, 'pageIndex', 1);
                 this.getData();
             },
-
-            // 删除操作
-            handleDelete(id) {
-
+            addOwner(){
+                this.cmpVisible = true
+                getOwenList(this.query2).then(res => {
+                    console.log(res);
+                    this.tableData2 = res.data.data;
+                    this.pageTotal2 = res.data.pageTotal || 0;
+                });
+            },
+            handleDelete(val){
                 // 二次确认删除
-                this.$confirm('该业主下可能有开票等信息，确定要删除吗？', '提示', {
+                this.$confirm('确认要将该业主从房间下移除？', '提示', {
                     type: 'warning'
                 })
                     .then(() => {
-                        deleteOwner(id).then(res => {
-                            this.$message.success('删除成功');
-                            this.getData();
+                        deleteOwnerProp(val).then(res => {
+                            this.tableData2 = res.data.data;
+                            this.pageTotal2 = res.data.pageTotal || 0;
                         });
                     })
                     .catch(() => {
                     });
             },
-            // 多选操作
-            handleSelectionChange(val) {
-                this.multipleSelection = val;
-            },
-
-            delAllSelection() {
-                const length = this.multipleSelection.length;
-                let str = '';
-
-                this.delList = this.delList.concat(this.multipleSelection);
-                for (let i = 0; i < length; i++) {
-                    if (i===length-1){
-                        this.query.delIds+=this.multipleSelection[i].id;
-                    }else{
-                        this.query.delIds+=this.multipleSelection[i].id+',';
-                    }
-                    str += this.multipleSelection[i].name + ' ';
-                }
-                deleteIds(this.query).then(res => {
-                    this.$message.error(`删除了${str}`);
-                    this.multipleSelection = [];
-                });
-
-            },
-            handleRefresh() {
-                this.query = {
-                    commId: '',
-                    pageNo: 1,
-                    size: 10
-                };
-                this.getData();
-            },
-            handleAdd() {
-                this.editVisible = true;
-                this.title = '新增业主';
-                this.form = {};
-                this.status = 0;
-                this.disable = false;
-                // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'createdAt', new Date());
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
-                this.form.commId = this.row.commId
-                this.form.commAreaId = this.row.commAreaId
-                this.form.buildingId = this.row.buildingId
-                this.form.roomId = this.row.id
-                getComp().then(res => {
-                    this.compName = res.data.name;
-                    this.$set(this.form, 'compId', res.data.id);
-                });
-
-            },
-            // 编辑操作
-            handleEdit(index, row) {
-                this.idx = index;
-                this.form = row;
-                this.status = 1;
-                getComp().then(res => {
-                    this.compName = res.data.name;
-                    this.$set(this.form, 'compId', res.data.id);
-                });
-                this.form.commId = this.row.commId
-                this.form.commAreaId = this.row.commAreaId
-                this.form.buildingId = this.row.buildingId
-                this.form.roomId = this.row.id
-                let that = this;
-                that.$set(that.form, 'model', this.form.model - 0);
-                this.modelArr.forEach(function(value, key, arr) {
-
-                    if (arr[key].id == that.form.model) {
-                        that.eleNum = arr[key].elevatorNum;
-                    }
-
-                });
-                this.editVisible = true;
-                this.disable = false;
-                this.title = '编辑业主信息';
-                // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
-                // this.$set(this.form, 'modifiedAt', new Date());
-
-            },
-            //表格行点击事件
-            openDetails(row) {
-                //具体操作
-                this.form = row;
-                this.disable = true;
-                this.status = 2;
-                this.editVisible = true;
-                let that = this;
-                that.$set(that.form, 'model', this.form.model - 0);
-                this.modelArr.forEach(function(value, key, arr) {
-
-                    if (arr[key].id == that.form.model) {
-                        that.eleNum = arr[key].elevatorNum;
-                    }
-
-                });
-                getComp().then(res => {
-                    this.compName = res.data.name;
-                    this.$set(this.form, 'compId', res.data.id);
-                });
-                this.title = '查看业主信息';
-
-            },
-            // 保存编辑
-            saveEditOrAdd(title) {
-                if (title === '新增业主') {
-                    this.$refs['form'].validate(valid => {
-                        if (valid) {
-                            // this.$delete(this.form, 'createdName');
-                            // this.$delete(this.form, 'createdAt');
-                            // this.$delete(this.form, 'modifiedName');
-                            // this.$delete(this.form, 'modifiedAt');
-                            this.editVisible = false;
-                            addOwner(this.form).then(res => {
-                                this.$message.success(`新增业主成功`);
-                                this.getData();
-                            });
-                        }
-                    });
-
-                } else {
-                    this.$refs['form'].validate(valid => {
-                        if (valid) {
-                            this.editVisible = false;
-                            // this.$delete(this.form, 'modifiedName');
-                            // this.$delete(this.form, 'modifiedAt');
-                            update(this.form).then(res => {
-                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                                this.$set(this.tableData, this.idx, this.form);
-                            });
-                        }
-                    });
-                }
-
-            },
-/*            compChange(val) {
+            compChange(val) {
                 if (this.form.compId != undefined || val != undefined) {
                     var compId;
                     if (val == undefined) {
@@ -597,7 +298,6 @@
                     getUserComm(compId).then(res => {
                         if (res.data) {
                             this.form.commId = undefined;
-                            this.query.commName = '请选择社区名称';
                             this.commList = res.data;
                         }
                     });
@@ -613,58 +313,36 @@
                         this.query.commName = commId;
                     }
                 }
-            },*/
-            dataInitialization(row){
-              this.query.roomId = row.id
-              this.row = row
+            },
 
-                // this.query.roomId = roomId;
-                /*this.$set(this.unitForm, 'compName', compId);
-                this.$set(this.unitForm, 'commName', commId);
-                this.$set(this.unitForm, 'commAreaName', areaId);
-                this.$set(this.unitForm, 'buildingName', buildId);
-                this.$set(this.unitForm, 'unitName', unitId);*/
-
-                this.unitDisable = false
+            handleRefresh() {
+                this.query = {
+                    commId: '',
+                    pageNo: 1,
+                    size: 10
+                };
                 this.getData();
+            },
+
+            //表格行点击事件
+            test(row) {
+                console.log(row)
+                console.log(this.row)
+                this.form.commId = this.row.commId
+                this.form.commAreaId = this.row.commAreaId
+                this.form.buildingId = this.row.commAreaId
+                this.form.propertyId = this.row.id
+                this.form.compId = this.row.compId
+                this.form.ownerId = row.id
+                this.form.type = row.propTypes
+            },
+
+            dataInitialization(row){
+                this.query.roomId = row.id
+                this.row = row
 
             },
-            handleoii(id) {
-                let linkID = id;
-                this.oiiVisible = true;
-                this.$nextTick(() => {
-                    this.$refs.ownerInvoiceInfo.dataInitialization(linkID);
-                });
 
-            },
-            exportXls(){
-                exportXlsByT(this.query).then(res => {
-                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
-                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
-                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
-                    } else {
-                        var downloadElement = document.createElement('a');
-                        var href = window.URL.createObjectURL(blob); //创建下载的链接
-
-                        downloadElement.href = href;
-                        downloadElement.download = unescape('业主信息.xls'); //下载后文件名
-
-                        document.body.appendChild(downloadElement);
-                        downloadElement.click(); //点击下载
-
-                        document.body.removeChild(downloadElement); //下载完成移除元素
-
-                        window.URL.revokeObjectURL(href); //释放掉blob对象
-                    }
-                });
-            },
-            handleProp(id){
-                let linkID = id;
-                this.propVisible = true;
-                this.$nextTick(() => {
-                    this.$refs.ownerProperty.dataInitialization(linkID);
-                });
-            },
             // 分页导航
             handlePageChange(val) {
                 this.$set(this.query, 'pageNo', val);

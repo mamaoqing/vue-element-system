@@ -21,8 +21,7 @@
                         {{types.name}}
                     </el-option>
                 </el-select>
-                <el-select v-model="query.commId" placeholder="请选择" @change="commChange">
-                    <el-option key="qxz" label="请选择社区名称" value=""></el-option>
+                <el-select v-model="query.commId" placeholder="请选择社区" @change="commChange">
                     <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in commList">
                         {{types.name}}
                     </el-option>
@@ -33,6 +32,7 @@
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
             </div>
             <el-table
@@ -86,7 +86,7 @@
                                  min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column label="操作" width="320" align="center">
+                <el-table-column label="操作" width="195" align="center">
                     <template slot-scope="scope">
                         <el-row>
                             <el-button-group>
@@ -160,7 +160,7 @@
                                   :rules="[
                         { required: true, message: '请选择业主类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.ownerType" placeholder="请选择业主类型">
+                        <el-select class="myWidth" v-model="form.ownerType" placeholder="请选择业主类型" width="200px">
                             <el-option :value="types.name" :key="types.name" :label="types.name"
                                        v-for="types in ownerTypes"></el-option>
                         </el-select>
@@ -169,7 +169,7 @@
                                   :rules="[
                         { required: true, message: '请选择证件类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.certType" placeholder="请选择">
+                        <el-select v-model="form.certType" placeholder="请选择" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in certTypes"></el-option>
                         </el-select>
@@ -209,7 +209,7 @@
                                   :rules="[
                         { required: true, message: '请输入行业', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.industry" placeholder="请选择行业">
+                        <el-select v-model="form.industry" placeholder="请选择行业" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in hys"></el-option>
                         </el-select>
@@ -218,22 +218,34 @@
                                   :rules="[
                         { required: true, message: '请选择性别', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.sex" placeholder="请选择性别">
-                            <el-option key="male" label="男" value="男"></el-option>
-                            <el-option key="female" label="女" value="女"></el-option>
+                        <el-select v-model="form.sex" placeholder="请选择性别" class="myWidth">
+                            <el-option :value="types.name" :key="types.id" :label="types.name"
+                                       v-for="types in sexTypes"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="籍贯" label-width="150px" prop="nativePlace"
                                   :rules="[
                         { required: true, message: '请选择籍贯', trigger: 'blur' },
                     ]">
-                        <el-input v-model="form.nativePlace"></el-input>
+                        <el-cascader
+                                v-model="nativePlace"
+                                class="myWidth"
+                                ref="cascaderAddr"
+                                :props="{
+                                    value: 'name',
+                                    label: 'name',
+                                    children: 'childList'
+                                  }"
+                                :options="provinces"
+                                placeholder="请选择籍贯"
+                                @change="handleChange"
+                        ></el-cascader>
                     </el-form-item>
                     <el-form-item class="item" label="学历" label-width="150px">
                         <el-input v-model="form.education"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="房屋关系" label-width="150px">
-                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系">
+                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in propTypes"></el-option>
                         </el-select>
@@ -242,7 +254,7 @@
                                   :rules="[
                         { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.state" placeholder="请选择">
+                        <el-select v-model="form.state" placeholder="请选择" class="myWidth">
                             <el-option key="bbk" label="在用" value="在用"></el-option>
                             <el-option key="xtc" label="不在用" value="不在用"></el-option>
                         </el-select>
@@ -283,6 +295,10 @@
         <el-dialog :visible.sync="oiiVisible" append-to-body>
             <ownerInvoiceInfo v-if="oiiVisible" ref="ownerInvoiceInfo"></ownerInvoiceInfo>
         </el-dialog>
+
+        <el-dialog  :visible.sync="cmpVisible" append-to-body>
+            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
+        </el-dialog>
     </div>
 </template>
 
@@ -292,13 +308,24 @@
         getComp
 
     } from '../../api/unit';
-    import { addOwner, deleteIds, deleteOwner, getCount, getOwenList, update,exportXlsByT } from '../../api/owner';
+    import {
+        addOwner,
+        deleteIds,
+        deleteOwner,
+        getCount,
+        getOwenList,
+        update,
+        exportXlsByT,
+        listProvincesAndCity
+    } from '../../api/owner';
     import { listCompAll } from '../../api/role';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
     import ownerInvoiceInfo from './ownerInvoiceInfo';
     import ownerProperty from './ownerProperty';
     import { getCityDict } from '../../api';
     import commPage from '../common/commPage';
+    import { upload } from '../../api/owner';
+    import menu1 from './roomUpload';
     export default {
         name: 'basetable',
         data() {
@@ -325,15 +352,19 @@
                 compName: '',
                 commArr: [],
                 ownerTypes: [],
+                nativePlace:'',
                 sexTypes: [],
                 propTypes: [],
+                cmpVisible:false,
                 certTypes: [],
                 hys: [],
                 areaArr: [],
                 eleNum: '',
                 status:0,
+                provinces:[],
                 propVisible:false,
                 compList: [],
+
                 commList: [],
                 modelArr: [],
                 row:{},
@@ -356,10 +387,12 @@
                 }
 
             });
+
         },
         components: {
             ownerInvoiceInfo,
             commPage,
+            menu1,
             ownerProperty
         }
         ,
@@ -367,9 +400,11 @@
             // 获取数据
             getData() {
                 getOwenList(this.query).then(res => {
-                    console.log(res);
-                    this.tableData = res;
-                    // this.pageTotal = res.data.pageTotal || 0;
+                    this.tableData = res.data.data;
+                    this.pageTotal = res.data.pageTotal || 0;
+                });
+                listProvincesAndCity(this.query).then(res => {
+                    this.provinces = res.data;
                 });
                 // getOwenerByRoom(this.query).then(res => {
                 //     console.log(res);
@@ -400,6 +435,26 @@
                     this.cascaderData = res.data;
                 });
 
+            },
+            upload(){
+                //let linkID = id;
+                this.cmpVisible = true;
+                this.$nextTick(()=>{
+                    this.$refs.menu1.dataInitializationUpload("http://localhost:8900/api/rOwner/upload");
+                })
+
+            },
+        uploadDr(title,form){
+            console.log(this.form);
+            upload(this.form.file,{
+                headers: { 'Content-Type': 'multipart/form-data' }
+            }).then(res => {
+
+            })
+        },
+            handleChange(val){
+                this.form.nativePlace =val.join("/")
+                console.log(this.form.nativePlace)
             },
             getCount() {
                 if(this.form.ownerType&&this.form.certType&&this.form.certNumber){
@@ -466,6 +521,8 @@
                 deleteIds(this.query).then(res => {
                     this.$message.error(`删除了${str}`);
                     this.multipleSelection = [];
+                    this.query.delIds=null;
+                    this.getData()
                 });
 
             },
@@ -510,6 +567,7 @@
                 this.form.commAreaId = this.row.commAreaId
                 this.form.buildingId = this.row.buildingId
                 this.form.roomId = this.row.id
+                this.nativePlace = this.form.nativePlace.split("/")
                 let that = this;
                 that.$set(that.form, 'model', this.form.model - 0);
                 this.modelArr.forEach(function(value, key, arr) {
@@ -533,6 +591,7 @@
                 this.disable = true;
                 this.status = 2;
                 this.editVisible = true;
+                this.nativePlace = this.form.nativePlace.split("/");
                 let that = this;
                 that.$set(that.form, 'model', this.form.model - 0);
                 this.modelArr.forEach(function(value, key, arr) {
@@ -593,7 +652,6 @@
                     getUserComm(compId).then(res => {
                         if (res.data) {
                             this.form.commId = undefined;
-                            this.query.commName = '请选择社区名称';
                             this.commList = res.data;
                         }
                     });
@@ -635,6 +693,33 @@
                 this.$set(this.query, 'pageNo', val);
                 this.getData();
             },
+            getTime(){
+                let date = new Date();
+                let yy = date.getFullYear();
+                let mm = date.getMonth() + 1;
+                if(mm<10){
+                    mm = '0'+mm;
+                }
+                let dd = date.getDate();
+                if(dd<10){
+                    dd = '0'+dd;
+                }
+                let h = date.getHours();
+                if(h<10){
+                    h = '0'+h;
+                }
+                let m = date.getMinutes();
+                if(m<10){
+                    m = '0'+m;
+                }
+                let s = date.getSeconds();
+                if(s<10){
+                    s = '0'+s;
+                }
+                let ms = date.getMilliseconds();
+                let time = yy+""+mm+""+dd+""+h+""+m+""+s+""+ms;
+                return time;
+            },
             exportXls(){
                 console.log(this.query)
                 exportXlsByT(this.query).then(res => {
@@ -646,7 +731,7 @@
                         var href = window.URL.createObjectURL(blob); //创建下载的链接
 
                         downloadElement.href = href;
-                        downloadElement.download = unescape('业主信息.xls'); //下载后文件名
+                        downloadElement.download = unescape('业主信息'+this.getTime()+'.xls'); //下载后文件名
 
                         document.body.appendChild(downloadElement);
                         downloadElement.click(); //点击下载
@@ -700,9 +785,8 @@
     .el-table--small td{
         padding: 1px 0;
     }
-    .el-input--small .el-input__inner {
-        height: 32px;
+    .myWidth {
         width: 200px;
-        line-height: 32px;
     }
+
 </style>
