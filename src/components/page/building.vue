@@ -714,7 +714,7 @@ export default {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
                         //需要判断是否修改了建筑的名称和编号
-                        if(this.buildingNo != this.form.no) {
+                        if(this.buildingNo != this.form.no&&this.buildingName != this.form.name) {
                             checkBulidingNameNo(this.form).then(res => {
                                 if(res.data==''){
                                     updateBuilding(this.form).then(res => {
@@ -727,7 +727,11 @@ export default {
                                     this.$message.info(res.data);
                                 }
                             });
-                        }else{
+                        }else if(this.buildingName == this.form.name){
+                            this.$message.info("请修改建筑名称");
+                        }else if(this.buildingNo == this.form.no){
+                            this.$message.info("请修改建筑编号");
+                        }else{//建筑名称和建筑编号都没有改变，无需查询是否重复，直接update
                             updateBuilding(this.form).then(res => {
                                 this.updateVisible = false;
                                 this.$message.success(`修改第 ${this.idx + 1} 行成功`);
