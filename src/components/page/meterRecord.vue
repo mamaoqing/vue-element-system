@@ -174,6 +174,7 @@
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-dd HH:mm:ss"
                             disabled
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
@@ -216,12 +217,12 @@
                 </el-form-item>
                 <el-form-item label="仪表编号" prop="no" >
                     <el-input v-model="form.no" :disabled="true"></el-input>
-                    <el-button
+                    <!--<el-button
                             type="text"
                             icon="el-icon-search"
                             @click.stop
                             @click="meterSearch()"
-                    >选择</el-button>
+                    >选择</el-button>-->
                 </el-form-item>
                 <el-form-item label="抄表刻度" prop="newNum" >
                     <el-input v-model="form.newNum" ></el-input>
@@ -242,6 +243,7 @@
                             format="yyyy-MM-dd HH:mm:ss"
                             value-format="yyyy-MM-dd HH:mm:ss"
                             disabled
+                            style="width: 205px;"
                     />
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
