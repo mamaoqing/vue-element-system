@@ -140,9 +140,9 @@ export const listProvincesAndCity = id => {
     });
 };
 
-export const insertRoomOwner = query => {
+export const insertRoomOwnerOrPark = query => {
     return request({
-        url: '/api/rOwnerProperty/insertRoomOwner',
+        url: '/api/rOwnerProperty/insertRoomOwnerOrPark',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -158,4 +158,14 @@ export const deleteOwnerProp = id => {
     });
 };
 
+export const getAllProp = query => {
+    return request({
+        url: '/api/rOwnerProperty/getAllProp',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
+    });
+};
 

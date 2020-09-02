@@ -86,7 +86,7 @@
                                  min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column label="操作" width="320" align="center">
+                <el-table-column label="操作" width="195" align="center">
                     <template slot-scope="scope">
                         <el-row>
                             <el-button-group>
@@ -160,7 +160,7 @@
                                   :rules="[
                         { required: true, message: '请选择业主类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.ownerType" placeholder="请选择业主类型">
+                        <el-select class="myWidth" v-model="form.ownerType" placeholder="请选择业主类型" width="200px">
                             <el-option :value="types.name" :key="types.name" :label="types.name"
                                        v-for="types in ownerTypes"></el-option>
                         </el-select>
@@ -169,7 +169,7 @@
                                   :rules="[
                         { required: true, message: '请选择证件类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.certType" placeholder="请选择">
+                        <el-select v-model="form.certType" placeholder="请选择" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in certTypes"></el-option>
                         </el-select>
@@ -209,7 +209,7 @@
                                   :rules="[
                         { required: true, message: '请输入行业', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.industry" placeholder="请选择行业">
+                        <el-select v-model="form.industry" placeholder="请选择行业" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in hys"></el-option>
                         </el-select>
@@ -218,7 +218,7 @@
                                   :rules="[
                         { required: true, message: '请选择性别', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.sex" placeholder="请选择性别">
+                        <el-select v-model="form.sex" placeholder="请选择性别" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in sexTypes"></el-option>
                         </el-select>
@@ -229,6 +229,7 @@
                     ]">
                         <el-cascader
                                 v-model="nativePlace"
+                                class="myWidth"
                                 ref="cascaderAddr"
                                 :props="{
                                     value: 'name',
@@ -244,7 +245,7 @@
                         <el-input v-model="form.education"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="房屋关系" label-width="150px">
-                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系">
+                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in propTypes"></el-option>
                         </el-select>
@@ -253,7 +254,7 @@
                                   :rules="[
                         { required: true, message: '请选择状态', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.state" placeholder="请选择">
+                        <el-select v-model="form.state" placeholder="请选择" class="myWidth">
                             <el-option key="bbk" label="在用" value="在用"></el-option>
                             <el-option key="xtc" label="不在用" value="不在用"></el-option>
                         </el-select>
@@ -399,13 +400,11 @@
             // 获取数据
             getData() {
                 getOwenList(this.query).then(res => {
-                    console.log(res);
                     this.tableData = res.data.data;
                     this.pageTotal = res.data.pageTotal || 0;
                 });
                 listProvincesAndCity(this.query).then(res => {
                     this.provinces = res.data;
-                    console.log(this.provinces)
                 });
                 // getOwenerByRoom(this.query).then(res => {
                 //     console.log(res);
@@ -786,9 +785,8 @@
     .el-table--small td{
         padding: 1px 0;
     }
-    .el-input--small .el-input__inner {
-        height: 32px;
+    .myWidth {
         width: 200px;
-        line-height: 32px;
     }
+
 </style>

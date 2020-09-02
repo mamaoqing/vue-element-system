@@ -58,7 +58,7 @@
                                  min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column label="移除" align="center">
+                <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -66,7 +66,7 @@
                                 class="red"
                                 @click.stop
                                 @click="handleDelete(scope.row.propId)"
-                        >删除
+                        >移除
                         </el-button>
                     </template>
                 </el-table-column>

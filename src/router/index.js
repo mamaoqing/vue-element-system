@@ -252,6 +252,11 @@ export default new Router({
                     path: '/meterRecord',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/meterRecord.vue'),
                     meta: { title: '仪表抄表管理' }
+                },
+                {
+                    path: '/ownerPropertyList',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/ownerPropertyList.vue'),
+                    meta: { title: '业主物业关系' }
                 }
             ]
         },

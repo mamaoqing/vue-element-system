@@ -486,7 +486,7 @@ import { listCompAll } from '../../api/role';
 import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upload,exportXlsByT} from '../../api/room';
 import menu1 from './roomUpload';
 import ownerVisible from './owner';
-import { getOwenList, insertRoomOwner } from '../../api/owner';
+import { getOwenList, insertRoomOwnerOrPark } from '../../api/owner';
 export default {
     name:"roomlistpage",
     props:{
@@ -1063,6 +1063,7 @@ export default {
             this.formOwner.commAreaId = row.commAreaId;
             this.formOwner.buildingId = row.buildingId;
             this.formOwner.roomId = row.id;
+            this.formOwner.propType = "房产";
             this.ownerListVisible = true
 
         },
@@ -1125,7 +1126,7 @@ export default {
             this.$refs[form].validate((valid)=>{
                 if(valid) {
                     console.log(this.formOwner)
-                    insertRoomOwner(this.formOwner).then(res => {
+                    insertRoomOwnerOrPark(this.formOwner).then(res => {
                         if (res.code===0){
                             this.$message.success(`添加成功`);
                             this.ownerListVisible = false;
