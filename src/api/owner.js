@@ -65,9 +65,41 @@ export const deleteIds = delIds => {
     });
 };
 
+export const deletePropIds = delIds => {
+    return request({
+        url: '/api/rOwnerProperty/deleteIds',
+        method: 'delete',
+        params: delIds
+    });
+};
+
 export const exportXlsByT = query => {
     return request({
         url: '/api/rOwner/getExcel',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query,
+        responseType: 'blob'
+    });
+};
+
+export const exportXlsByTPop = query => {
+    return request({
+        url: '/api/rOwnerProperty/export',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query,
+        responseType: 'blob'
+    });
+};
+
+export const exportTemplate = query => {
+    return request({
+        url: '/api/rOwnerProperty/exportTemplate',
         method: 'post',
         headers: {
             'Content-Type': 'application/json'
