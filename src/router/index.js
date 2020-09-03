@@ -259,6 +259,11 @@ export default new Router({
                     meta: { title: '业主物业关系' }
                 },
                 {
+                    path: '/billList',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/bill'),
+                    meta: { title: '账单管理' }
+                },
+                {
                     path: '/auditerCnf',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/auditerCnf.vue'),
                     meta: { title: '审核人配置' }
