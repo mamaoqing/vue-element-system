@@ -9,7 +9,7 @@
         </div>
         <!--comp_id comm_id property_type property_id propertyName  type no name new_num old_num state remark created_at created_name  modified_at modified_name-->
         <div class="container">
-            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" >
+            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" :disabled="otherComp">
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
@@ -188,7 +188,7 @@
         </el-dialog>
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="updateVisible" width="40%" append-to-body>
-            <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="150px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId" >
                     <el-select v-model="form.compId" placeholder="请选择" @change="compChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
@@ -249,18 +249,7 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="创建人" >
-                    <el-input v-model="form.createdName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="创建日期" >
-                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改人" >
-                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改日期" >
-                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="updateVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
@@ -282,6 +271,7 @@ import { listCompAll } from '../../api/role';
 import {insertMeterRecord,exportXlsByT,exportXlsTemplateByT,deleteMeterRecord,upload,updateMeterRecord,listMeterRecord,listMeterRecordNum,checkMeterRecord} from '../../api/meterRecord';
 import menu1 from './roomUpload';
 import meterVisible from './meterChoose';
+    import commPage from '../common/commPage';
 export default {
     name:"roomlistpage",
     props:{
@@ -368,12 +358,14 @@ export default {
             updateVisible:false,
             uploadVisible:false,
             copyVisible:false,
+            otherComp:false,
             edit:false,
             pageTotal:0,
             disable:false,
             cmpVisible:false,
             meterVisible:false,
             detail:false,
+            status:0,
             compList:[],
             commList:[],
             propertyTypeList:[],//物业类型
@@ -418,6 +410,7 @@ export default {
     components:{
         menu1,
         meterVisible,
+        commPage
      },
     methods: {
         meterSearch(){
@@ -530,21 +523,13 @@ export default {
         },
         // 获取 easy-mock 的模拟数据
         getData() {
-            listMeterRecord(this.query).then(res => {
-                // debugger
-                console.log(this.query.unitId)
-                this.tableData = res.data;
-            });
-            listMeterRecordNum(this.query).then(res => {
-                // debugger
-                this.pageTotal = res.data || 0;
-                console.log(this.pageTotal+"__+++__");
-            });
+
             listCompAll(this.query).then(res => {
                 // debugger
                 this.compList = res.data.records;
                 if(res.data.records.length==1){
-                    this.query.compName=res.data.records[0].name;
+                    this.otherComp = true;
+                    this.query.compName=res.data.records[0].id;
                     getUserComm(res.data.records[0].id).then(res => {
                         if(res.data){
                             this.form.commId=undefined;
@@ -552,8 +537,19 @@ export default {
                         }
                     });
                 }
+                listMeterRecord(this.query).then(res => {
+                    // debugger
+                    console.log(this.query.unitId)
+                    this.tableData = res.data;
+                });
+                listMeterRecordNum(this.query).then(res => {
+                    // debugger
+                    this.pageTotal = res.data || 0;
+                    console.log(this.pageTotal+"__+++__");
+                });
 
             });
+
             getDictItemByDictId(45).then(res => {//45是物业类型
                 this.propertyTypeList = res.data;
             });
@@ -611,6 +607,7 @@ export default {
             debugger
             this.form = {};
             this.editVisible = true;
+            this.status = 0;
             this.title="新增仪表抄表";
             this.disable=false;
             let date = new Date();
@@ -669,6 +666,7 @@ export default {
             this.disable=false;
             this.detail=false;
             this.no = row.no;
+            this.status = 1;
             this.edit=true;
             this.title="编辑仪表抄表";
             this.$refs.form.clearValidate();
@@ -685,9 +683,11 @@ export default {
         openDetails (row) {
             //具体操作
             this.form = row;
+            this.edit=false;
             this.disable=true;
             this.detail=true;
             this.updateVisible = true;
+            this.status = 2;
             this.title="查看仪表抄表";
         },
         format(val){
