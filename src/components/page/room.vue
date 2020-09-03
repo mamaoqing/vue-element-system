@@ -8,7 +8,7 @@
             </el-breadcrumb>
         </div>
         <div class="container">
-            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" v-if="unitDisable">
+            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" v-if="unitDisable" :disabled="otherComp">
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
@@ -251,7 +251,7 @@
         </el-dialog>
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="updateVisible" width="40%" append-to-body>
-            <el-form ref="form" :model="form" label-width="120px"  :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="150px"  :rules="rules" :disabled="disable">
                 <el-form-item label="物业公司" prop="compId">
                     <el-select v-model="form.compName" placeholder="请选择" @change="compChange" :disabled="edit">
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
@@ -346,18 +346,7 @@
                 <el-form-item label="备注" >
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="创建人" >
-                    <el-input v-model="form.createdName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="创建日期" >
-                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改人" >
-                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改日期" >
-                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="updateVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
@@ -487,6 +476,7 @@ import { insertRoom,deleteRoom,updateRoom,listRoom,listRoomNum,checkRoomOwer,upl
 import menu1 from './roomUpload';
 import ownerVisible from './owner';
 import { getOwenList, insertRoomOwnerOrPark } from '../../api/owner';
+import commPage from '../common/commPage';
 export default {
     name:"roomlistpage",
     props:{
@@ -682,6 +672,7 @@ export default {
             cmpVisible:false,
             ownerVisible:false,
             detail:false,
+            otherComp:false,
             compList:[],
             commList:[],
             commAreaList:[],
@@ -695,6 +686,7 @@ export default {
             unitList:[],
             form: {},
             formCopy:{},
+            status:0,
             unitForm:{},
             idx: -1,
             types:[],
@@ -748,7 +740,8 @@ export default {
     },
     components:{
         menu1,
-        ownerVisible
+        ownerVisible,
+        commPage
      },
     methods: {
         childByValueUpload(){
@@ -904,21 +897,11 @@ export default {
         },
         // 获取 easy-mock 的模拟数据
         getData() {
-            listRoom(this.query).then(res => {
-                // debugger
-                console.log(this.query.unitId)
-                this.tableData = res.data;
-            });
-            listRoomNum(this.query).then(res => {
-                // debugger
-                this.pageTotal = res.data || 0;
-                console.log(this.pageTotal+"__+++__");
-            });
             listCompAll(this.query).then(res => {
-                // debugger
                 this.compList = res.data.records;
                 if(res.data.records.length==1){
-                    this.query.compName=res.data.records[0].name;
+                    this.otherComp = true;
+                    this.query.compName=res.data.records[0].id;
                     getUserComm(res.data.records[0].id).then(res => {
                         if(res.data){
                             this.form.commId=undefined;
@@ -926,7 +909,16 @@ export default {
                         }
                     });
                 }
-
+                listRoom(this.query).then(res => {
+                    // debugger
+                    console.log(this.query.unitId)
+                    this.tableData = res.data;
+                });
+                listRoomNum(this.query).then(res => {
+                    // debugger
+                    this.pageTotal = res.data || 0;
+                    console.log(this.pageTotal+"__+++__");
+                });
             });
             getDictItemByDictId(44).then(res => {//44是房型的id
                 // debugger
@@ -1013,6 +1005,7 @@ export default {
             this.updateVisible = false;
             this.editVisible = true;
             this.title="新增房间";
+            this.status = 0;
             this.edit=false;
             this.disable=false;
             this.form={state:'在用'}
@@ -1035,6 +1028,7 @@ export default {
             this.idx = index;
             this.form = row;
             this.updateVisible = true;
+            this.status = 1;
             this.disable=false;
             this.edit=true;
             this.title="编辑房间"
@@ -1085,6 +1079,7 @@ export default {
             this.updateVisible = true;
             this.title="查看房间"
             this.detail=false;
+            this.status = 2;
         },
         uploadDr(title,form){
             console.log(this.form);

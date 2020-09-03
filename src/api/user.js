@@ -9,6 +9,14 @@ export const userList = query => {
     });
 };
 
+export const listUserComm = query => {
+    return request({
+        url: '/api/sUser/listUserComm',
+        method: 'get',
+        params:query
+    });
+};
+
 // 添加用户
 export const addUser = query => {
     return request({
