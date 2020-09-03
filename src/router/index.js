@@ -257,6 +257,11 @@ export default new Router({
                     path: '/ownerPropertyList',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/ownerPropertyList.vue'),
                     meta: { title: '业主物业关系' }
+                },
+                {
+                    path: '/auditerCnf',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/page/auditerCnf.vue'),
+                    meta: { title: '审核人配置' }
                 }
             ]
         },
