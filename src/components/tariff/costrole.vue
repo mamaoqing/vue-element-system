@@ -76,13 +76,13 @@
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
-                                @click="addUnit(scope.row.id)">添加住宅
+                                @click="addUnit(scope.row.id,scope.row.commId)">添加住宅
                         </el-button>
                         <el-button
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
-                                @click="addPark(scope.row.id)">添加车位
+                                @click="addPark(scope.row.id,scope.row.commId)">添加车位
                         </el-button>
                     </template>
                 </el-table-column>
@@ -101,12 +101,12 @@
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="12">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
                                       :rules="[
                     { required: true, message: '请选择公司名称', trigger: 'blur' },
                 ]">
-                            <el-select v-model="form.compId" @clear="clearCompForm" clearable filterable
+                            <el-select v-model="form.compId" @clear="clearCompForm" style="width: 250px" clearable filterable
                                        placeholder="请选择物业公司"
                                        @change="selectCompForm(form.compId)">
                                 <el-option
@@ -117,11 +117,35 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <template v-if="true">
+                            <el-form-item label="社区名称" label-width="100px" prop="commId"
+                                          :rules="[
+                    { required: true, message: '请选择社区名称', trigger: 'blur' },
+                ]">
+                                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="child.compId"
+                                           :change="child.commId"></comm-util>
+                            </el-form-item>
+                        </template>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="标准名称" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入标准名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="费用明细" label-width="100px" prop="costItemId"
                                       :rules="[
                     { required: true, message: '请选择费用明细', trigger: 'blur' },
                 ]">
-                            <el-select v-model="form.costItemId" @clear="clearItemForm" clearable filterable
+                            <el-select v-model="form.costItemId" style="width: 250px" @clear="clearItemForm" clearable filterable
                                        placeholder="请选择费用明细"
                                        @change="selectItemForm(form.costItemId)">
                                 <el-option
@@ -136,17 +160,6 @@
                 </el-row>
                 <el-row>
                     <el-col :span="24">
-                        <el-form-item label="标准名称" label-width="100px" prop="name"
-                                      :rules="[
-                    { required: true, message: '请输入标准名称', trigger: 'blur' },
-                ]">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item>
-
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
                         <el-form-item label="开始日期" label-width="100px" prop="beginDate"
                                       :rules="[
                     { required: true, message: '请选择开始日期', trigger: 'blur' },
@@ -155,6 +168,7 @@
                                     v-model="form.beginDate"
                                     type="datetime"
                                     format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd"
                                     placeholder="选择开始日期">
                             </el-date-picker>
                         </el-form-item>
@@ -166,6 +180,7 @@
                                     v-model="form.endDate"
                                     type="datetime"
                                     format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd"
                                     placeholder="选择结束日期">
                             </el-date-picker>
                         </el-form-item>
@@ -256,7 +271,7 @@
         <el-dialog :title="title" :visible.sync="editVisible" width="60%">
             <el-form ref="editForm" :model="form" label-width="70px">
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="12">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
                                       :rules="[
                     { required: true, message: '请选择公司名称', trigger: 'blur' },
@@ -272,6 +287,31 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <template v-if="true">
+                            <el-form-item label="社区名称" label-width="100px" prop="commId"
+                                          :rules="[
+                    { required: true, message: '请选择社区名称', trigger: 'blur' },
+                ]">
+                                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="child.compId"
+                                           :change="child.commId"></comm-util>
+                            </el-form-item>
+                        </template>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="标准名称" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入标准名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
                         <el-form-item label="费用明细" label-width="100px" prop="costItemId"
                                       :rules="[
                     { required: true, message: '请选择费用明细', trigger: 'blur' },
@@ -287,17 +327,6 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
-                        <el-form-item label="标准名称" label-width="100px" prop="name"
-                                      :rules="[
-                    { required: true, message: '请输入标准名称', trigger: 'blur' },
-                ]">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item>
-
                     </el-col>
                 </el-row>
                 <el-row>
@@ -405,7 +434,7 @@
         </el-dialog>
 
         <el-dialog :title="title" :visible.sync="addUnitVisible" width="40%">
-            <trees @child1="setRoom" :arr="changeRoom"></trees>
+            <trees @child1="setRoom" :comm-id="commId" :arr="changeRoom"></trees>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addUnitVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitUnit()">确 定</el-button>
@@ -458,7 +487,7 @@
         </el-dialog>
         <el-dialog :title="title" :visible.sync="pv" width="80%">
              <span slot="footer" class="dialog-footer">
-                <parkingSpace  @park="park"  :shows="false" ref="parkingSpace"></parkingSpace>
+                <parkingSpace :comm-id="commId"  @park="park"  :shows="false" ref="parkingSpace"></parkingSpace>
                 <el-button @click="pv = false">取 消</el-button>
                 <el-button type="primary" @click="submitPark()">确 定</el-button>
             </span>
@@ -481,18 +510,20 @@
         deletparkById,
         deleteAllPark
     } from '../../api/tariff/costrule'
+    import commUtil from '../common/commutil'
     import compUtil from '../common/comp'
     import {getComp} from "../../api/user";
     import distUtil from "../common/distutil"
-    import trees from '../common/tree'
+    import trees from '../common/unitroom'
     import parkingSpace from '../asstes/changepark'
 
     export default {
         components: {
-            distUtil, trees, parkingSpace, compUtil
+            distUtil, trees, parkingSpace, compUtil,commUtil
         },
         data() {
             return {
+                commId:0,
                 parkData: [],
                 dist: {
                     priceProp: '请选择价格单位',
@@ -511,6 +542,7 @@
                     estateId: '54',
                     estateName: 'estate',
                 },
+                child:{},
                 title: '',
                 addForm: {
                     rooms: '',
@@ -552,7 +584,9 @@
             edit(index, row) {
                 this.form = row;
                 this.setItemData();
+                this.child.compId = row.compId;
                 this.editVisible = !this.editVisible;
+                this.child.commId = row.commId;
                 this.title = '修改费用类型';
             },
             deleted(id) {
@@ -569,8 +603,8 @@
                     });
                 })
             },
-            addUnit(id) {
-
+            addUnit(id,commId) {
+                this.commId = commId;
                 getRoomIds(id).then(res => {
                     this.changeRoom = res.data;
                     this.addUnitVisible = !this.addUnitVisible;
@@ -579,7 +613,8 @@
                 this.title = '选择物业单位';
 
             },
-            addPark(id) {
+            addPark(id,commId) {
+                this.commId = commId;
                 this.title = '请选择车位';
                 this.ruleId = id;
                 getCostPark(id).then(res => {
@@ -590,7 +625,7 @@
             submitUnit() {
                 insertRuleRoom(this.addForm).then(res => {
                     if (res.code === 0 && res.data) {
-                        this.$message.success(`设置成功`);
+
                         this.addUnitVisible = !this.addUnitVisible;
                         this.changeRoom = [];
                     } else {
@@ -657,6 +692,14 @@
                 }
             },
             selectCompForm(value) {
+                if (value) {
+                    this.child.compId = parseInt(value);
+                    this.form.compId = parseInt(value);
+                } else {
+                    console.log(123)
+                    this.child.compId = 0;
+                    this.form.compId = '';
+                }
                 this.form.compId = value;
                 this.itemData = [];
                 if (value) {
@@ -790,6 +833,11 @@
                     this.deleteParkIds.push(selection[i].id);
                 }
                 console.log(this.deleteParkIds);
+            },
+            formCommValue(value){
+                if (value){
+                    this.form.commId = value;
+                }
             },
 
         }

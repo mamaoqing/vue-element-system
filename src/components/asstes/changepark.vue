@@ -156,11 +156,17 @@
         props:{
             shows : Boolean,
             change : Array,
+            commId: Number,
         },
         watch:{
             shows : {
                 immediate: true,
                 handler: function (newVal) {
+                }
+            },commId : {
+                immediate: true,
+                handler: function (newVal) {
+                    this.query.commId = newVal;
                 }
             },
             change : {

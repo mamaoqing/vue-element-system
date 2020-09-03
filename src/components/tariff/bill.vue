@@ -9,11 +9,21 @@
         </div>
         <div class="container">
             <div class="handle-box">
+                <el-select v-model="query.type" placeholder="请选择">
+                    <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
                 <comp-util @comp="compValue"></comp-util>
+                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="compId"></comm-util>
                 <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName" :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName" :title="dist.overdueProp"></dist-util>
-                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>
-                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>
+<!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
+<!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
             </div>
             <el-table
@@ -50,6 +60,12 @@
                                 @click.stop
                                 @click="push(scope.row.id)">推送微信
                         </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="reset(scope.row.id)">重新生成
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -74,15 +90,34 @@
 </template>
 
 <script>
-    import {listBills} from '../../api/tariff/bill'
+    import {listBills,resetBill,resetBillAll} from '../../api/tariff/bill'
     import compUtil from '../common/comp'
     import distUtil from "../common/distutil"
+    import commUtil from '../common/commutil'
     export default {
         components: {
-          compUtil,distUtil
+          compUtil,distUtil,commUtil
         },
         data() {
             return {
+                options:[{
+                    value:'room',
+                    label:'房产',
+                },{
+                    value:'park',
+                    label:'停车位',
+                },{
+                    value:'water',
+                    label:'水表',
+                },{
+                    value:'an',
+                    label:'电表',
+                },{
+                    value:'rq',
+                    label:'燃气表',
+                }
+                ],
+                compId:0,
                 billData:[],
                 form: {},
                 dist:{
@@ -128,6 +163,7 @@
             },
             compValue(value) {
                 this.query.compId = value;
+                this.compId = value;
             },
             print(){
 
@@ -136,7 +172,6 @@
 
             },
             checkIn(value, name) {
-                console.log(value+"<--->"+name);
                 if(name === 'payment'){
                     this.query.isPayment = value;
                 }
@@ -150,6 +185,20 @@
                     this.query.isInvoice = value;
                 }
             },
+            formCommValue(value){
+                this.query.commId = value;
+            },
+            reset(id){
+                console.log(id);
+                resetBill(id).then(res=>{
+                    if(res.code === 0 && res.data){
+                        this.$message.success(`重新生成账单成功`);
+                        this.init();
+                    }else {
+                        this.$message.error(res.msg);
+                    }
+                });
+            }
         }
     }
 </script>
