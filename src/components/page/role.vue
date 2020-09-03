@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import { addRole,deleteRole,updateRole,listRole,checkRoleMenuUser,setUserRole,listRoleNum,listCompAll } from '../../api/role';
+import { addRole,deleteRole,updateRole,listRole,checkRoleMenuUser,setUserRole,listRoleNum,listCompAll,checkUser } from '../../api/role';
 import menu1 from './menuTree';
 import { listDictAll } from '../../api/dict';
 
@@ -234,7 +234,7 @@ export default {
 
             });
             listRoleNum(this.query).then(res => {
-                this.pageTotal = res.data.total || 0;
+                this.pageTotal = res.data|| 0;
                 console.log(this.pageTotal);
             });
         },
@@ -252,35 +252,39 @@ export default {
         },
         // 删除操作
         handleDelete(id) {
-            console.log(id);
-
-            checkRoleMenuUser(id).then(res => {
-                //debugger
-                //console.log(res);
+            checkUser(id).then(res => {
                 if(res.data==''){
-                    this.$confirm('确定要删除吗？', '提示', {
-                        type: 'warning'
-                    })
-                        .then(() => {
-                            deleteRole(id).then(res => {
-                                //console.log(res);
-                                this.$message.success('删除成功');
-                                this.getData();
-                            });
-                        })
-                        .catch(() => {});
-                }else{//
-                    this.$confirm(res.data, '提示', {
-                        type: 'warning'
-                    })
-                        .then(() => {
-                            deleteRole(id).then(res => {
-                                //console.log(res);
-                                this.$message.success('删除成功');
-                                this.getData();
-                            });
-                        })
-                        .catch(() => {});
+                    checkRoleMenuUser(id).then(res => {
+                        //debugger
+                        //console.log(res);
+                        if(res.data==''){
+                            this.$confirm('确定要删除吗？', '提示', {
+                                type: 'warning'
+                            })
+                                .then(() => {
+                                    deleteRole(id).then(res => {
+                                        //console.log(res);
+                                        this.$message.success('删除成功');
+                                        this.getData();
+                                    });
+                                })
+                                .catch(() => {});
+                        }else{//
+                            this.$confirm(res.data, '提示', {
+                                type: 'warning'
+                            })
+                                .then(() => {
+                                    deleteRole(id).then(res => {
+                                        //console.log(res);
+                                        this.$message.success('删除成功');
+                                        this.getData();
+                                    });
+                                })
+                                .catch(() => {});
+                        }
+                    });
+                }else{
+                    this.$message.info(res.data);
                 }
             });
         },
@@ -310,11 +314,17 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             this.form = row;
-            this.updateVisible = true;
-            this.disable=false;
-            this.edit=true;
-            this.title="修改角色";
-            this.$refs.form.clearValidate();
+            checkUser(this.form.id).then(res => {
+                if(res.data==''){
+                    this.updateVisible = true;
+                    this.disable=false;
+                    this.edit=true;
+                    this.title="修改角色";
+                    this.$refs.form.clearValidate();
+                }else{
+                    this.$message.info(res.data);
+                }
+            });
         },
         menuEdit(id){
             let linkID = id;

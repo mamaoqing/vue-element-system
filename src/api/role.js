@@ -47,6 +47,13 @@ export const checkRoleMenuUser = id => {
     });
 };
 
+export const checkUser = id => {
+    return request({
+        url: '/api/sRole/checkUser/'+id,
+        method: 'get'
+    });
+};
+
 export const getRoleMenuByRoleId = roleId => {
     return request({
         url: '/api/sRole/getRoleMenuByRoleId/'+roleId,

@@ -85,8 +85,8 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form')">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="title" :visible.sync="updateVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px" :rules="rules" :disabled="disable">
+        <el-dialog :title="title" :visible.sync="updateVisible" width="45%">
+            <el-form ref="form" :model="form" label-width="150px" :rules="rules" :disabled="disable">
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="form.name" ></el-input>
                 </el-form-item>
@@ -102,18 +102,7 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="创建人" prop="createdName">
-                    <el-input v-model="form.createdName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="创建日期" prop="createdAt">
-                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改人" prop="modifiedName">
-                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改日期" prop="modifiedAt">
-                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="updateVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
@@ -125,7 +114,8 @@
 
 <script>
 import { listUnitModel,updateUnitModel,deleteUnitModel,addUnitModel } from '../../api/unitModel';
-
+import commPage from '../common/commPage';
+import userVisible from './userChoose';
 export default {
     data() {
         let checkname = (rule,value,callback) =>{
@@ -183,6 +173,7 @@ export default {
             edit:false,
             pageSize:0,
             pageTotal: 0,
+            status:0,
             disable:false,
             cmpVisible:false,
             form: {},
@@ -208,6 +199,9 @@ export default {
     },
     created() {
         this.getData();
+    },
+    components:{
+        commPage
     },
     methods: {
         // 获取 easy-mock 的模拟数据
@@ -252,6 +246,7 @@ export default {
             this.editVisible = true;
             this.title="新增单元型号";
             this.edit=false;
+            this.status = 0;
             this.form={state:'在用'}
             this.$refs.form.clearValidate();
         },
@@ -261,6 +256,7 @@ export default {
             this.form = row;
             this.updateVisible = true;
             this.disable=false;
+            this.status = 1;
             this.edit=true;
             this.detail=true;
             this.title="编辑单元型号"
@@ -273,6 +269,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看单元型号"
+            this.status = 2;
             this.detail=false;
         },
         // 保存编辑

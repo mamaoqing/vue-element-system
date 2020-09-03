@@ -9,7 +9,7 @@
         </div>
         <div class="container">
             <el-input v-model="query.name" placeholder="建筑名称" class="handle-input mr10"></el-input>
-            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" >
+            <el-select v-model="query.compName" placeholder="请选择" @change="compChange" :disabled="otherComp">
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
@@ -166,7 +166,7 @@
         </el-dialog>
         <!-- 编辑弹出框 -->
         <el-dialog :title="title" :visible.sync="updateVisible" width="40%">
-            <el-form ref="form" :model="form" label-width="120px" :rules="rules" :disabled="disable">
+            <el-form ref="form" :model="form" label-width="150px" :rules="rules" :disabled="disable">
                 <el-form-item label="建筑编号" prop="no" >
                     <el-input v-model="form.no"  ></el-input>
                 </el-form-item>
@@ -227,18 +227,7 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="form.remark"></el-input>
                 </el-form-item>
-                <el-form-item label="创建人" prop="createdName">
-                    <el-input v-model="form.createdName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="创建日期" prop="createdAt">
-                    <el-input v-model="form.createdAt" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改人" prop="modifiedName">
-                    <el-input v-model="form.modifiedName" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item label="修改日期" prop="modifiedAt">
-                    <el-input v-model="form.modifiedAt" :disabled="true"></el-input>
-                </el-form-item>
+                <commPage :form="form" :status="status" :editVisible="updateVisible"></commPage>
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="updateVisible = false">取 消</el-button>
@@ -323,7 +312,8 @@
 import { insertBuilding,deleteBuilding,updateBuilding,listBuilding,getUserComm,getCommArea,getCommAreaContent,
     getDictItemByDictId,listBuildingNum,checkBuildingRoomUnit,copyBuilding,checkBulidingNameNo,checkBulidingNameNoCopy } from '../../api/building';
 import { checkRoleMenuUser, deleteRole, listCompAll } from '../../api/role';
-
+import commPage from '../common/commPage';
+import userVisible from './userChoose';
 
 export default {
     data() {
@@ -456,10 +446,12 @@ export default {
             pageTotal:0,
             disable:false,
             cmpVisible:false,
+            otherComp:false,
             commAreaName:'',
             commAreaId:'',
             compList:[],
             commList:[],
+            status:0,
             commAreaList:[],
             typeList:[],
             form: {},
@@ -509,6 +501,9 @@ export default {
     },
     created() {
         this.getData();
+    },
+    components:{
+        commPage
     },
     methods: {
         compChange(val){
@@ -575,19 +570,11 @@ export default {
         // 获取 easy-mock 的模拟数据
         getData() {
             this.form={};
-            listBuilding(this.query).then(res => {
-                debugger
-                this.tableData = res.data;
-            });
-            listBuildingNum(this.query).then(res => {
-                debugger
-                this.pageTotal = res.data || 0;
-                console.log(this.pageTotal+"__+++__");
-            });
             listCompAll(this.query).then(res => {
                 this.compList = res.data.records;
                 if(res.data.records.length==1){
-                    this.query.compName=res.data.records[0].name;
+                    this.otherComp = true;
+                    this.query.compName=res.data.records[0].id;
                     getUserComm(res.data.records[0].id).then(res => {
                         if(res.data){
                             this.form.commId=undefined;
@@ -595,7 +582,13 @@ export default {
                         }
                     });
                 }
-
+                listBuilding(this.query).then(res => {
+                    this.tableData = res.data;
+                });
+                listBuildingNum(this.query).then(res => {
+                    this.pageTotal = res.data || 0;
+                    console.log(this.pageTotal+"__+++__");
+                });
             });
             getDictItemByDictId(10).then(res => {//10是建筑类型的id
                 this.typeList = res.data;
@@ -647,6 +640,7 @@ export default {
             this.editVisible = true;
             this.disable = false;
             this.title="新增建筑";
+            this.status = 0;
             this.edit=false;
             this.form={state:'在用'}
             this.$refs.form.clearValidate();
@@ -659,6 +653,7 @@ export default {
             this.buildingName = row.name;
             this.buildingNo = row.no;
             this.updateVisible = true;
+            this.status = 1;
             this.disable=false;
             this.edit=true;
             this.title="编辑建筑"
@@ -687,6 +682,7 @@ export default {
             this.disable=true;
             this.updateVisible = true;
             this.title="查看建筑"
+            this.status = 2;
             this.detail=false;
         },
         // 保存编辑
