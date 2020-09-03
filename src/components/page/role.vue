@@ -234,7 +234,7 @@ export default {
 
             });
             listRoleNum(this.query).then(res => {
-                this.pageTotal = res.data.total || 0;
+                this.pageTotal = res.data|| 0;
                 console.log(this.pageTotal);
             });
         },
