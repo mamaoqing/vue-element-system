@@ -34,6 +34,7 @@
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportTemplate">导入模板下载</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -65,6 +66,8 @@
                 <el-table-column prop="industry" label="行业" min-width="75" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="sex" label="性别" min-width="75" min-height="55"
+                                 align="center"></el-table-column>
+                <el-table-column prop="likes" label="爱好" min-width="75" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="nativePlace" label="籍贯" min-width="125" min-height="55"
                                  align="center"></el-table-column>
@@ -245,6 +248,9 @@
                                 @change="handleChange"
                         ></el-cascader>
                     </el-form-item>
+                    <el-form-item class="item" label="爱好" label-width="150px">
+                        <el-input v-model="form.likes"></el-input>
+                    </el-form-item>
                     <el-form-item class="item" label="学历" label-width="150px">
                         <el-input v-model="form.education"></el-input>
                     </el-form-item>
@@ -314,7 +320,7 @@
         getOwenList,
         update,
         exportXlsByT,
-        listProvincesAndCity
+        listProvincesAndCity, exportTemplate, exportTemplateOwner
     } from '../../api/owner';
     import { listCompAll } from '../../api/role';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
@@ -760,7 +766,30 @@
                         window.URL.revokeObjectURL(href); //释放掉blob对象
                     }
                 });
-            }
+            },
+            exportTemplate(){
+                console.log(this.query)
+                exportTemplateOwner(this.query).then(res => {
+                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                    } else {
+                        var downloadElement = document.createElement('a');
+                        var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                        downloadElement.href = href;
+                        downloadElement.download = unescape('业主信息'+this.getTime()+'.xls'); //下载后文件名
+
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); //点击下载
+
+                        document.body.removeChild(downloadElement); //下载完成移除元素
+
+                        window.URL.revokeObjectURL(href); //释放掉blob对象
+                    }
+                });
+            },
+
         }
     };
 </script>

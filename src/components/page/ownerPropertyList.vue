@@ -44,7 +44,7 @@
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">添加</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="exportTemplate">导出模板</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportTemplate">导入模板下载</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -63,7 +63,7 @@
                 <el-table-column prop="commAreaName" label="分区名称" align="center" min-width="110"></el-table-column>
                 <el-table-column prop="buildingName" label="楼栋名称" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
-                <el-table-column prop="propertyId" label="物业类型" align="center"></el-table-column>
+                <el-table-column prop="propertyName" label="物业编号" align="center"></el-table-column>
                 <el-table-column prop="certType" label="证件类型" align="center"></el-table-column>
                 <el-table-column prop="certNumber" label="证件号码" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="ownerType" label="业主类型" align="center"></el-table-column>

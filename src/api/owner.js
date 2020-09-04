@@ -109,6 +109,18 @@ export const exportTemplate = query => {
     });
 };
 
+export const exportTemplateOwner = query => {
+    return request({
+        url: '/api/rOwner/exportTemplate',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query,
+        responseType: 'blob'
+    });
+};
+
 export const fetchLinkData = query => {
     return request({
         url: '/api/rOwnerInvoiceInfo/getListByOwnerId',
