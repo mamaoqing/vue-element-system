@@ -34,6 +34,7 @@
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportTemplate">导入模板下载</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -48,6 +49,10 @@
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="compName" label="公司名称" min-width="125" min-height="55"
                                  align="center"></el-table-column>
+                <el-table-column prop="certType" label="证件类型" min-width="125" min-height="55"
+                                 align="center"></el-table-column>
+                <el-table-column prop="certNumber" label="证件号码" min-width="125" min-height="55"
+                                 align="center"></el-table-column>
                 <el-table-column prop="ownerType" label="业主类型" min-width="90" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
@@ -58,13 +63,11 @@
                                  align="center"></el-table-column>
                 <el-table-column prop="email" label="邮箱" min-width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="certType" label="证件类型" min-width="125" min-height="55"
-                                 align="center"></el-table-column>
-                <el-table-column prop="certNumber" label="证件号码" min-width="125" min-height="55"
-                                 align="center"></el-table-column>
                 <el-table-column prop="industry" label="行业" min-width="75" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="sex" label="性别" min-width="75" min-height="55"
+                                 align="center"></el-table-column>
+                <el-table-column prop="likes" label="爱好" min-width="75" min-height="55"
                                  align="center"></el-table-column>
                 <el-table-column prop="nativePlace" label="籍贯" min-width="125" min-height="55"
                                  align="center"></el-table-column>
@@ -138,9 +141,13 @@
                         <el-input v-model="form.id"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="公司名称" label-width="150px">
-                        <el-input v-model="compName" disabled></el-input>
+                        <el-input v-model="compName" disabled v-if="!isAdmin"></el-input>
+                        <el-select class="myWidth" v-model="form.compId" placeholder="请选择公司" width="200px" v-if="isAdmin">
+                            <el-option :value="types.id" :key="types.name" :label="types.name"
+                                       v-for="types in compList"></el-option>
+                        </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="公司id"  v-show="false" label-width="150px">
+                    <el-form-item class="item" label="公司id"  v-show="false" v-if="!isAdmin" label-width="150px">
                         <el-input v-model="form.compId" disabled></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="社区id"  v-show="false" label-width="150px">
@@ -160,7 +167,7 @@
                                   :rules="[
                         { required: true, message: '请选择业主类型', trigger: 'blur' },
                     ]">
-                        <el-select class="myWidth" v-model="form.ownerType" placeholder="请选择业主类型" width="200px">
+                        <el-select class="myWidth" v-model="form.ownerType" placeholder="请选择业主类型" width="200px" @change="ownerTypeChange">
                             <el-option :value="types.name" :key="types.name" :label="types.name"
                                        v-for="types in ownerTypes"></el-option>
                         </el-select>
@@ -241,14 +248,11 @@
                                 @change="handleChange"
                         ></el-cascader>
                     </el-form-item>
+                    <el-form-item class="item" label="爱好" label-width="150px">
+                        <el-input v-model="form.likes"></el-input>
+                    </el-form-item>
                     <el-form-item class="item" label="学历" label-width="150px">
                         <el-input v-model="form.education"></el-input>
-                    </el-form-item>
-                    <el-form-item class="item" label="房屋关系" label-width="150px">
-                        <el-select v-model="form.propTypes" placeholder="请选择与房屋关系" class="myWidth">
-                            <el-option :value="types.name" :key="types.id" :label="types.name"
-                                       v-for="types in propTypes"></el-option>
-                        </el-select>
                     </el-form-item>
                     <el-form-item class="item" label="状态" prop="state" label-width="150px"
                                   :rules="[
@@ -316,7 +320,7 @@
         getOwenList,
         update,
         exportXlsByT,
-        listProvincesAndCity
+        listProvincesAndCity, exportTemplate, exportTemplateOwner
     } from '../../api/owner';
     import { listCompAll } from '../../api/role';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
@@ -363,6 +367,7 @@
                 status:0,
                 provinces:[],
                 propVisible:false,
+                isAdmin:false,
                 compList: [],
 
                 commList: [],
@@ -452,14 +457,25 @@
 
             })
         },
+            ownerTypeChange(val){
+                console.log(val)
+                if (val==='个人'){
+                    this.form.certType = '身份证'
+                }else{
+                    this.form.certType = '营业执照'
+                }
+            }
+            ,
             handleChange(val){
                 this.form.nativePlace =val.join("/")
-                console.log(this.form.nativePlace)
             },
             getCount() {
                 if(this.form.ownerType&&this.form.certType&&this.form.certNumber){
                     getCount(this.form).then(res => {
                         if (res.data != null){
+                            this.title = '新增业主  '
+                            this.nativePlace = res.data.nativePlace.split('/');
+                            this.$set(this.form, 'id', res.data.id);
                             this.$set(this.form, 'education', res.data.education);
                             this.$set(this.form, 'name', res.data.name);
                             this.$set(this.form, 'email', res.data.email);
@@ -468,7 +484,7 @@
                             this.$set(this.form, 'linkAddr', res.data.linkAddr);
                             this.$set(this.form, 'linkName', res.data.linkName);
                             this.$set(this.form, 'linkTel', res.data.linkTel);
-                            this.$set(this.form, 'nativePlace', res.data.nativePlace);
+                            this.$set(this.form, 'nativePlace',this.nativePlace);
                             this.$set(this.form, 'ownerAddr', res.data.ownerAddr);
                             this.$set(this.form, 'remark', res.data.remark);
                             this.$set(this.form, 'sex', res.data.sex);
@@ -540,6 +556,9 @@
                 this.form = {};
                 this.status = 0;
                 this.disable = false;
+                if (localStorage.getItem('ms_username')==='admin'){
+                    this.isAdmin = true
+                }
                 // this.$set(this.form, 'createdName', localStorage.getItem('ms_username'));
                 // this.$set(this.form, 'createdAt', new Date());
                 // this.$set(this.form, 'modifiedName', localStorage.getItem('ms_username'));
@@ -563,6 +582,9 @@
                     this.compName = res.data.name;
                     this.$set(this.form, 'compId', res.data.id);
                 });
+                if (localStorage.getItem('ms_username')==='admin'){
+                    this.isAdmin = true
+                }
                 this.form.commId = this.row.commId
                 this.form.commAreaId = this.row.commAreaId
                 this.form.buildingId = this.row.buildingId
@@ -593,6 +615,9 @@
                 this.editVisible = true;
                 this.nativePlace = this.form.nativePlace.split("/");
                 let that = this;
+                if (localStorage.getItem('ms_username')==='admin'){
+                    this.isAdmin = true
+                }
                 that.$set(that.form, 'model', this.form.model - 0);
                 this.modelArr.forEach(function(value, key, arr) {
 
@@ -741,7 +766,30 @@
                         window.URL.revokeObjectURL(href); //释放掉blob对象
                     }
                 });
-            }
+            },
+            exportTemplate(){
+                console.log(this.query)
+                exportTemplateOwner(this.query).then(res => {
+                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                    } else {
+                        var downloadElement = document.createElement('a');
+                        var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                        downloadElement.href = href;
+                        downloadElement.download = unescape('业主信息'+this.getTime()+'.xls'); //下载后文件名
+
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); //点击下载
+
+                        document.body.removeChild(downloadElement); //下载完成移除元素
+
+                        window.URL.revokeObjectURL(href); //释放掉blob对象
+                    }
+                });
+            },
+
         }
     };
 </script>
