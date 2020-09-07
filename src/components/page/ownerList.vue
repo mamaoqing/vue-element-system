@@ -454,7 +454,7 @@
                             <el-form-item class="item" label="备注" label-width="150px">
                                 <el-input v-model="form.remark"></el-input>
                             </el-form-item>
-                            <commPage :form="form" :status="status" :editVisible="editVisible"></commPage>
+                            <commPage :form="form" :status="status" :editVisible="chakan"></commPage>
                         </div>
 
 
