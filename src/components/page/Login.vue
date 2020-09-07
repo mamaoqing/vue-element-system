@@ -54,7 +54,6 @@ export default {
                     axios.post("/api/login/login",params).then((res=>{
                         //debugger
                         // this.$message.success('登录成功');
-                        console.log(res)
                         if(res.data.code===0){
                             let data = res.data.data;
                             //根据store中set_token方法将token保存至localStorage/sessionStorage中，data["Authentication-Token"]，获取token的value值
