@@ -215,11 +215,14 @@
                 if(this.query.costRuleId){
                     console.log(this.query.costRuleId);
                     resetBillAll({ruleId :this.query.costRuleId }).then(res=>{
+                        console.log(res)
                         if(res.code === 0 && res.data){
                             this.$message.success(`重新生成账单成功`);
                             this.init();
                         }else {
+                            console.log(1)
                             this.$message.error(res.msg);
+                            this.init();
                         }
                     })
                 }else {
