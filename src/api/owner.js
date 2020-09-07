@@ -123,9 +123,12 @@ export const exportTemplateOwner = query => {
 
 export const fetchLinkData = query => {
     return request({
-        url: '/api/rOwnerInvoiceInfo/getListByOwnerId',
-        method: 'get',
-        params: query
+        url: '/api/rOwnerInvoiceInfo/getList',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'post',
+        data: query
     });
 };
 
@@ -223,4 +226,33 @@ export const getAllProp = query => {
         data: query
     });
 };
+
+export const getAllBank = query => {
+    return request({
+        url: '/api/sBank/getAllBank',
+        method: 'get'
+    });
+};
+
+export const getRoomByOwnerId = ownerId => {
+    return request({
+        url: '/api/rOwner/getRoomByOwnerId/'+ownerId,
+        method: 'get'
+    });
+};
+
+export const getParkByOwnerId = ownerId => {
+    return request({
+        url: '/api/rOwner/getParkByOwnerId/'+ownerId,
+        method: 'get'
+    });
+};
+
+/*export const findAllInvo = query => {
+    return request({
+        url: '/api/rOwner/findAllInvo',
+        method: 'get'
+    });
+};*/
+
 
