@@ -22,10 +22,10 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="taxpayerType" label="纳税人类型"  align="center"></el-table-column>
+                <el-table-column prop="taxpayerType" label="纳税人类型" width="95"  align="center"></el-table-column>
                 <el-table-column prop="name" label="开票名称" align="center"></el-table-column>
                 <el-table-column prop="identificationNo" label="识别号" align="center"></el-table-column>
-                <el-table-column prop="bank" label="开票银行" align="center"></el-table-column>
+                <el-table-column prop="bankName" label="开票银行" align="center"  width="155"></el-table-column>
                 <el-table-column prop="registerTel" label="注册电话" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="registerAddr" label="注册地址" align="center"></el-table-column>
                 <el-table-column prop="remark" label="备注" align="center"></el-table-column>
@@ -101,7 +101,11 @@
                               :rules="[
                     { required: true, message: '请输入开票银行', trigger: 'blur' },
                 ]">
-                    <el-input v-model="form.bank"></el-input>
+                    <el-select v-model="form.bank" placeholder="请选择" style="width: 200px">
+                        <el-option :value="types.no" :key="types.id" :label="types.name" v-for="types in banks">
+                            {{types.name}}
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="开票银行账户" prop="bankAccountNo" label-width="150px"
                               :rules="[
@@ -137,7 +141,7 @@
 </template>
 
 <script>
-    import { deleteLinkData, fetchLinkData, addLinkData, updateLinkData, getInfo } from '../../api/owner';
+    import { deleteLinkData, fetchLinkData, addLinkData, updateLinkData, getInfo, getAllBank } from '../../api/owner';
     import { getDictItemByDictId } from '../../api/building';
     import commPage from '../common/commPage';
     export default {
@@ -155,6 +159,7 @@
                 delList: [],
                 editVisible: false,
                 taxpayerType:[],
+                banks:[],
                 pageTotal: 0,
                 disable: false,
                 form: {},
@@ -170,12 +175,16 @@
         methods: {
             getData() {
                 fetchLinkData(this.query).then(res => {
-                    this.tableData = this.tableData = res.data;
+                    this.tableData = res.data.data;
                     this.pageTotal = res.data.pageTotal || 0;
                 });
                 getDictItemByDictId(8).then(res => {
                     this.taxpayerType = res.data;
                 });
+                getAllBank().then(res => {
+                    this.banks = res.data
+                });
+
             },
             //初始化数据
             dataInitialization(id) {
