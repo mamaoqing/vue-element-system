@@ -53,6 +53,8 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
+                <el-table-column prop="ruleName" label="费用标准" align="center"></el-table-column>
+                <el-table-column prop="no" label="物业编号" align="center"></el-table-column>
                 <el-table-column prop="billNo" label="账单号" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="billTime" label="账单生成时间" align="center"></el-table-column>
@@ -184,6 +186,7 @@
             },
             init() {
                 listBills(this.query).then(res=>{
+                    console.log(res)
                     this.billData = res.data.records;
                     this.pageTotal = res.data.total;
                 });
