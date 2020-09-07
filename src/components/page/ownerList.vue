@@ -1137,5 +1137,9 @@
     .myWidth {
         width: 200px;
     }
-
+    .el-tabs >>> .el-tabs__content{
+        height: 575px;
+        flex-grow: 1;
+        overflow-y: scroll;
+    }
 </style>
