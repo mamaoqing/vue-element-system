@@ -9,7 +9,17 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-select v-model="query.type" placeholder="请选择">
+                <comp-util @comp="compValue"></comp-util>
+                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="compId"></comm-util>
+                <el-select v-model="query.costRuleId" clearable placeholder="请选择费用标准">
+                    <el-option
+                            v-for="item in ruleList"
+                            :key="item.value"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+                <el-select v-model="query.type" clearable placeholder="请选择物业类型">
                     <el-option
                             v-for="item in options"
                             :key="item.value"
@@ -18,13 +28,12 @@
                     </el-option>
                 </el-select>
                 <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
-                <comp-util @comp="compValue"></comp-util>
-                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="compId"></comm-util>
                 <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName" :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName" :title="dist.overdueProp"></dist-util>
 <!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
 <!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="resetAll">重新生成账单</el-button>
             </div>
             <el-table
                     :data="billData"
@@ -90,7 +99,7 @@
 </template>
 
 <script>
-    import {listBills,resetBill,resetBillAll} from '../../api/tariff/bill'
+    import {listBills,resetBill,resetBillAll,fCostRule} from '../../api/tariff/bill'
     import compUtil from '../common/comp'
     import distUtil from "../common/distutil"
     import commUtil from '../common/commutil'
@@ -100,6 +109,7 @@
         },
         data() {
             return {
+                ruleList:[],
                 options:[{
                     value:'room',
                     label:'房产',
@@ -117,6 +127,7 @@
                     label:'燃气表',
                 }
                 ],
+                queryRule:{pageNo:1,size:100},
                 compId:0,
                 billData:[],
                 form: {},
@@ -146,6 +157,7 @@
         },
         created() {
             this.init();
+            this.costRuleSelect();
         },
         methods: {
             init() {
@@ -197,6 +209,29 @@
                     }else {
                         this.$message.error(res.msg);
                     }
+                });
+            },
+            resetAll(){
+                if(this.query.costRuleId){
+                    console.log(this.query.costRuleId);
+                    resetBillAll({ruleId :this.query.costRuleId }).then(res=>{
+                        console.log(res)
+                        if(res.code === 0 && res.data){
+                            this.$message.success(`重新生成账单成功`);
+                            this.init();
+                        }else {
+                            console.log(1)
+                            this.$message.error(res.msg);
+                            this.init();
+                        }
+                    })
+                }else {
+                    this.$message.error(`请选择费用标准！`);
+                }
+            },
+            costRuleSelect(){
+                fCostRule(this.queryRule).then(res=>{
+                    this.ruleList = res.data.records;
                 });
             }
         }

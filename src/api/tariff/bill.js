@@ -22,4 +22,10 @@ export const resetBill = query => {
     });
 };
 
-
+export const fCostRule = query => {
+    return request({
+        url: '/order/fCostRule/listCostRule',
+        method: 'get',
+        params: query
+    });
+};
