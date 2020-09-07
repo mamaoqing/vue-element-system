@@ -27,6 +27,15 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
+                <el-select v-model="query.owners" @clear="clearOwner" clearable filterable placeholder="请选择业主姓名"
+                           @change="selectOwner">
+                    <el-option
+                            v-for="item in ownerData"
+                            :key="item.value"
+                            :label="item.name"
+                            :value="item.name">
+                    </el-option>
+                </el-select>
                 <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
                 <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName" :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName" :title="dist.overdueProp"></dist-util>
@@ -99,7 +108,7 @@
 </template>
 
 <script>
-    import {listBills,resetBill,resetBillAll,fCostRule} from '../../api/tariff/bill'
+    import {listBills,resetBill,resetBillAll,fCostRule,listOwner} from '../../api/tariff/bill'
     import compUtil from '../common/comp'
     import distUtil from "../common/distutil"
     import commUtil from '../common/commutil'
@@ -110,20 +119,21 @@
         data() {
             return {
                 ruleList:[],
+                ownerData:[],
                 options:[{
-                    value:'room',
+                    value:'房产',
                     label:'房产',
                 },{
-                    value:'park',
+                    value:'停车位',
                     label:'停车位',
                 },{
-                    value:'water',
+                    value:'水表',
                     label:'水表',
                 },{
-                    value:'an',
+                    value:'电表',
                     label:'电表',
                 },{
-                    value:'rq',
+                    value:'燃气表',
                     label:'燃气表',
                 }
                 ],
@@ -158,8 +168,20 @@
         created() {
             this.init();
             this.costRuleSelect();
+            this.ownerlist();
         },
         methods: {
+            clearOwner(){
+
+            },
+            selectOwner(value){
+                this.query.owners = value;
+            },
+            ownerlist(){
+                listOwner(this.query).then(res=>{
+                   this.ownerData = res.data;
+                });
+            },
             init() {
                 listBills(this.query).then(res=>{
                     this.billData = res.data.records;
@@ -201,7 +223,6 @@
                 this.query.commId = value;
             },
             reset(id){
-                console.log(id);
                 resetBill(id).then(res=>{
                     if(res.code === 0 && res.data){
                         this.$message.success(`重新生成账单成功`);
@@ -213,14 +234,11 @@
             },
             resetAll(){
                 if(this.query.costRuleId){
-                    console.log(this.query.costRuleId);
                     resetBillAll({ruleId :this.query.costRuleId }).then(res=>{
-                        console.log(res)
                         if(res.code === 0 && res.data){
                             this.$message.success(`重新生成账单成功`);
                             this.init();
-                        }else {
-                            console.log(1)
+                        }else {``
                             this.$message.error(res.msg);
                             this.init();
                         }
