@@ -43,35 +43,35 @@
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="compName" label="公司名称" min-width="125" min-height="55"
+                <el-table-column prop="compName" label="公司名称" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="commName" label="社区名称" min-width="125" min-height="55"
+                <el-table-column prop="commName" label="社区名称" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="areaName" label="分区名称" min-width="125" min-height="55"
+                <el-table-column prop="areaName" label="分区名称" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="buildingName" label="建筑名称" min-width="125" min-height="55"
+                <el-table-column prop="buildingName" label="建筑名称" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="no" label="单元编号" min-width="125" min-height="55"
+                <el-table-column prop="no" label="单元编号" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="name" label="单元名称" min-width="125" min-height="55"
+                <el-table-column prop="name" label="单元名称" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="floorNum" label="楼层数" min-width="125" min-height="55"
+                <el-table-column prop="floorNum" label="楼层数" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="modelName" label="型号" min-width="125" min-height="55"
+                <el-table-column prop="modelName" label="型号" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="eleNum" label="电梯数" min-width="125" min-height="55"
+                <el-table-column prop="eleNum" label="电梯数" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="rmNum" label="每层房间数" min-width="125" min-height="55"
+                <el-table-column prop="rmNum" label="每层房间数" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="state" label="状态" min-width="125" min-height="55"
+                <el-table-column prop="state" label="状态" width="125" min-height="55"
                                  align="center"></el-table-column>
-                <el-table-column prop="createdName" label="创建人" align="center" min-width="75"
+                <el-table-column prop="createdName" label="创建人" align="center" width="75"
                                  min-height="55"></el-table-column>
-                <el-table-column prop="createdAt" label="创建时间" align="center" min-width="155"
+                <el-table-column prop="createdAt" label="创建时间" align="center" width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column prop="modifiedName" label="修改人" align="center" min-width="75"
+                <el-table-column prop="modifiedName" label="修改人" align="center" width="75"
                                  min-height="55"></el-table-column>
-                <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
+                <el-table-column prop="modifiedAt" label="修改时间" align="center" width="155"
                                  min-height="55"></el-table-column>
                 <el-table-column label="操作" width="320" align="center">
                     <template slot-scope="scope">
@@ -809,7 +809,6 @@
     }
 
     .table {
-        width: 100%;
         font-size: 14px;
     }
 
@@ -841,8 +840,20 @@
         padding: 1px 0;
     }
     .el-select .el-input__inner {
-
         width: 360px;
 
+    }
+    .el-dialog__wrapper >>> .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: auto;
+        min-height: 200px;
+        max-height: 562px;
+    }
+    .container >>> .el-table--scrollable-x >>> .el-table__body-wrapper {
+        width: 100%;
+        overflow: visible;
+    }
+    .container{
+        width: 2165px;
     }
 </style>
