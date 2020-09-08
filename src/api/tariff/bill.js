@@ -29,3 +29,10 @@ export const fCostRule = query => {
         params: query
     });
 };
+
+export const listOwner = query => {
+    return request({
+        url: '/order/fBill/listOwner',
+        method: 'get',
+    });
+};
