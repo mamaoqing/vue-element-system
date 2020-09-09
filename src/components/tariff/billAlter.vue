@@ -441,7 +441,7 @@ export default {
             }
         }
         let checkauditor = (rule,value,callback) =>{
-            debugger
+            value = this.form.auditor;
             if(!value){
                 return callback(new Error("请输入审核人"));
             }else{
@@ -653,6 +653,7 @@ export default {
         },
         select_status(val){
             this.$forceUpdate();
+            this.$set(this.form, "auditor", val);
         },
         // 获取 easy-mock 的模拟数据
         getData() {
@@ -776,15 +777,11 @@ export default {
         childByValue(list){
             debugger
             this.billVisible = false;
-            getCostRuleName(list.costRuleId).then(res => {
-                this.$set(this.form, "costRuleName", res.data);//费用标准
-            });
+            this.$set(this.form, "costRuleName", list.ruleName);//费用标准
             this.$set(this.form, "billId", list.id);//账期
             this.$set(this.form, "accountPeriod", list.accountPeriod);//账期
             this.$set(this.form, "propertyType", list.propertyType);//物业类型
-            getPropertyName(list.propertyId).then(res => {
-                this.$set(this.form, "propertyName", res.data);//物业编号
-            });
+            this.$set(this.form, "propertyName", list.no);//物业编号
             this.$set(this.form, "price", list.price);//费用金额
             //调整金额的负值不能大于（账单总价格-已经付的钱+逾期产生的费用+费用调整）
             this.priceCul = list.price-list.payPrice+list.overdueCost+list.salePrice;
