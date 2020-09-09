@@ -93,3 +93,18 @@ export const deleteAllPark = query => {
         params:query
     });
 };
+export const listBills = query => {
+    return request({
+        url: '/order/fBillDate/'+query,
+        method: 'get',
+    });
+};
+
+
+export const updateBillDate = query => {
+    return request({
+        url: '/order/fBillDate/updateBillDate',
+        method: 'put',
+        data: query
+    });
+};

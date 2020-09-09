@@ -58,7 +58,7 @@
                                  min-height="55"></el-table-column>
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"
                                  min-height="55"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="325">
+                <el-table-column label="操作" width="" align="center" width="425">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -76,13 +76,19 @@
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
-                                @click="addUnit(scope.row.id)">添加住宅
+                                @click="addUnit(scope.row.id,scope.row.commId)">添加住宅
                         </el-button>
                         <el-button
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
-                                @click="addPark(scope.row.id)">添加车位
+                                @click="addPark(scope.row.id,scope.row.commId)">添加车位
+                        </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="listBill(scope.row.id)">账单日期列表
                         </el-button>
                     </template>
                 </el-table-column>
@@ -101,12 +107,13 @@
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
             <el-form ref="addForm" :model="form" label-width="70px">
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="12">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
                                       :rules="[
                     { required: true, message: '请选择公司名称', trigger: 'blur' },
                 ]">
-                            <el-select v-model="form.compId" @clear="clearCompForm" clearable filterable
+                            <el-select v-model="form.compId" @clear="clearCompForm" style="width: 250px" clearable
+                                       filterable
                                        placeholder="请选择物业公司"
                                        @change="selectCompForm(form.compId)">
                                 <el-option
@@ -117,11 +124,36 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <template v-if="true">
+                            <el-form-item label="社区名称" label-width="100px" prop="commId"
+                                          :rules="[
+                    { required: true, message: '请选择社区名称', trigger: 'blur' },
+                ]">
+                                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="child.compId"
+                                           :change="child.commId"></comm-util>
+                            </el-form-item>
+                        </template>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="标准名称" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入标准名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="费用明细" label-width="100px" prop="costItemId"
                                       :rules="[
                     { required: true, message: '请选择费用明细', trigger: 'blur' },
                 ]">
-                            <el-select v-model="form.costItemId" @clear="clearItemForm" clearable filterable
+                            <el-select v-model="form.costItemId" style="width: 250px" @clear="clearItemForm" clearable
+                                       filterable
                                        placeholder="请选择费用明细"
                                        @change="selectItemForm(form.costItemId)">
                                 <el-option
@@ -136,17 +168,6 @@
                 </el-row>
                 <el-row>
                     <el-col :span="24">
-                        <el-form-item label="标准名称" label-width="100px" prop="name"
-                                      :rules="[
-                    { required: true, message: '请输入标准名称', trigger: 'blur' },
-                ]">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item>
-
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
                         <el-form-item label="开始日期" label-width="100px" prop="beginDate"
                                       :rules="[
                     { required: true, message: '请选择开始日期', trigger: 'blur' },
@@ -155,6 +176,7 @@
                                     v-model="form.beginDate"
                                     type="datetime"
                                     format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd"
                                     placeholder="选择开始日期">
                             </el-date-picker>
                         </el-form-item>
@@ -166,6 +188,7 @@
                                     v-model="form.endDate"
                                     type="datetime"
                                     format="yyyy-MM-dd"
+                                    value-format="yyyy-MM-dd"
                                     placeholder="选择结束日期">
                             </el-date-picker>
                         </el-form-item>
@@ -256,7 +279,7 @@
         <el-dialog :title="title" :visible.sync="editVisible" width="60%">
             <el-form ref="editForm" :model="form" label-width="70px">
                 <el-row>
-                    <el-col :span="24">
+                    <el-col :span="12">
                         <el-form-item label="公司名称" label-width="100px" prop="compId"
                                       :rules="[
                     { required: true, message: '请选择公司名称', trigger: 'blur' },
@@ -272,6 +295,31 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
+                        <template v-if="true">
+                            <el-form-item label="社区名称" label-width="100px" prop="commId"
+                                          :rules="[
+                    { required: true, message: '请选择社区名称', trigger: 'blur' },
+                ]">
+                                <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="child.compId"
+                                           :change="child.commId"></comm-util>
+                            </el-form-item>
+                        </template>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="标准名称" label-width="100px" prop="name"
+                                      :rules="[
+                    { required: true, message: '请输入标准名称', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+
+                    </el-col>
+                    <el-col :span="12">
                         <el-form-item label="费用明细" label-width="100px" prop="costItemId"
                                       :rules="[
                     { required: true, message: '请选择费用明细', trigger: 'blur' },
@@ -287,17 +335,6 @@
                                 </el-option>
                             </el-select>
                         </el-form-item>
-                    </el-col>
-                </el-row>
-                <el-row>
-                    <el-col :span="24">
-                        <el-form-item label="标准名称" label-width="100px" prop="name"
-                                      :rules="[
-                    { required: true, message: '请输入标准名称', trigger: 'blur' },
-                ]">
-                            <el-input v-model="form.name"></el-input>
-                        </el-form-item>
-
                     </el-col>
                 </el-row>
                 <el-row>
@@ -403,9 +440,8 @@
                 <el-button type="primary" @click="submit()">确 定</el-button>
             </span>
         </el-dialog>
-
         <el-dialog :title="title" :visible.sync="addUnitVisible" width="40%">
-            <trees @child1="setRoom" :arr="changeRoom"></trees>
+            <trees @child1="setRoom" :comm-id="commId" :arr="changeRoom"></trees>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="addUnitVisible = false">取 消</el-button>
                 <el-button type="primary" @click="submitUnit()">确 定</el-button>
@@ -458,9 +494,56 @@
         </el-dialog>
         <el-dialog :title="title" :visible.sync="pv" width="80%">
              <span slot="footer" class="dialog-footer">
-                <parkingSpace  @park="park"  :shows="false" ref="parkingSpace"></parkingSpace>
+                <parkingSpace :comm-id="commId" @park="park" :shows="false" ref="parkingSpace"></parkingSpace>
                 <el-button @click="pv = false">取 消</el-button>
                 <el-button type="primary" @click="submitPark()">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="editBill" width="30%">
+            <el-form :model="billForm" label-width="70px" ref="editBillForm">
+                <el-form-item label="创建账单时间" label-width="150px" prop="createBillDate"
+                              :rules="[
+                    { required: true, message: '请选择公司名称', trigger: 'blur' },
+                ]">
+                    <el-date-picker
+                            v-model="billForm.createBillDate"
+                            type="datetime"
+                            format="yyyy-MM-dd"
+                            placeholder="选择开始日期">
+                    </el-date-picker>
+                </el-form-item>
+            </el-form>
+             <span slot="footer" class="dialog-footer">
+                <el-button @click="editBill = false">取 消</el-button>
+                <el-button type="primary" @click="submitBill()">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="billList" width="80%">
+            <el-table
+                    :data="billDateList"
+                    border
+                    class="table"
+                    ref="multipleTable"
+                    header-cell-class-name="table-header"
+            >
+                <el-table-column prop="id" label="ID" min-width="125" v-if="false" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="createBillDate" label="账单自动生成日期" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="accountPeriod" label="账期" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="endTime" label="账单结束日期" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column prop="updateUser" label="修改人" min-width="125" min-height="55" align="center"></el-table-column>
+                <el-table-column label="操作" width="" align="center" width="150">
+                    <template slot-scope="scope">
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="editBillDate(scope.$index, scope.row)">编辑
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+             <span slot="footer" class="dialog-footer">
+                <el-button @click="billList = false">确 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -479,20 +562,26 @@
         getParkIds,
         getCostPark,
         deletparkById,
-        deleteAllPark
+        deleteAllPark,
+        listBills,
+        updateBillDate
     } from '../../api/tariff/costrule'
+    import commUtil from '../common/commutil'
     import compUtil from '../common/comp'
     import {getComp} from "../../api/user";
     import distUtil from "../common/distutil"
-    import trees from '../common/tree'
+    import trees from '../common/unitroom'
     import parkingSpace from '../asstes/changepark'
 
     export default {
         components: {
-            distUtil, trees, parkingSpace, compUtil
+            distUtil, trees, parkingSpace, compUtil, commUtil
         },
         data() {
             return {
+                billForm:{},
+                billDateList:[],
+                commId: 0,
                 parkData: [],
                 dist: {
                     priceProp: '请选择价格单位',
@@ -511,6 +600,7 @@
                     estateId: '54',
                     estateName: 'estate',
                 },
+                child: {},
                 title: '',
                 addForm: {
                     rooms: '',
@@ -532,10 +622,12 @@
                 editVisible: false,
                 addUnitVisible: false,
                 addParksVisible: false,
+                editBill: false,
+                billList: false,
                 pageTotal: 0,
                 parkIds: '',
-                ruleId:'',
-                deleteParkIds:[],
+                ruleId: '',
+                deleteParkIds: [],
             }
         },
         created() {
@@ -552,7 +644,9 @@
             edit(index, row) {
                 this.form = row;
                 this.setItemData();
+                this.child.compId = row.compId;
                 this.editVisible = !this.editVisible;
+                this.child.commId = row.commId;
                 this.title = '修改费用类型';
             },
             deleted(id) {
@@ -569,8 +663,8 @@
                     });
                 })
             },
-            addUnit(id) {
-
+            addUnit(id, commId) {
+                this.commId = commId;
                 getRoomIds(id).then(res => {
                     this.changeRoom = res.data;
                     this.addUnitVisible = !this.addUnitVisible;
@@ -579,7 +673,36 @@
                 this.title = '选择物业单位';
 
             },
-            addPark(id) {
+            submitBill(){
+                if (this.title === '生成账单时间列表') {
+                    this.$refs['editBillForm'].validate(valid => {
+                        if (valid) {
+                            updateBillDate(this.billForm).then(res=>{
+                                if (res.code === 0 && res.data) {
+                                    this.$message.success(`设置成功`);
+                                    this.editBill = !this.editBill;
+                                } else {
+                                    this.$message.error(`设置失败！`);
+                                }
+                            })
+                        }
+                    });
+                }
+            },
+            listBill(id) {
+                this.title = '生成账单时间列表';
+                listBills(id).then(res => {
+                    console.log(res);
+                    this.billDateList = res.data;
+                    this.billList = !this.billList;
+                });
+            },
+            editBillDate(index ,row){
+                this.editBill = !this.editBill;
+                this.billForm = row;
+            },
+            addPark(id, commId) {
+                this.commId = commId;
                 this.title = '请选择车位';
                 this.ruleId = id;
                 getCostPark(id).then(res => {
@@ -590,7 +713,7 @@
             submitUnit() {
                 insertRuleRoom(this.addForm).then(res => {
                     if (res.code === 0 && res.data) {
-                        this.$message.success(`设置成功`);
+
                         this.addUnitVisible = !this.addUnitVisible;
                         this.changeRoom = [];
                     } else {
@@ -657,6 +780,14 @@
                 }
             },
             selectCompForm(value) {
+                if (value) {
+                    this.child.compId = parseInt(value);
+                    this.form.compId = parseInt(value);
+                } else {
+                    console.log(123)
+                    this.child.compId = 0;
+                    this.form.compId = '';
+                }
                 this.form.compId = value;
                 this.itemData = [];
                 if (value) {
@@ -731,14 +862,14 @@
                 let ids = '';
                 this.addForm.ruleId = this.ruleId;
                 // 查询费用标准下的停车位信息
-                getParkIds(this.ruleId).then(res=>{
-                    ids=res.data;
+                getParkIds(this.ruleId).then(res => {
+                    ids = res.data;
                     this.$nextTick(() => {
                         this.$refs.parkingSpace.init(ids);
                     });
                 });
             },
-            deletpark(id){
+            deletpark(id) {
                 console.log(id);
                 this.$confirm('确定要删除该车位吗？', '提示', {
                     type: 'warning'
@@ -755,21 +886,21 @@
                     });
                 })
             },
-            deleteParksAll(){
+            deleteParksAll() {
                 console.log(123);
-                if(this.deleteParkIds.length > 0){
-                console.log(321);
+                if (this.deleteParkIds.length > 0) {
+                    console.log(321);
                     var d = this.deleteParkIds;
                     var s = "";
-                    for (var i=0;i<d.length;i++){
-                        s += d[i]+",";
+                    for (var i = 0; i < d.length; i++) {
+                        s += d[i] + ",";
                     }
                     this.$confirm('确认删除吗？', '提示', {
                         type: 'warning'
                     }).then(() => {
                         var json = {
-                            ids:s,
-                            ruleId : this.ruleId
+                            ids: s,
+                            ruleId: this.ruleId
                         };
                         deleteAllPark(json).then(res => {
                             if (res.code === 0 && res.data) {
@@ -777,7 +908,7 @@
                                 getCostPark(this.ruleId).then(res => {
                                     this.parkData = res.data;
                                 });
-                            }else {
+                            } else {
                                 this.$message.success(`批量删除失败！`);
                             }
                         });
@@ -790,6 +921,11 @@
                     this.deleteParkIds.push(selection[i].id);
                 }
                 console.log(this.deleteParkIds);
+            },
+            formCommValue(value) {
+                if (value) {
+                    this.form.commId = value;
+                }
             },
 
         }

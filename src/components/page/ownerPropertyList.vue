@@ -9,8 +9,13 @@
         </div>
         <div class="container">
             <div class="handle-box">
-                <el-select v-model="query.compId" placeholder="请选择" @change="compChange">
-                    <el-option key="qxz" label="请选择物业公司" value=""></el-option>
+                <el-button
+                        type="primary"
+                        icon="el-icon-delete"
+                        class="handle-del mr10"
+                        @click="delAllSelection"
+                >批量删除</el-button>
+                <el-select v-model="query.compId" placeholder="请选择物业公司" @change="compChange">
                     <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in compList">
                         {{types.name}}
                     </el-option>
@@ -37,6 +42,9 @@
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">添加</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="exportTemplate">导入模板下载</el-button>
             </div>
             <el-table
                     :data="tableData"
@@ -47,6 +55,7 @@
                     header-cell-class-name="table-header"
                     @selection-change="handleSelectionChange"
             >
+                <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="compName" label="物业公司" align="center" min-width="120"></el-table-column>
@@ -54,16 +63,17 @@
                 <el-table-column prop="commAreaName" label="分区名称" align="center" min-width="110"></el-table-column>
                 <el-table-column prop="buildingName" label="楼栋名称" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
+                <el-table-column prop="propertyName" label="物业编号" align="center"></el-table-column>
+                <el-table-column prop="certType" label="证件类型" align="center"></el-table-column>
+                <el-table-column prop="certNumber" label="证件号码" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="ownerType" label="业主类型" align="center"></el-table-column>
                 <el-table-column prop="ownerName" label="业主姓名" align="center"></el-table-column>
                 <el-table-column prop="tel" label="业主电话" align="center" min-width="110"></el-table-column>
                 <el-table-column prop="ownerAddr" label="业主地址" align="center" min-width="110"></el-table-column>
                 <el-table-column prop="email" label="业主邮箱" align="center" min-width="125"></el-table-column>
-                <el-table-column prop="certType" label="证件类型" align="center"></el-table-column>
-                <el-table-column prop="certNumber" label="证件号码" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="industry" label="行业" align="center" min-width="75"></el-table-column>
                 <el-table-column prop="sex" label="性别" align="center" min-width="55"></el-table-column>
-                <el-table-column prop="nativePlace" label="籍贯" align="center"></el-table-column>
+                <el-table-column prop="nativePlace" label="籍贯" align="center" min-width="125"></el-table-column>
                 <el-table-column prop="education" label="学历" align="center"></el-table-column>
                 <el-table-column prop="remark" label="备注" align="center"></el-table-column>
                 <el-table-column prop="createdName" label="创建人" align="center"></el-table-column>
@@ -72,7 +82,6 @@
                 <el-table-column prop="modifiedAt" label="修改时间" align="center" min-width="155"></el-table-column>
                 <el-table-column label="操作" width="125" align="center">
                     <template slot-scope="scope">
-
                         <el-button
                                 type="text"
                                 icon="el-icon-edit"
@@ -365,6 +374,9 @@
             <parkingVisible v-on:childByValueParking="childByValueParking" v-if="parkingVisible"
                             ref="parkingVisible"></parkingVisible>
         </el-dialog>
+        <el-dialog  :visible.sync="cmpVisible" append-to-body>
+            <menu1 v-if="cmpVisible" ref="menu1"></menu1>
+        </el-dialog>
     </div>
 </template>
 
@@ -374,14 +386,21 @@
         getInfo,
         getAllProp,
         getOwenList,
-        insertRoomOwnerOrPark, deleteOwnerProp, updateOwnerProp
+        insertRoomOwnerOrPark,
+        deleteOwnerProp,
+        updateOwnerProp,
+        exportXlsByT,
+        exportXlsByTPop,
+        upload,
+        exportTemplate,
+        deleteIds, deletePropIds
     } from '../../api/owner';
     import { getDictItemByDictId, getUserComm } from '../../api/building';
     import { getArea, getBuild, getComm, getComp } from '../../api/unit';
     import { listCompAll } from '../../api/role';
     import roomVisible from './roomChoose';
     import parkingVisible from './parkingChoose';
-
+    import menu1 from './roomUpload';
     export default {
         name: 'ownerProperty',
         data() {
@@ -417,6 +436,7 @@
                 compList: [],
                 selectOwnerVis: false,
                 roomVisible: false,
+                cmpVisible: false,
                 parkingVisible: false,
                 disable: false,
                 ownerTypes: [],
@@ -453,6 +473,7 @@
         },
         components: {
             roomVisible,
+            menu1,
             parkingVisible
         },
         methods: {
@@ -560,12 +581,22 @@
             delAllSelection() {
                 const length = this.multipleSelection.length;
                 let str = '';
+
                 this.delList = this.delList.concat(this.multipleSelection);
                 for (let i = 0; i < length; i++) {
+                    if (i===length-1){
+                        this.query.delIds+=this.multipleSelection[i].id;
+                    }else{
+                        this.query.delIds+=this.multipleSelection[i].id+',';
+                    }
                     str += this.multipleSelection[i].name + ' ';
                 }
-                this.$message.error(`删除了${str}`);
-                this.multipleSelection = [];
+                deletePropIds(this.query).then(res => {
+                    this.$message.error(`删除成功`);
+                    this.multipleSelection = [];
+                    this.query.delIds=null;
+                    this.getData()
+                });
             },
             getInfo() {
                 if (this.form.taxpayerType && this.form.identificationNo) {
@@ -723,6 +754,93 @@
                 this.formOwner.commAreaId = list.commAreaId;
                 this.formOwner.propertyName = list.no;
             },
+            exportXls(){
+                console.log(this.query)
+                exportXlsByTPop(this.query).then(res => {
+                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                    } else {
+                        var downloadElement = document.createElement('a');
+                        var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                        downloadElement.href = href;
+                        downloadElement.download = unescape('业主物业关系信息'+this.getTime()+'.xls'); //下载后文件名
+
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); //点击下载
+
+                        document.body.removeChild(downloadElement); //下载完成移除元素
+
+                        window.URL.revokeObjectURL(href); //释放掉blob对象
+                    }
+                });
+            },
+            exportTemplate(){
+                console.log(this.query)
+                exportTemplate(this.query).then(res => {
+                    var blob = new Blob([res],{type:'application/octet-stream'},'sheet.xlsx')
+                    if (window.navigator.msSaveBlob) {  //没有此判断的话，ie11下的导出没有效果
+                        window.navigator.msSaveBlob(blob, unescape(res.headers.filename.replace(/\\u/g, '%u')));
+                    } else {
+                        var downloadElement = document.createElement('a');
+                        var href = window.URL.createObjectURL(blob); //创建下载的链接
+
+                        downloadElement.href = href;
+                        downloadElement.download = unescape('业主物业关系信息'+this.getTime()+'.xls'); //下载后文件名
+
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); //点击下载
+
+                        document.body.removeChild(downloadElement); //下载完成移除元素
+
+                        window.URL.revokeObjectURL(href); //释放掉blob对象
+                    }
+                });
+            },
+            getTime(){
+                let date = new Date();
+                let yy = date.getFullYear();
+                let mm = date.getMonth() + 1;
+                if(mm<10){
+                    mm = '0'+mm;
+                }
+                let dd = date.getDate();
+                if(dd<10){
+                    dd = '0'+dd;
+                }
+                let h = date.getHours();
+                if(h<10){
+                    h = '0'+h;
+                }
+                let m = date.getMinutes();
+                if(m<10){
+                    m = '0'+m;
+                }
+                let s = date.getSeconds();
+                if(s<10){
+                    s = '0'+s;
+                }
+                let ms = date.getMilliseconds();
+                let time = yy+""+mm+""+dd+""+h+""+m+""+s+""+ms;
+                return time;
+            },
+            upload(){
+                //let linkID = id;
+                this.cmpVisible = true;
+                this.$nextTick(()=>{
+                    this.$refs.menu1.dataInitializationUpload("http://localhost:8900/api/rOwnerProperty/upload");
+                })
+
+            },
+            uploadDr(title,form){
+                console.log(this.form);
+                upload(this.form.file,{
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                }).then(res => {
+
+                })
+            },
         }
     };
 </script>
@@ -773,9 +891,29 @@
     .el-input {
         width: 200px;
     }
-
+    .el-button+.el-button {
+        margin-left: 10px;
+        margin-top: 5px;
+    }
     .el-input__inner {
         width: 200px;
         padding: 0 0 0 30px;
+    }
+
+    .el-table{
+        overflow: auto;
+    }
+    .el-dialog__wrapper >>> .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: auto;
+        min-height: 200px;
+        max-height: 562px;
+    }
+    .container >>> .el-table--scrollable-x >>> .el-table__body-wrapper {
+        width: 100%;
+        overflow: visible;
+    }
+    .container{
+        width: 2326px;
     }
 </style>

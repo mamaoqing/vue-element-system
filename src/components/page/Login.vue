@@ -53,18 +53,22 @@ export default {
                     params.append('passwd', this.param.passwd);
                     axios.post("/api/login/login",params).then((res=>{
                         //debugger
-                        this.$message.success('登录成功');
-                        let data = res.data.data;
-                        console.log(data);
-                        //根据store中set_token方法将token保存至localStorage/sessionStorage中，data["Authentication-Token"]，获取token的value值
-                        store.commit('set_token', data);
+                        // this.$message.success('登录成功');
+                        if(res.data.code===0){
+                            let data = res.data.data;
+                            //根据store中set_token方法将token保存至localStorage/sessionStorage中，data["Authentication-Token"]，获取token的value值
+                            store.commit('set_token', data);
 
-                        if (store.state.token) {
-                            localStorage.setItem('ms_username', this.param.username);
-                            this.$router.push('/')
-                        } else {
-                            this.$message.error("登陆失败，用户名或密码不正确");
-                            // this.$router.replace('/login');
+                            if (store.state.token) {
+                                this.$message.success('登录成功');
+                                localStorage.setItem('ms_username', this.param.username);
+                                this.$router.push('/')
+                            } else {
+                                this.$message.error("登陆失败");
+                                // this.$router.replace('/login');
+                            }
+                        }else{
+                            this.$message.error(res.data.msg);
                         }
 
                     }));

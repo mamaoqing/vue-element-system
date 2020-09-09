@@ -561,4 +561,17 @@
     .el-input__inner{
         width: 200px;
     }
+    .el-dialog__wrapper >>> .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: auto;
+        min-height: 200px;
+        max-height: 562px;
+    }
+    .container >>> .el-table--scrollable-x >>> .el-table__body-wrapper {
+        width: 100%;
+        overflow: visible;
+    }
+    .container{
+        width: 2790px;
+    }
 </style>
