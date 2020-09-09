@@ -21,17 +21,18 @@
                     border
                     class="table"
                     ref="multipleTable"
+                    @row-click="chooseDetails"
                     header-cell-class-name="table-header"
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="billNo" label="账单号" align="center"></el-table-column>
+                <el-table-column prop="billNo" label="账单号" align="center" width="150"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
-                <el-table-column prop="billTime" label="账单生成时间" align="center"></el-table-column>
+                <el-table-column prop="billTime" label="账单生成时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
                 <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
-                <el-table-column prop="payEndTime" label="付款结束时间" align="center"></el-table-column>
+                <el-table-column prop="payEndTime" label="付款结束时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isOverdue" label="是否逾期" align="center"></el-table-column>
                 <el-table-column prop="overdueCost" label="逾期费用" align="center"></el-table-column>
                 <el-table-column prop="isInvoice" label="是否开发票" align="center"></el-table-column>
@@ -102,6 +103,9 @@
                 query: {
                     pageNo: 1,
                     size: 10,
+                    state:'',
+                    compId:'',
+                    commId:''
                 },
                 addVisible: false,
                 editVisible: false,
@@ -135,6 +139,17 @@
             push(){
 
             },
+            chooseDetails (row) {
+                //具体操作
+                this.form = row;
+                //this.disable=true;
+                this.updateVisible = true;
+                this.title="查看房间";
+                this.sendData(this.form);
+            },
+            sendData(list) {
+                this.$emit('childByValue', list);
+            },
             checkIn(value, name) {
                 console.log(value+"<--->"+name);
                 if(name === 'payment'){
@@ -150,6 +165,11 @@
                     this.query.isInvoice = value;
                 }
             },
+            dataInitializationByByBillAlter(compId,commId){
+                this.query.compId = compId;
+                this.query.commId = commId;
+                this.query.state = "已支付";
+            }
         }
     }
 </script>
