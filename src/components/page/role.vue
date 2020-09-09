@@ -26,7 +26,7 @@
 
                 <!--<el-input v-model="query.compId" placeholder="物业公司名称" class="handle-input mr10"></el-input>-->
                 <!--<el-form-item label="物业公司名称" prop="dictId">-->
-                    <el-select v-model="query.compId" placeholder="物业公司名称" :disabled="edit">
+                    <el-select v-model="query.compId" placeholder="物业公司名称" >
                         <el-option key="qxz" label="请选择物业公司名称" value=""></el-option>
                         <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
                     </el-select>
