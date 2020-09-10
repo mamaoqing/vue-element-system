@@ -269,6 +269,11 @@
                 fCostRule(this.queryRule).then(res=>{
                     this.ruleList = res.data.records;
                 });
+            },
+            dataInitializationByByBillAlter(compId,commId){
+                this.query.compId = compId;
+                this.query.commId = commId;
+                this.query.state = '已支付';
             }
         }
     }
