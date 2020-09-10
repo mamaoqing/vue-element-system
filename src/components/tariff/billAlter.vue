@@ -348,6 +348,195 @@
                 <el-button type="primary" @click="saveEditOrAdd(title,'form','不同意')">不同意</el-button>
             </span>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="detailVisible" width="50%" append-to-body>
+            <el-form ref="form" :model="form"   :rules="rules" :disabled="disable">
+                <h2 style="padding-bottom: 2px;">&nbsp;&nbsp;账单详情</h2>
+                <div class="link-top"></div>
+                <div class="link-bottom"></div>
+                <el-row>
+                    <el-col :span="6" style="width: 250px;">
+                        <el-form-item label="物业公司" label-width="80px">
+                            <el-select v-model="form.compId" placeholder="请选择" style="width: 140px;"  :disabled="edit">
+                                <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 220px;">
+                        <el-form-item label="社区名称" label-width="80px">
+                            <el-select v-model="form.commName" placeholder="请选择" style="width: 140px;" :disabled="edit">
+                                <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 220px;">
+                        <el-form-item label="账单号" label-width="90px">
+                            <el-input :value="billDetail.billNo" :disabled="true" style="width: 140px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 220px;">
+                        <el-form-item label="费用标准"label-width="100px">
+                            <el-input :value="billDetail.ruleName" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="4" style="width: 150px;">
+                        <el-form-item label="物业类型" label-width="80px">
+                            <el-input :value="billDetail.propertyType" :disabled="true" style="width: 70px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4" style="width: 165px;">
+                        <el-form-item label="物业编号" label-width="75px">
+                            <el-input :value="billDetail.no" :disabled="true" style="width: 90px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4" style="width: 205px;">
+                        <el-form-item label="账单生成时间" label-width="100px">
+                            <el-input :value="billDetail.billTime" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="4" style="width: 205px;" >
+                        <el-form-item label="付款结束时间" label-width="100px">
+                            <el-input :value="billDetail.payEndTime" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 80px;">
+                        <el-form-item label="账单状态" label-width="75px">
+                            <el-input :value="billDetail.state" :disabled="true" style="width: 90px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="6" style="width: 190px;">
+                        <el-form-item label="账单总金额" label-width="95px">
+                            <el-input :value="billDetail.price" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="6" style="width: 265px;">
+                        <el-form-item label="逾期费用计费规则" label-width="135px">
+                            <el-input :value="billDetail.overdueRule" :disabled="true" style="width: 120px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 140px;">
+                        <el-form-item label="费用调整" label-width="75px">
+                            <el-input :value="billDetail.salePrice" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 155px;">
+                        <el-form-item label="账期" label-width="45px">
+                            <el-input :value="billDetail.accountPeriod" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 110px;">
+                        <el-form-item label="是否开发票" label-width="90px">
+                            <el-input :value="billDetail.isInvoice" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="6" style="width: 125px;" v-if="billDetail.state=='未付款'">
+                        <el-form-item label="是否付款" label-width="80px">
+                            <el-input :value="billDetail.isPayment" :disabled="true" style="width: 45px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 120px;" v-if="billDetail.state=='未付款'">
+                        <el-form-item label="付款金额" label-width="75px">
+                            <el-input :value="billDetail.payPrice" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 120px;" v-if="billDetail.state=='未付款'">
+                        <el-form-item label="是否逾期" label-width="75px">
+                            <el-input :value="billDetail.isOverdue" :disabled="true" style="width: 45px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 125px;" v-if="billDetail.state=='未付款'">
+                        <el-form-item label="逾期费用" label-width="75px">
+                            <el-input :value="billDetail.overdueCost" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 125px;">
+                        <el-form-item label="起始刻度" label-width="80px">
+                            <el-input :value="billDetail.beginScale" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 125px;">
+                        <el-form-item label="结束刻度" label-width="75px">
+                            <el-input :value="billDetail.endScale" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 150px;">
+                        <el-form-item label="是否打印收据" label-width="100px">
+                            <el-input :value="billDetail.isPrint" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
+            <el-form ref="form" :model="form"  :rules="rules" :disabled="disable">
+                <h2 style="padding-bottom: 2px;">&nbsp;&nbsp;费用调整</h2>
+                <div class="link-top"></div>
+                <div class="link-bottom"></div>
+                <el-row>
+                    <el-col :span="6" style="width: 130px;">
+                        <el-form-item label="调整金额" label-width="80px" >
+                            <el-input v-model="form.alterFee" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 580px;">
+                        <el-form-item label="调整原因" label-width="80px">
+                            <el-input v-model="form.alterReason" style="width: 500px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 180px;">
+                        <el-form-item label="调整状态" label-width="80px" >
+                            <el-input v-model="form.state" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="6" style="width: 180px;">
+                        <el-form-item label="调整人" label-width="65px" >
+                            <el-input v-model="form.alterByName" :disabled="true" style="width: 100px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 235px;">
+                        <el-form-item label="调整时间" label-width="80px">
+                            <el-input v-model="form.alterTime" :disabled="true" style="width: 155px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 490px;">
+                        <el-form-item label="备注" prop="remark" label-width="45px" >
+                            <el-input v-model="form.remark" style="width: 430px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                </el-row>
+                <el-row>
+                    <el-col :span="6" style="width: 510px;">
+                        <el-form-item label="审核意见" label-width="80px">
+                            <el-input v-model="form.audiReason" style="width: 430px;" :disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 155px;">
+                        <el-form-item label="审核人" label-width="65px">
+                            <el-select v-model="form.auditor" placeholder="请选择" style="width: 90px;" @change="select_status">
+                                <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in auditorList" >{{types.name}}</el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 225px;">
+                        <el-form-item label="审核时间" label-width="80px">
+                            <el-input v-model="form.auditTime" :disabled="true" style="width: 145px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                </el-row>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="detailVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title,'form','')" v-if="edit">确 定</el-button>
+            </span>
+        </el-dialog>
         <el-dialog  :visible.sync="billVisible" append-to-body width="55%" >
             <billVisible v-on:childByValue="childByValue" v-if="billVisible" ref="billVisible"></billVisible>
         </el-dialog>
@@ -358,6 +547,7 @@
 import { getUserComm, getDictItemByDictId, getCommArea } from '../../api/building';
 import { listCompAll } from '../../api/role';
 import { insertBillAlter,deleteBillAlter,updateBillAlter,listBillAlter,getRuleList,getAuditorList,getPropertyName,getCostRuleName,exportXlsByT} from '../../api/tariff/billAlter';
+import { listBills } from '../../api/tariff/bill';
 import billVisible from './bill';
 export default {
     name:"roomlistpage",
@@ -488,6 +678,7 @@ export default {
             editVisible: false,
             updateVisible:false,
             verifyVisible:false,
+            detailVisible:false,
             edit:false,
             otherComp:false,
             pageTotal:0,
@@ -502,6 +693,7 @@ export default {
             billStateList:[],//账单状态
             updateChoose:false,
             form: {},
+            billDetail:{},
             no:'',
             formCopy:{},
             unitForm:{},
@@ -793,7 +985,6 @@ export default {
         },
         // 编辑操作
         handleEdit(index, row) {
-
             if(row.state=='不同意'){
                 this.idx = index;
                 this.form = row;
@@ -861,9 +1052,13 @@ export default {
             //具体操作
             this.form = row;
             this.disable=true;
-            this.updateVisible = true;
+            this.detailVisible = true;
             this.title="查看费用调整";
             this.status = 2;
+            listBills({id:row.billId,pageNo: 1, size: 10}).then(res => {
+                debugger
+                this.billDetail = res.data.records[0];
+            });
         },
         format(val){
             let read = new Date(val);
@@ -982,5 +1177,19 @@ export default {
 }
 .el-table--small td{
     padding: 1px 0;
+}
+.link-top {
+    width: 98%;
+    height: 1px;
+    padding: 0 15px 0 0;
+    float:right;
+    border-top: solid #ACC0D8 1px;
+}
+.link-bottom {
+    width: 98%;
+    height: 1px;
+    padding: 0 15px 3px 0;
+    float:right;
+    border-top: solid #ACC0D8 1px;
 }
 </style>
