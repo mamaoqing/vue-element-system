@@ -371,6 +371,7 @@ export default {
             propertyTypeList:[],//物业类型
             typeList:[],//仪表类型
             form: {},
+            billNum:'',
             no:'',
             meterReadTime:'',
             billDate:'',
@@ -436,6 +437,7 @@ export default {
             this.form.no = list.no;
             this.form.propertyType = list.propertyType;
             this.form.propertyId = list.propertyId;
+            this.billNum = list.billNum;
             console.log(list+"_______________________________");
         },
         childByValueUpload(){
@@ -708,36 +710,32 @@ export default {
                     if(valid) {
                         this.form.modifiedAt = this.format(this.form.modifiedAt);
                         //保存之前检查抄表刻度不能低于仪表中的账单刻度
-                        checkMeterRecord(this.form).then(res => {
-                            if (res.data == null) {
-                                insertMeterRecord(this.form).then(res => {
-                                    this.editVisible = false;
-                                    this.$message.success(`新增成功`);
-                                    this.getData();
-                                });
-                            }else{
-                                this.$message.info(res.data);
-                            }
-                        });
-
+                        if(this.form.newNum>=this.billNum){
+                            insertMeterRecord(this.form).then(res => {
+                                this.editVisible = false;
+                                this.$message.success(`新增成功`);
+                                this.getData();
+                            });
+                        }else{
+                            this.$message.info("抄表刻度不能低于仪表中的账单刻度");
+                        }
                     }
                 });
             }else {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
                         //保存之前检查抄表刻度不能低于仪表中的账单刻度
-                        checkMeterRecord(this.form).then(res => {
-                            if (res.data == null) {
-                                updateMeterRecord(this.form).then(res => {
-                                    this.updateVisible = false;
-                                    this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                                    this.$set(this.tableData, this.idx, this.form);
-                                    this.getData();
-                                });
-                            }else{
+                        updateMeterRecord(this.form).then(res => {
+                            if(res.data=="抄表刻度小于仪表的账单刻度"){
                                 this.$message.info(res.data);
+                            }else{
+                                this.updateVisible = false;
+                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
+                                this.$set(this.tableData, this.idx, this.form);
+                                this.getData();
                             }
                         });
+
                     }
                 });
             }

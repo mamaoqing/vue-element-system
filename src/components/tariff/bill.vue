@@ -37,17 +37,12 @@
                     </el-option>
                 </el-select>
                 <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
-                <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName"
-                           :title="dist.paymentProp"></dist-util>
-                <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName"
-                           :title="dist.overdueProp"></dist-util>
-                <!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
-                <!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
+                <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName" :title="dist.paymentProp"></dist-util>
+                <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName" :title="dist.overdueProp"></dist-util>
+<!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
+<!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="add">添加账单</el-button>
-                <el-button type="primary" icon="el-icon-edit" @click="resetAll"
-                           :disabled="flag">{{content}}
-                </el-button>
+                <el-button type="primary" icon="el-icon-search" @click="resetAll">重新生成账单</el-button>
             </div>
             <el-table
                     :data="billData"
@@ -62,12 +57,13 @@
                 <el-table-column prop="ruleName" label="费用标准" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="no" label="物业编号" align="center"></el-table-column>
-                <el-table-column prop="billNo" label="账单号" align="center"></el-table-column>
-                <el-table-column prop="billTime" label="账单生成时间" align="center"></el-table-column>
+                <el-table-column prop="billNo" label="账单号" align="center"  width="150"></el-table-column>
+                <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
+                <el-table-column prop="billTime" label="账单生成时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
                 <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
-                <el-table-column prop="payEndTime" label="付款结束时间" align="center"></el-table-column>
+                <el-table-column prop="payEndTime" label="付款结束时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isOverdue" label="是否逾期" align="center"></el-table-column>
                 <el-table-column prop="overdueCost" label="逾期费用" align="center"></el-table-column>
                 <el-table-column prop="isInvoice" label="是否开发票" align="center"></el-table-column>
@@ -314,27 +310,30 @@
                     label: '燃气表',
                 }
                 ],
-                queryRule: {pageNo: 1, size: 100},
-                compId: 0,
-                billData: [],
+                queryRule:{pageNo:1,size:100},
+                compId:0,
+                billData:[],
                 form: {},
-                dist: {
-                    paymentProp: '请选择是否付款',
-                    paymentPropName: 'payment',
-                    paymentPropId: '51',
-                    overdueProp: '请选择是否逾期',
-                    overduePropName: 'overdue',
-                    overduePropId: '51',
-                    printProp: '请选择是否打印收据',
-                    printPropName: 'print',
-                    printPropId: '51',
-                    invoiceProp: '请选择是否开发票',
-                    invoicePropName: 'invoice',
-                    invoicePropId: '51',
+                dist:{
+                    paymentProp:'请选择是否付款',
+                    paymentPropName:'payment',
+                    paymentPropId:'51',
+                    overdueProp:'请选择是否逾期',
+                    overduePropName:'overdue',
+                    overduePropId:'51',
+                    printProp:'请选择是否打印收据',
+                    printPropName:'print',
+                    printPropId:'51',
+                    invoiceProp:'请选择是否开发票',
+                    invoicePropName:'invoice',
+                    invoicePropId:'51',
                 },
                 query: {
                     pageNo: 1,
                     size: 10,
+                    state:'',
+                    compId:'',
+                    commId:''
                 },
                 payVisible: false,
                 detailVisible: false,
@@ -420,7 +419,7 @@
             print() {
 
             },
-            push() {
+            push(){
 
             },
             pay(row) {
@@ -468,7 +467,7 @@
                     if (res.code === 0 && res.data) {
                         this.$message.success(`重新生成账单成功`);
                         this.init();
-                    } else {
+                    }else {
                         this.$message.error(res.msg);
                     }
                 });
@@ -518,6 +517,4 @@
             },
         }
     }
-
-
 </script>

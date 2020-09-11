@@ -1137,10 +1137,18 @@
     .myWidth {
         width: 200px;
     }
-    .el-tabs >>> .el-tabs__content{
+
+    .el-dialog__wrapper >>> .el-table__body-wrapper {
+        overflow-x: auto;
+        overflow-y: auto;
         min-height: 200px;
-        max-height: 575px;
-        flex-grow: 1;
-        overflow-y: scroll;
+        max-height: 562px;
+    }
+    .container >>> .el-table--scrollable-x >>> .el-table__body-wrapper {
+        width: 100%;
+        overflow: visible;
+    }
+    .container{
+        width: 2500px;
     }
 </style>
