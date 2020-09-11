@@ -44,6 +44,7 @@
                 <el-table-column prop="commName" label="社区名称" align="center"></el-table-column>
                 <el-table-column prop="areaName" label="分区名称" align="center"></el-table-column>
                 <el-table-column prop="no" label="编号" align="center"></el-table-column>
+                <el-table-column prop="plateNumber" label="车牌号" align="center"></el-table-column>
                 <el-table-column prop="position" label="位置" align="center"></el-table-column>
                 <el-table-column prop="buildingProperty" label="建筑属性" align="center"></el-table-column>
                 <el-table-column prop="useProperty" label="使用属性" align="center"></el-table-column>
@@ -119,6 +120,14 @@
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
                             <el-input v-model="form.no" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="车牌号" label-width="100px" prop="plateNumber"
+                                      :rules="[
+                    { required: true, message: '请输入车牌号', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.plateNumber" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="16">
@@ -331,6 +340,14 @@
                     { required: true, message: '请输入编号', trigger: 'blur' },
                 ]">
                             <el-input v-model="form.no" style="width: 250px"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="车牌号" label-width="100px" prop="plateNumber"
+                                      :rules="[
+                    { required: true, message: '请输入车牌号', trigger: 'blur' },
+                ]">
+                            <el-input v-model="form.plateNumber" style="width: 250px"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="16">

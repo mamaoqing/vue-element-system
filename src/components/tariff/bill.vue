@@ -49,24 +49,26 @@
                     border
                     class="table"
                     ref="multipleTable"
+                    @row-click="openDetails"
                     header-cell-class-name="table-header"
             >
                 <el-table-column type="selection" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
                 <el-table-column prop="ruleName" label="费用标准" align="center"></el-table-column>
-                <el-table-column prop="no" label="物业编号" align="center"></el-table-column>
-                <el-table-column prop="billNo" label="账单号" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
-                <el-table-column prop="billTime" label="账单生成时间" align="center"></el-table-column>
+                <el-table-column prop="no" label="物业编号" align="center"></el-table-column>
+                <el-table-column prop="billNo" label="账单号" align="center"  width="150"></el-table-column>
+                <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
+                <el-table-column prop="billTime" label="账单生成时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
                 <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
-                <el-table-column prop="payEndTime" label="付款结束时间" align="center"></el-table-column>
+                <el-table-column prop="payEndTime" label="付款结束时间" align="center" width="150"></el-table-column>
                 <el-table-column prop="isOverdue" label="是否逾期" align="center"></el-table-column>
                 <el-table-column prop="overdueCost" label="逾期费用" align="center"></el-table-column>
                 <el-table-column prop="isInvoice" label="是否开发票" align="center"></el-table-column>
                 <el-table-column prop="isPrint" label="是否打印收据" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="250">
+                <el-table-column label="操作" width="" align="center" width="350">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -86,6 +88,12 @@
                                 @click.stop
                                 @click="reset(scope.row.id)">重新生成
                         </el-button>
+                        <el-button
+                                type="text"
+                                icon="el-icon-edit"
+                                @click.stop
+                                @click="pay(scope.row)">现金付款
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -100,43 +108,206 @@
                 ></el-pagination>
             </div>
         </div>
-        <el-dialog :title="title" :visible.sync="addVisible" width="60%">
-
+        <el-dialog :title="title" :visible.sync="payVisible" width="60%">
+            <el-form ref="editForm" label-width="70px">
+                <el-form-item label="付款金额" label-width="100px" style="width: 200px;">
+                    <el-input v-model="payPrice" type="number"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="payVisible = false">取 消</el-button>
+                <el-button type="primary" @click="payment()">确 定</el-button>
+            </span>
         </el-dialog>
-        <el-dialog :title="title" :visible.sync="editVisible" width="60%">
+        <el-dialog :title="title" :visible.sync="detailVisible" width="60%">
+            <template>
+                <el-tabs v-model="activeName" @tab-click="handleClick">
+                    <el-tab-pane label="费用标准" name="first">
+                        <el-table
+                                :data="ruleData"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="name" label="标准名称" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billingMethod" label="计费方式" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="price" label="价格" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="priceUnit" label="价格单位" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="beginDate" label="开始时间" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="endDate" label="结束时间" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="isLiquidatedDamages" label="是否有违约金" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="liquidatedDamagesMethod" label="违约金计算方式" min-width="125"
+                                             min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billCycle" label="账单周期" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billDay" label="出账天" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="payTime" label="付款天" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                    <el-tab-pane label="业主信息" name="second">
+                        <el-table
+                                :data="ownersData"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="ownerAddr" label="业主地址" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="tel" label="电话" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
 
+                    <el-tab-pane label="缴费信息" name="third">
+
+                    </el-tab-pane>
+
+                    <el-tab-pane label="账单周期" name="four">
+                        <el-table
+                                :data="billDateList"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="id" label="ID" min-width="125" v-if="false" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="createBillDate" label="账单自动生成日期" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="accountPeriod" label="账期" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="endTime" label="账单结束日期" min-width="125" min-height="55" align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                </el-tabs>
+            </template>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="addVisible" width="60%">
+            <el-form ref="addForm" :model="form" label-width="70px">
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="公司名称" label-width="100px">
+                            <comp-util @comp="compValue1" style="width: 250px;"></comp-util>
+
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="8">
+                        <el-form-item label="社区名称" label-width="100px">
+                            <comm-util @comm="formCommValue1" style="width: 250px" :comp-ids="compId"></comm-util>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="费用标准" label-width="100px">
+                            <el-select v-model="form.costRuleId" clearable placeholder="请选择费用标准">
+                                <el-option
+                                        v-for="item in ruleList"
+                                        :key="item.value"
+                                        :label="item.name"
+                                        :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="数量" label-width="100px">
+                            <el-input v-model="form.count" type="number" style="width: 250px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="是否付款" label-width="100px">
+                            <dist-util @child1="checkForm" :distId="dist.paymentPropId" :distName="dist.paymentPropName"
+                                       :title="dist.paymentProp" :change="form.billingMethod" style="width: 250px;"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="付款金额" label-width="100px">
+                            <el-input v-model="form.payPrice" type="number" style="width: 250px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+
+
+                </el-row>
+                <el-row>
+                    <el-col :span="8">
+                        <el-form-item label="是否打印收据" label-width="100px">
+                            <dist-util @child1="checkForm" :distId="dist.printPropId" :distName="dist.printPropName"
+                                       :title="dist.printProp" :change="form.billingMethod"></dist-util>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-form-item label="是否开发票" label-width="100px">
+                            <dist-util @child1="checkForm" :distId="dist.invoicePropId" :distName="dist.invoicePropName"
+                                       :title="dist.invoiceProp" :change="form.billingMethod"></dist-util>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :span="8">
+                    </el-col>
+                    <el-col :span="8">
+                    </el-col>
+                </el-row>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="addVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submit()">确 定</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
 
 <script>
-    import {listBills,resetBill,resetBillAll,fCostRule,listOwner} from '../../api/tariff/bill'
+    import {listBillss, resetBill, resetBillAll, fCostRule, listOwner, doPay, getOwnerList,insertBill} from '../../api/tariff/bill'
     import compUtil from '../common/comp'
     import distUtil from "../common/distutil"
     import commUtil from '../common/commutil'
+    import {getCostRule,listBills} from '../../api/tariff/costrule'
     export default {
         components: {
-            compUtil,distUtil,commUtil
+            compUtil, distUtil, commUtil
         },
         data() {
             return {
-                ruleList:[],
-                ownerData:[],
-                options:[{
-                    value:'房产',
-                    label:'房产',
-                },{
-                    value:'停车位',
-                    label:'停车位',
-                },{
-                    value:'水表',
-                    label:'水表',
-                },{
-                    value:'电表',
-                    label:'电表',
-                },{
-                    value:'燃气表',
-                    label:'燃气表',
+                billDateList:[],
+                ownersData: [],
+                ruleData: [],
+                activeName: 'first',
+                name: 'mmq',
+                content: '重新生成账单',
+                flag: false,
+                payId: 0,
+                payPrice: 0,
+                ruleList: [],
+                ownerData: [],
+                options: [{
+                    value: '房产',
+                    label: '房产',
+                }, {
+                    value: '停车位',
+                    label: '停车位',
+                }, {
+                    value: '水表',
+                    label: '水表',
+                }, {
+                    value: '电表',
+                    label: '电表',
+                }, {
+                    value: '燃气表',
+                    label: '燃气表',
                 }
                 ],
                 queryRule:{pageNo:1,size:100},
@@ -160,11 +331,16 @@
                 query: {
                     pageNo: 1,
                     size: 10,
+                    state:'',
+                    compId:'',
+                    commId:''
                 },
+                payVisible: false,
+                detailVisible: false,
                 addVisible: false,
-                editVisible: false,
                 pageTotal: 0,
-                title:'',
+                title: '',
+                totalTime: 10,
             }
         },
         created() {
@@ -173,20 +349,54 @@
             this.ownerlist();
         },
         methods: {
-            clearOwner(){
+            add() {
+                this.title = '添加账单';
+                this.addVisible = !this.addVisible;
+            },
+            handleClick(tab, event) {
 
             },
-            selectOwner(value){
+            openDetails(row) {
+                getCostRule(row.costRuleId).then(res => {
+                    this.ruleData = [];
+                    this.ruleData.push(res.data);
+                });
+
+                getOwnerList({propertyId: row.propertyId, propertyType: row.propertyType}).then(res => {
+                    this.ownersData = res.data;
+                });
+
+                listBills(row.costRuleId).then(res => {
+                    console.log(res);
+                    this.billDateList = res.data;
+                });
+                this.title = '账单详情';
+                this.detailVisible = !this.detailVisible;
+            },
+            clearOwner() {
+
+            },
+            selectOwner(value) {
                 this.query.owners = value;
             },
-            ownerlist(){
-                listOwner(this.query).then(res=>{
+            submit() {
+                console.log(this.form);
+                insertBill(this.form).then(res=>{
+                    if (res.code === 0 && res.data) {
+                        this.$message.success(`账单添加成功`);
+                    } else {
+                        this.$message.error(`添加失败`);
+                    }
+                    this.addVisible = !this.addVisible;
+                });
+            },
+            ownerlist() {
+                listOwner(this.query).then(res => {
                     this.ownerData = res.data;
                 });
             },
             init() {
-                listBills(this.query).then(res=>{
-                    console.log(res)
+                listBillss(this.query).then(res => {
                     this.billData = res.data.records;
                     this.pageTotal = res.data.total;
                 });
@@ -202,32 +412,59 @@
                 this.query.compId = value;
                 this.compId = value;
             },
-            print(){
+            compValue1(value) {
+                this.form.compId = value;
+                this.compId = value;
+            },
+            print() {
 
             },
             push(){
 
             },
+            pay(row) {
+                this.payId = 0;
+                if (row.price > row.payPrice) {
+                    this.payVisible = !this.payVisible;
+                    this.payId = row.id;
+                } else {
+                    this.$message.error(`订单已完成，请勿重复付款！`);
+                }
+            },
+            payment() {
+                doPay({id: this.payId, price: this.payPrice}).then(res => {
+                    if (res.code === 0 && res.data) {
+                        this.$message.success(`付款成功`);
+                        this.payVisible = !this.payVisible;
+                        this.init();
+                    } else {
+                        this.$message.error(res.msg);
+                    }
+                });
+            },
             checkIn(value, name) {
-                if(name === 'payment'){
+                if (name === 'payment') {
                     this.query.isPayment = value;
                 }
-                if(name === 'overdue'){
+                if (name === 'overdue') {
                     this.query.isOverdue = value;
                 }
-                if(name === 'print'){
+                if (name === 'print') {
                     this.query.isPrint = value;
                 }
-                if(name === 'invoice'){
+                if (name === 'invoice') {
                     this.query.isInvoice = value;
                 }
             },
-            formCommValue(value){
+            formCommValue(value) {
                 this.query.commId = value;
             },
-            reset(id){
-                resetBill(id).then(res=>{
-                    if(res.code === 0 && res.data){
+            formCommValue1(value) {
+                this.form.commId = value;
+            },
+            reset(id) {
+                resetBill(id).then(res => {
+                    if (res.code === 0 && res.data) {
                         this.$message.success(`重新生成账单成功`);
                         this.init();
                     }else {
@@ -235,26 +472,49 @@
                     }
                 });
             },
-            resetAll(){
-                if(this.query.costRuleId){
-                    resetBillAll({ruleId :this.query.costRuleId }).then(res=>{
-                        if(res.code === 0 && res.data){
+            resetAll() {
+                if (this.query.costRuleId) {
+                    this.flag = !this.flag;
+                    resetBillAll({ruleId: this.query.costRuleId}).then(res => {
+                        if (res.code === 0 && res.data) {
                             this.$message.success(`重新生成账单成功`);
                             this.init();
-                        }else {``
+                            this.content = this.totalTime + '秒后可用';
+                            let clock = window.setInterval(() => {
+                                this.totalTime--;
+                                this.content = this.totalTime + "s后可用";
+                                if (this.totalTime < 0) {
+                                    window.clearInterval(clock);
+                                    this.content = "重新生成账单";
+                                    this.totalTime = 10;
+                                    this.flag = !this.flag;
+                                }
+                            }, 1000);
+                        } else {
                             this.$message.error(res.msg);
                             this.init();
                         }
                     })
-                }else {
+                } else {
                     this.$message.error(`请选择费用标准！`);
                 }
             },
-            costRuleSelect(){
-                fCostRule(this.queryRule).then(res=>{
+            costRuleSelect() {
+                fCostRule(this.queryRule).then(res => {
                     this.ruleList = res.data.records;
                 });
-            }
+            },
+            checkForm(value, name){
+                if(name === 'print'){
+                    this.form.isPrint = value;
+                }
+                if(name === 'invoice'){
+                    this.form.isInvoice = value;
+                }
+                if(name === 'payment'){
+                    this.form.isPayment = value;
+                }
+            },
         }
     }
 </script>

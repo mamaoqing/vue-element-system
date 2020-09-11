@@ -108,3 +108,10 @@ export const updateBillDate = query => {
         data: query
     });
 };
+
+export const getCostRule = query => {
+    return request({
+        url: '/order/fCostRule/'+query,
+        method: 'get',
+    });
+};

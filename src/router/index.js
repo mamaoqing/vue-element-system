@@ -267,6 +267,11 @@ export default new Router({
                     path: '/auditerCnf',
                     component: () => import(/* webpackChunkName: "company" */ '../components/page/auditerCnf.vue'),
                     meta: { title: '审核人配置' }
+                },
+                {
+                    path: '/billAlter',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/billAlter.vue'),
+                    meta: { title: '费用调整' }
                 }
             ]
         },

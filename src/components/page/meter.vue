@@ -31,6 +31,7 @@
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in typeList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.no" placeholder="仪表编号" class="handle-input mr10" ></el-input>
+            <el-input v-model="query.ownerName" placeholder="业主名称" class="handle-input mr10" ></el-input>
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" >搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">新增</el-button>
@@ -429,7 +430,7 @@ export default {
                 propertyName:'',
                 type:'',
                 no:'',
-                name:'',
+                ownerName:'',
                 newNum:'',
                 meterReadTime:'',
                 billNum:'',
@@ -646,7 +647,7 @@ export default {
                     });
                 }
                 listMeter(this.query).then(res => {
-                    // debugger
+                    debugger
                     console.log(this.query.unitId)
                     this.tableData = res.data;
                 });
@@ -826,15 +827,13 @@ export default {
                     if(valid) {
                         this.form.meterReadTime = this.format(this.form.meterReadTime);
                         this.form.billDate = this.format(this.form.billDate);
-                        checkMeterNo(this.form).then(res => {
-                            if(res.data==''||res.data==null){
-                                insertMeter(this.form).then(res => {
-                                    this.editVisible = false;
-                                    this.$message.success(`新增成功`);
-                                    this.getData();
-                                });
-                            }else{
+                        insertMeter(this.form).then(res => {
+                            if(res.data=="仪表编号重复"){
                                 this.$message.info(res.data);
+                            }else{
+                                this.editVisible = false;
+                                this.$message.success(res.data);
+                                this.getData();
                             }
                         });
                     }
@@ -842,7 +841,7 @@ export default {
             }else {
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        if(this.no != this.form.no){
+                        /*if(this.no != this.form.no){
                             checkMeterNo(this.form).then(res => {
                                 if(res.data==''){
                                     updateMeter(this.form).then(res => {
@@ -855,14 +854,17 @@ export default {
                                     this.$message.info(res.data);
                                 }
                             });
-                        }else{
+                        }else{*/
                             updateMeter(this.form).then(res => {
-                                this.updateVisible = false;
-                                this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-                                this.$set(this.tableData, this.idx, this.form);
-                                this.getData();
+                                if(res.data=="仪表编号重复"){
+                                    this.$message.info(res.data);
+                                }else {
+                                    this.updateVisible = false;
+                                    this.$message.success(res.data);
+                                    this.getData();
+                                }
                             });
-                        }
+                        /*}*/
                     }
                 });
             }
