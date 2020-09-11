@@ -692,7 +692,6 @@
             listBill(id) {
                 this.title = '生成账单时间列表';
                 listBills(id).then(res => {
-                    console.log(res);
                     this.billDateList = res.data;
                     this.billList = !this.billList;
                 });

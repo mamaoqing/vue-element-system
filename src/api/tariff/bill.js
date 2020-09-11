@@ -1,6 +1,6 @@
 import request from '../../utils/request';
 
-export const listBills = query => {
+export const listBillss = query => {
     return request({
         url: '/order/fBill/listBill',
         method: 'get',
@@ -34,5 +34,35 @@ export const listOwner = query => {
     return request({
         url: '/order/fBill/listOwner',
         method: 'get',
+    });
+};
+
+export const doPay = query => {
+    return request({
+        url: '/order/fBill/doPay',
+        method: 'post',
+        data:query
+    });
+};
+
+export const getOwnerList = query => {
+    return request({
+        url: '/order/fBill/getOwners',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query
+    });
+};
+
+export const insertBill = query => {
+    return request({
+        url: '/order/fBill/insertBill',
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: query
     });
 };
