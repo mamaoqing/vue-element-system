@@ -873,7 +873,7 @@
                                     this.editVisible = false;
                                     this.$message.success(`缴费成功`);
                                     getOwnerPropId(this.query).then(res => {
-                                        console.log(res);
+
                                         this.billSearchVis = false;
                                         this.aaa = false;
                                         this.billData2 = res.data.records;
@@ -980,8 +980,7 @@
                 }
             },
             closeDialog(){
-                this.payForm.accountId=null
-                this.payForm.isYc = null
+                this.payForm= {}
             }
         }
     };
