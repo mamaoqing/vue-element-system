@@ -274,6 +274,11 @@ export default new Router({
                     meta: { title: '费用调整' }
                 },
                 {
+                    path: '/billSearch',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/billSearch.vue'),
+                    meta: { title: '缴费' }
+                },
+                {
                     path: '/account',
                     component: () => import(/* webpackChunkName: "company" */ '../components/tariff/account.vue'),
                     meta: { title: '费用预存' }

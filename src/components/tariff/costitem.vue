@@ -199,7 +199,7 @@
                 form: {},
                 query: {
                     pageNo: 1,
-                    size: 10,
+                    size: 10000000,
                 },
                 addVisible: false,
                 editVisible: false,
