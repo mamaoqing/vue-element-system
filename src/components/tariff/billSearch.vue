@@ -228,7 +228,7 @@
                 <el-button type="primary" @click="insertBill((title,'form'))">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="ownerBillTitle" :visible.sync="aaa" width="75%">
+        <el-dialog :title="ownerBillTitle" :visible.sync="aaa" width="75%" @close='closeDialog'>
             <!--            <el-button type="primary" icon="el-icon-lx-add" @click="pay">缴费</el-button>-->
             <el-button type="primary" icon="el-icon-lx-add" @click="addBill">添加临时性费用</el-button>
             <el-table
@@ -261,7 +261,7 @@
             <div>
                 <div class="myTitle">收款</div>
                 <el-divider></el-divider>
-                <el-form ref="payForm" :model="payForm" label-width="90px" :inline="true">
+                <el-form ref="payForm" :model="payForm" label-width="125px" :inline="true">
                     <el-form-item label="业主ID" v-show="false">
                         <el-input v-model="payForm.ownerId"></el-input>
                     </el-form-item>
@@ -296,6 +296,22 @@
                             <el-option key="zfb" label="支付宝" value="支付宝"></el-option>
                             <el-option key="xj" label="现金" value="现金"></el-option>
                             <el-option key="yhzz" label="银行转账" value="银行转账"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否转入预存账户">
+                        <el-select v-model="payForm.isYc" placeholder="请选择" style="width: 200px" @change="getAccount">
+                            <el-option key="true" label="是" value="true"></el-option>
+                            <el-option key="false" label="否" value="false"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="预存账户" prop="accountId" v-if="accountVis"
+                                  :rules="[
+                        { required: true, message: '请选择预存账户', trigger: 'blur' },
+                    ]">
+                        <el-select v-model="payForm.accountId" placeholder="请选择" style="width: 200px">
+                            <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in accounts">
+                                {{types.name}}
+                            </el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item label="备注">
@@ -459,7 +475,7 @@
         fCostRule,
         listOwner,
         getOwnerByName,
-        getOwnerPropId, addBill, payPrice
+        getOwnerPropId, addBill, payPrice, listBillss, getAccountByOwnerId
     } from '../../api/tariff/bill';
     import compUtil from '../common/comp';
     import distUtil from '../common/distutil';
@@ -540,9 +556,11 @@
                 compList: [],
                 commList: [],
                 wyTypes: [],
+                accounts: [],
                 multipleSelection: [],
                 payPriceVis: false,
                 ownerVisible: false,
+                accountVis: false,
                 price:0,
                 payprice: 0,
                 ownerBillTitle: '',
@@ -589,7 +607,7 @@
                 });
             },
             init() {
-                listBills(this.query).then(res => {
+                listBillss(this.query).then(res => {
                     console.log(res);
                     this.billData = res.data.records;
                     this.pageTotal = res.data.total;
@@ -857,7 +875,7 @@
                                     getOwnerPropId(this.query).then(res => {
                                         console.log(res);
                                         this.billSearchVis = false;
-                                        this.aaa = true;
+                                        this.aaa = false;
                                         this.billData2 = res.data.records;
                                         this.pageTotal2 = res.data.total;
                                     });
@@ -871,7 +889,7 @@
                         });
                     });
                 }else if(this.payForm.cost>this.price){
-                    this.$confirm('支付的金额多于账单金额，系统会自动将金额存入预存账户，是否确定？', '提示', {
+                    this.$confirm('将多余的金额存入预存账户，是否确定？', '提示', {
                         confirmButtonText: '确定',
                         cancelButtonText: '取消',
                         type: 'warning'
@@ -885,7 +903,7 @@
                                     getOwnerPropId(this.query).then(res => {
                                         console.log(res);
                                         this.billSearchVis = false;
-                                        this.aaa = true;
+                                        this.aaa = false;
                                         this.billData2 = res.data.records;
                                         this.pageTotal2 = res.data.total;
                                     });
@@ -908,7 +926,7 @@
                                 getOwnerPropId(this.query).then(res => {
                                     console.log(res);
                                     this.billSearchVis = false;
-                                    this.aaa = true;
+                                    this.aaa = false;
                                     this.billData2 = res.data.records;
                                     this.pageTotal2 = res.data.total;
                                 });
@@ -942,6 +960,28 @@
                 this.parkingVisible = false
                 this.form.propertyId = val.id;
                 this.form.propertyName = val.no;
+            },
+            getAccount(val){
+                if (val==="true"){
+                    this.accountVis = true
+                    getAccountByOwnerId(this.payForm.ownerId).then(res => {
+                        console.log(res);
+                        if (res.data.size!=0){
+                            this.accounts = res.data
+                        }else{
+                            this.$message({
+                                type: 'info',
+                                message: '未查到账户信息，请先添加账户!'
+                            });
+                        }
+                    });
+                }else{
+                    this.accountVis = false
+                }
+            },
+            closeDialog(){
+                this.payForm.accountId=null
+                this.payForm.isYc = null
             }
         }
     };
