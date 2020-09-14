@@ -195,48 +195,28 @@
                     ]">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="业主地址" label-width="150px" prop="ownerAddr"
-                                  :rules="[
-                        { required: true, message: '请输入业主地址', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="业主地址" label-width="150px">
                         <el-input v-model="form.ownerAddr"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="业主电话" label-width="150px" prop="tel"
-                                  :rules="[
-                        { required: true, message: '请输入业主电话', trigger: 'blur' },
-                        { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                    ]">
+                    <el-form-item class="item" label="业主电话" label-width="150px">
                         <el-input v-model="form.tel"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="业主邮箱" label-width="150px" prop="email"
-                                  :rules="[
-                        { required: true, message: '请输入业主邮箱', trigger: 'blur' },
-                        { type: 'email', message: '邮箱格式不正确', trigger: ['blur', 'change']},
-                    ]">
+                    <el-form-item class="item" label="业主邮箱" label-width="150px">
                         <el-input v-model="form.email"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="行业" label-width="150px" prop="industry"
-                                  :rules="[
-                        { required: true, message: '请输入行业', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="行业" label-width="150px">
                         <el-select v-model="form.industry" placeholder="请选择行业" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in hys"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="性别" label-width="150px" prop="sex"
-                                  :rules="[
-                        { required: true, message: '请选择性别', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="性别" label-width="150px">
                         <el-select v-model="form.sex" placeholder="请选择性别" class="myWidth">
                             <el-option :value="types.name" :key="types.id" :label="types.name"
                                        v-for="types in sexTypes"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="籍贯" label-width="150px" prop="nativePlace"
-                                  :rules="[
-                        { required: true, message: '请选择籍贯', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="籍贯" label-width="150px">
                         <el-cascader
                                 v-model="nativePlace"
                                 class="myWidth"
@@ -257,32 +237,19 @@
                     <el-form-item class="item" label="学历" label-width="150px">
                         <el-input v-model="form.education"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="状态" prop="state" label-width="150px"
-                                  :rules="[
-                        { required: true, message: '请选择状态', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="状态" label-width="150px">
                         <el-select v-model="form.state" placeholder="请选择" class="myWidth">
                             <el-option key="bbk" label="在用" value="在用"></el-option>
                             <el-option key="xtc" label="不在用" value="不在用"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item class="item" label="联系人" label-width="150px" prop="linkName"
-                                  :rules="[
-                        { required: true, message: '请输入联系人', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="联系人" label-width="150px">
                         <el-input v-model="form.linkName"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="联系人电话" label-width="150px" prop="linkTel"
-                                  :rules="[
-                        { required: true, message: '请输入电话', trigger: 'blur' },
-                        { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
-                    ]">
+                    <el-form-item class="item" label="联系人电话" label-width="150px">
                         <el-input v-model="form.linkTel"></el-input>
                     </el-form-item>
-                    <el-form-item class="item" label="联系人地址" label-width="150px" prop="linkAddr"
-                                  :rules="[
-                        { required: true, message: '请输入联系人地址', trigger: 'blur' },
-                    ]">
+                    <el-form-item class="item" label="联系人地址" label-width="150px">
                         <el-input v-model="form.linkAddr"></el-input>
                     </el-form-item>
                     <el-form-item class="item" label="备注" label-width="150px">

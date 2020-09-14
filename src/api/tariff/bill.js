@@ -38,7 +38,7 @@ export const listOwner = query => {
 };
 export const addBill = query => {
     return request({
-        url: '/order/fBill/insertBill',
+        url: '/order/fBill/addBill',
         method: 'post',
         data: query
     });
