@@ -66,3 +66,9 @@ export const insertBill = query => {
         data: query
     });
 };
+export const listBills = query => {
+    return request({
+        url: '/order/fBillDate/'+query,
+        method: 'get',
+    });
+};
