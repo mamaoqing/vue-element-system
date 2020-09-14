@@ -272,6 +272,11 @@ export default new Router({
                     path: '/billAlter',
                     component: () => import(/* webpackChunkName: "company" */ '../components/tariff/billAlter.vue'),
                     meta: { title: '费用调整' }
+                },
+                {
+                    path: '/account',
+                    component: () => import(/* webpackChunkName: "company" */ '../components/tariff/account.vue'),
+                    meta: { title: '费用预存' }
                 }
             ]
         },
