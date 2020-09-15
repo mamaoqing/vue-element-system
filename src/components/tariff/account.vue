@@ -12,16 +12,18 @@
                 <el-option key="qxz" label="请选择物业公司" value=""></el-option>
                 <el-option :value="types.id" :key="types.name" :label="types.name" v-for="types in compList" >{{types.name}}</el-option>
             </el-select>
-            <el-select v-model="query.commId" placeholder="请选择"  >
+            <el-select v-model="query.commId" placeholder="请选择"  @change="commChange">
                 <el-option key="qxz" label="请选择社区名称" value=""></el-option>
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.ownerName" placeholder="业主名称" class="handle-input mr10" ></el-input>
-            <el-select v-model="query.propertyType" placeholder="请选择" >
-                <el-option key="qxz" label="请选择物业类型" value=""></el-option>
+            <el-select v-model="query.propertyType" placeholder="请选择物业类型" @change="typeChange">
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" ></el-input>
+            <el-select v-model="query.propertyName" placeholder="请选择物业编号" >
+                <el-option key="qxz" label="请选择物业编号" value=""></el-option>
+                <el-option :value="types.id" :key="types.propertyName" :label="types.propertyName" v-for="types in typeNameList" >{{types.propertyName}}</el-option>
+            </el-select>
             <el-input v-model="query.name" placeholder="账户名称" class="handle-input mr10" ></el-input>
             <el-input v-model="query.no" placeholder="预存账号编号" class="handle-input mr10" ></el-input>
 
@@ -188,7 +190,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" style="width: 240px;">
-                        <el-form-item label="预存账号编号" label-width="160px">
+                        <el-form-item label="预存账号编号" label-width="140px">
                             <el-input v-model="form.no" :disabled="true" style="width: 100px"></el-input>
                         </el-form-item>
                     </el-col>
@@ -508,7 +510,7 @@
 <script scope>
 import { getUserComm, getDictItemByDictId, getCommArea } from '../../api/building';
 import { listCompAll } from '../../api/role';
-import { insertAccount,updateAccount,listAccount,getRuleList,getAccount,listFinanceRecord,listFinanceBillRecord} from '../../api/tariff/account';
+import { insertAccount,updateAccount,listAccount,getRuleList,getAccount,listFinanceRecord,listFinanceBillRecord,getTypeName} from '../../api/tariff/account';
 import { listBills } from '../../api/tariff/bill';
 import billVisible from './bill';
 import { getOwenList } from '../../api/owner';
@@ -677,9 +679,11 @@ export default {
             pageTotal3:0,
             pageTotal4:0,
             pageTotal5:0,
+            compId:'',
             disable:false,
             compList:[],
             commList:[],
+            typeNameList:[],
             billVisible:false,
             propertyTypeList:[],//物业类型
             ruleList:[],//费用标准
@@ -772,6 +776,22 @@ export default {
                 });
             }
         },
+        typeChange(){
+            getTypeName(this.query).then(res => {
+                if(res.data){
+                    this.typeNameList = res.data;
+                }
+            });
+        },
+        commChange(){
+            if(this.query.propertyType!=''&&this.query.propertyType!=undefined){
+                getTypeName(this.query).then(res => {
+                    if(res.data){
+                        this.typeNameList = res.data;
+                    }
+                });
+            }
+        },
         select_status(val){
             this.$forceUpdate();
             this.$set(this.form, "auditor", val);
@@ -784,6 +804,7 @@ export default {
                 if(res.data.records.length==1){
                     this.otherComp = true;
                     this.query.compId=res.data.records[0].id;
+                    this.compId=res.data.records[0].id;
                     getUserComm(res.data.records[0].id).then(res => {
                         if(res.data){
                             this.form.commId=undefined;
@@ -850,6 +871,9 @@ export default {
         handleAdd() {
             debugger
             this.form = {};
+            if(this.compId!=''&&this.compId!=undefined){
+                this.form.compId = this.compId;
+            }
             this.editVisible = true;
             this.title="费用预存";
             this.feeAddShow = false;
@@ -1024,32 +1048,31 @@ export default {
             }else{
                 this.$refs[form].validate((valid)=>{
                     if(valid) {
-                        this.form.state = state;
-                        this.form.alterTime = this.format(this.form.alterTime);
-                        this.form.alterBy = '';
-                        this.form.auditTime = this.format(this.form.auditTime);
-                        updateAccount(this.form).then(res => {
-                            if(res.data){
-                                if(this.form.isReNew){
-                                    this.updateVisible = false;
-                                    this.$message.success("续费成功");
+                        if(this.form.fee>=this.form.feeAdd){
+                            updateAccount(this.form).then(res => {
+                                if(res.data){
+                                    if(this.form.isReNew){
+                                        this.updateVisible = false;
+                                        this.$message.success("续费成功");
+                                    }else{
+                                        this.castVisible = false;
+                                        this.$message.success("提现成功");
+                                    }
+                                    this.getData();
                                 }else{
-                                    this.castVisible = false;
-                                    this.$message.success("提现成功");
+                                    if(this.form.isReNew){
+                                        this.updateVisible = false;
+                                        this.$message.success("续费失败");
+                                    }else{
+                                        this.castVisible = false;
+                                        this.$message.success("提现失败");
+                                    }
+                                    this.getData();
                                 }
-
-                                this.getData();
-                            }else{
-                                if(this.form.isReNew){
-                                    this.updateVisible = false;
-                                    this.$message.success("续费失败");
-                                }else{
-                                    this.castVisible = false;
-                                    this.$message.success("提现失败");
-                                }
-                                this.getData();
-                            }
-                        });
+                            });
+                        }else{
+                            this.$message.info("提现额不能大于预存金额");
+                        }
                     }
                 });
             }
