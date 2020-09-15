@@ -10,8 +10,17 @@
         <div class="container">
             <div class="handle-box">
                 <comp-util @comp="compValue"></comp-util>
-                <el-input v-model="query.billNo" placeholder="请输入账单号" style="width: 250px"></el-input>
+
                 <comm-util @comm="formCommValue" style="width: 250px" :comp-ids="compId"></comm-util>
+                <el-select v-model="query.ownersId" @clear="clearOwner" clearable filterable placeholder="请选择业主姓名"
+                           @change="selectOwner">
+                    <el-option
+                            v-for="item in ownerData"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
                 <el-select v-model="query.costRuleId" clearable placeholder="请选择费用标准">
                     <el-option
                             v-for="item in ruleList"
@@ -28,26 +37,19 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
-                <el-select v-model="query.owners" @clear="clearOwner" clearable filterable placeholder="请选择业主姓名"
-                           @change="selectOwner">
-                    <el-option
-                            v-for="item in ownerData"
-                            :key="item.value"
-                            :label="item.name"
-                            :value="item.name">
-                    </el-option>
-                </el-select>
+
                 <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
                 <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName"
                            :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName"
                            :title="dist.overdueProp"></dist-util>
-                <!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
-                <!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
+                <el-select v-model="query.state1" placeholder="请选择" style="width: 200px">
+                    <el-option key="wfk" label="未付款" value="未付款"></el-option>
+                    <el-option key="yfk" label="已付款" value="已付款"></el-option>
+                </el-select>
+                <el-input v-model="query.billNo" placeholder="请输入账单号" style="width: 250px"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-                <el-button type="primary" icon="el-icon-search" @click="resetAll">重新生成账单</el-button>
-                <el-button type="primary" icon="el-icon-search" @click="billSearch">账单查询</el-button>
-
+                <el-button type="primary" icon="el-icon-lx-add" @click="addBill">添加临时性费用</el-button>
             </div>
             <el-table
                     :data="billData"
@@ -55,23 +57,22 @@
                     class="table"
                     ref="multipleTable"
                     header-cell-class-name="table-header"
+                    @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
                 <el-table-column prop="id" label="ID" width="55" align="center" v-if="false"></el-table-column>
-                <el-table-column prop="compName" label="物业公司" width="130" align="center"></el-table-column>
-                <el-table-column prop="commName" label="社区" align="center"></el-table-column>
-                <el-table-column prop="billNo" label="账单号" width="155" align="center"></el-table-column>
                 <el-table-column prop="ruleName" label="费用标准" align="center"></el-table-column>
                 <el-table-column prop="accountPeriod" label="账期" align="center"></el-table-column>
+                <el-table-column prop="billNo" label="账单号" width="155" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="no" label="物业编号" width="95" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
-                <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
-                <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
                 <el-table-column prop="salePrice" label="减免金额" align="center"></el-table-column>
                 <el-table-column prop="overdueCost" label="违约金" align="center"></el-table-column>
-                <el-table-column prop="payEndTime" label="逾期时间" width="175" align="center"></el-table-column>
-                <el-table-column prop="billTime" label="账单生成时间" width="175" align="center"></el-table-column>
+                <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
+                <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
+                <el-table-column prop="billTime" label="账单生成时间" width="125" align="center"></el-table-column>
+                <el-table-column prop="payEndTime" label="逾期时间" width="125" align="center"></el-table-column>
                 <el-table-column prop="createName" label="生成人" align="center"></el-table-column>
                 <el-table-column label="操作" width="" align="center" width="250">
                     <template slot-scope="scope">
@@ -105,6 +106,72 @@
                         :total="pageTotal"
                         @current-change="handlePageChange"
                 ></el-pagination>
+            </div>
+            <div>
+                <div class="myTitle">收款</div>
+                <el-divider></el-divider>
+                <el-form ref="payForm" :model="payForm" label-width="125px" :inline="true">
+                    <el-form-item label="业主ID" v-show="false">
+                        <el-input v-model="payForm.ownerId"></el-input>
+                    </el-form-item>
+                    <el-form-item label="应付合计" >
+                        <el-input v-model="payForm.ssje" :disabled="true"></el-input>
+                    </el-form-item>
+                    <el-form-item label="付款金额" prop="fukuan"
+                                  :rules="[
+                        { required: true, message: '请输入付款金额', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="payForm.fukuan" @input="subtract"></el-input>
+                    </el-form-item>
+                    <el-form-item label="实收金额" prop="cost"
+                                  :rules="[
+                        { required: true, message: '请输入实收金额', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="payForm.cost" @input="subtract"></el-input>
+                    </el-form-item>
+                    <el-form-item label="支付方式" prop="paymentMethod"
+                                  :rules="[
+                        { required: true, message: '请选择支付方式', trigger: 'blur' },
+                    ]">
+                        <el-select v-model="payForm.paymentMethod" placeholder="请选择" style="width: 200px">
+                            <el-option key="wx" label="微信" value="微信"></el-option>
+                            <el-option key="zfb" label="支付宝" value="支付宝"></el-option>
+                            <el-option key="xj" label="现金" value="现金"></el-option>
+                            <el-option key="yhzz" label="银行转账" value="银行转账"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="是否转入预存账户">
+                        <el-select v-model="payForm.isYc" placeholder="请选择" style="width: 200px" @change="getAccount">
+                            <el-option key="true" label="是" value="true"></el-option>
+                            <el-option key="false" label="否" value="false"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="预存账户" prop="accountId" v-if="accountVis"
+                                  :rules="[
+                        { required: true, message: '请选择预存账户', trigger: 'blur' },
+                    ]">
+                        <el-select v-model="payForm.accountId" placeholder="请选择" style="width: 200px">
+                            <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in accounts">
+                                {{types.name}}
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="预存金额" prop="ycje" v-if="accountVis"
+                                  :rules="[
+                        { required: true, message: '请输入预存金额', trigger: 'blur' },
+                    ]">
+                        <el-input v-model="payForm.subMoney" @input="subtract"></el-input>
+                    </el-form-item>
+                    <el-form-item label="备注">
+                        <el-input v-model="payForm.remark"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="pagination">
+                <!--                <div class="cell myCell">账单合计：￥{{price}}</div>-->
+                <div class="cell myCell">找零：￥{{payForm.subMoney}}</div>
+                <div class="cell myCell"><el-button type="primary" @click="payPrice">确认缴费</el-button></div>
+
             </div>
         </div>
         <el-dialog :title="title" :visible.sync="addVisible" width="60%">
@@ -154,6 +221,19 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item class="item" label="选择业主" label-width="150px" prop="ownerId" :rules="[
+                        { required: true, message: '请选择业主', trigger: 'blur' },
+                    ]">
+                        <el-select v-model="form.ownerId" @clear="clearOwner" style="width: 200px;" clearable filterable placeholder="请选择业主姓名"
+                                   @change="selectOwner">
+                            <el-option
+                                    v-for="item in ownerData"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-form-item label="物业类型" label-width="150px" prop="propertyType" :rules="[
                         { required: true, message: '请选择物业类型', trigger: 'blur' },
                     ]">
@@ -163,9 +243,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="物业编号" prop="propertyId" label-width="150px" :disabled="false" :rules="[
-                        { required: true, message: '请选择物业编号', trigger: 'blur' },
-                    ]">
+                    <el-form-item label="物业编号"label-width="150px" :disabled="false">
                         <el-input v-model="form.propertyId" v-show="false" :disabled="true"
                                   style="width: 150px;"></el-input>
                         <el-input v-model="form.propertyName" :disabled="true" style="width: 150px;"></el-input>
@@ -189,19 +267,6 @@
                             <el-option key="wfk" label="未付款" value="未付款"></el-option>
                             <el-option key="yfk" label="已付款" value="已付款"></el-option>
                         </el-select>
-                    </el-form-item>
-                    <el-form-item class="item" label="生成时间" label-width="150px" prop="billTime" :rules="[
-                        { required: true, message: '请填写生成时间', trigger: 'blur' },
-                    ]">
-                        <el-date-picker
-                                style="width: 200px"
-                                v-model="form.billTime"
-                                type="datetime"
-                                placeholder="选择日期时间"
-                                format="yyyy-MM-dd HH:mm:ss"
-                                value-format="yyyy-MM-dd HH:mm:ss"
-                                default-time="00:00:00"
-                        />
                     </el-form-item>
                     <el-form-item class="item" label="逾期时间" label-width="150px" prop="payEndTime" :rules="[
                         { required: true, message: '请填写逾期时间', trigger: 'blur' },
@@ -258,72 +323,7 @@
                 <el-table-column prop="createName" label="生成人" align="center"></el-table-column>
             </el-table>
 
-            <div>
-                <div class="myTitle">收款</div>
-                <el-divider></el-divider>
-                <el-form ref="payForm" :model="payForm" label-width="125px" :inline="true">
-                    <el-form-item label="业主ID" v-show="false">
-                        <el-input v-model="payForm.ownerId"></el-input>
-                    </el-form-item>
-                    <el-form-item label="操作类型">
-                        <el-select v-model="payForm.operType" placeholder="请选择" style="width: 200px" prop="operType"
-                                   :rules="[
-                        { required: true, message: '请选择操作类型', trigger: 'blur' },
-                    ]">
-                            <el-option key="zf" label="支付" value="支付"></el-option>
-                            <el-option key="yc" label="预存" value="预存"></el-option>
-                            <el-option key="qx" label="取现" value="取现"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="付款金额" prop="fukuan"
-                                  :rules="[
-                        { required: true, message: '请输入付款金额', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="payForm.fukuan" @input="subtract"></el-input>
-                    </el-form-item>
-                    <el-form-item label="实收金额" prop="cost"
-                                  :rules="[
-                        { required: true, message: '请输入实收金额', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="payForm.cost" @input="subtract"></el-input>
-                    </el-form-item>
-                    <el-form-item label="支付方式" prop="paymentMethod"
-                                  :rules="[
-                        { required: true, message: '请选择支付方式', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="payForm.paymentMethod" placeholder="请选择" style="width: 200px">
-                            <el-option key="wx" label="微信" value="微信"></el-option>
-                            <el-option key="zfb" label="支付宝" value="支付宝"></el-option>
-                            <el-option key="xj" label="现金" value="现金"></el-option>
-                            <el-option key="yhzz" label="银行转账" value="银行转账"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="是否转入预存账户">
-                        <el-select v-model="payForm.isYc" placeholder="请选择" style="width: 200px" @change="getAccount">
-                            <el-option key="true" label="是" value="true"></el-option>
-                            <el-option key="false" label="否" value="false"></el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="预存账户" prop="accountId" v-if="accountVis"
-                                  :rules="[
-                        { required: true, message: '请选择预存账户', trigger: 'blur' },
-                    ]">
-                        <el-select v-model="payForm.accountId" placeholder="请选择" style="width: 200px">
-                            <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in accounts">
-                                {{types.name}}
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="备注">
-                        <el-input v-model="payForm.remark"></el-input>
-                    </el-form-item>
-                </el-form>
-            </div>
-            <div class="pagination">
-                <div class="cell myCell">账单合计：￥{{price}}</div>
-                <div class="cell myCell">找零：￥{{subMoney}}</div>
-                <el-button type="primary" @click="payPrice">确认缴费</el-button>
-            </div>
+
         </el-dialog>
         <el-dialog :visible.sync="payPriceVis" append-to-body width="20%">
             <el-form ref="payForm" :model="payForm" label-width="90px" :inline="true">
@@ -394,14 +394,7 @@
                 <el-table-column prop="modifiedAt" label="修改日期" width="155"></el-table-column>
             </el-table>
         </el-dialog>
-
-        <!--        <el-dialog :visible.sync="roomVisible" append-to-body width="55%">-->
-        <!--            <roomVisible v-on:childByValue="childByValue" v-if="roomVisible" ref="roomVisible"></roomVisible>-->
-        <!--        </el-dialog>-->
         <el-dialog :visible.sync="parkingVisible" append-to-body width="55%">
-            <!--            <parkingVisible v-on:childByValueParking="childByValueParking" v-if="parkingVisible"-->
-            <!--                            ref="parkingVisible"></parkingVisible>-->
-
             <el-table
                     :data="parkData"
                     border
@@ -486,6 +479,7 @@
     import parkingVisible from '../page/parkingChoose';
     import { listCompAll } from '../../api/role';
     import { getParkByOwnerId, getRoomByOwnerId } from '../../api/owner';
+    import { getComp } from '../../api/unit';
 
     export default {
         components: {
@@ -547,6 +541,8 @@
                 payForm: {
                     cost:0,
                     fukuan:0,
+                    ssje: 0,
+                    subMoney:0,
                 },
                 isAdmin: false,
                 roomVisible: false,
@@ -563,17 +559,17 @@
                 accountVis: false,
                 price:0,
                 payprice: 0,
+
                 ownerBillTitle: '',
                 compName: '',
                 createName: '',
                 pageTotal: 0,
-                subMoney:0,
+
                 pageTotal2: 0,
                 title: ''
             };
         },
         created() {
-            this.init();
             this.costRuleSelect();
             this.ownerlist();
 
@@ -599,7 +595,7 @@
 
             },
             selectOwner(value) {
-                this.query.owners = value;
+                this.payForm.ownerId = value;
             },
             ownerlist() {
                 listOwner(this.query).then(res => {
@@ -724,9 +720,14 @@
                 if (localStorage.getItem('ms_username') === 'admin') {
                     this.isAdmin = true;
                 }
+                getComp().then(res => {
+                    this.compName = res.data.name;
+                    this.$set(this.form, 'compId', res.data.id);
+                });
                 this.title = '新增账单';
                 this.form = {};
                 this.form.state = '未付款';
+                this.form.ownerId = this.query.ownersId
                 this.createName = localStorage.getItem('ms_username');
             },
             compChange(val) {
@@ -757,7 +758,7 @@
             },
             roomDetail(compId, commId, commAreaId) {
                 this.roomVisible = true;
-                getRoomByOwnerId(this.formSearch.ownerId).then(res => {
+                getRoomByOwnerId(this.form.ownerId).then(res => {
                     this.roomData = res.data
                 });
 
@@ -767,7 +768,7 @@
                 // this.$nextTick(() => {
                 //     this.$refs.parkingVisible.dataInitializationByMeter(compId, commId, commAreaId);
                 // });
-                getParkByOwnerId(this.formSearch.ownerId).then(res => {
+                getParkByOwnerId(this.form.ownerId).then(res => {
                     this.parkData = res.data
                 });
 
@@ -822,7 +823,7 @@
 
                     this.price += this.multipleSelection[i].price-this.multipleSelection[i].payPrice;
                 }
-                this.payForm.cost = JSON.parse(JSON.stringify(this.price));
+                this.payForm.ssje = JSON.parse(JSON.stringify(this.price));
             },
             payPrice() {
                 if (this.price===0){
@@ -872,13 +873,7 @@
                                 payPrice(this.payForm).then(res => {
                                     this.editVisible = false;
                                     this.$message.success(`缴费成功`);
-                                    getOwnerPropId(this.query).then(res => {
-
-                                        this.billSearchVis = false;
-                                        this.aaa = false;
-                                        this.billData2 = res.data.records;
-                                        this.pageTotal2 = res.data.total;
-                                    });
+                                    this.init();
                                 });
                             }
                         });
@@ -900,13 +895,7 @@
                                 payPrice(this.payForm).then(res => {
                                     this.editVisible = false;
                                     this.$message.success(`缴费成功`);
-                                    getOwnerPropId(this.query).then(res => {
-                                        console.log(res);
-                                        this.billSearchVis = false;
-                                        this.aaa = false;
-                                        this.billData2 = res.data.records;
-                                        this.pageTotal2 = res.data.total;
-                                    });
+                                    this.init();
                                 });
                             }
                         });
@@ -923,13 +912,7 @@
                             payPrice(this.payForm).then(res => {
                                 this.editVisible = false;
                                 this.$message.success(`缴费成功`);
-                                getOwnerPropId(this.query).then(res => {
-                                    console.log(res);
-                                    this.billSearchVis = false;
-                                    this.aaa = false;
-                                    this.billData2 = res.data.records;
-                                    this.pageTotal2 = res.data.total;
-                                });
+                                this.init();
                             });
                         }
                     });
@@ -949,7 +932,7 @@
                 }
                 m = Math.pow(10, Math.max(re1, re2));
                 n = (re1 >= re2) ? re1 : re2;
-                this.subMoney = ((this.payForm.fukuan * m - this.payForm.cost * m) / m).toFixed(n);
+                this.payForm.subMoney = ((this.payForm.fukuan * m - this.payForm.cost * m) / m).toFixed(n);
             },
             chooseRoomDetails(val){
                 this.roomVisible = false;
@@ -964,7 +947,7 @@
             getAccount(val){
                 if (val==="true"){
                     this.accountVis = true
-                    getAccountByOwnerId(this.payForm.ownerId).then(res => {
+                    getAccountByOwnerId(this.query.ownersId).then(res => {
                         console.log(res);
                         if (res.data.size!=0){
                             this.accounts = res.data
@@ -1032,20 +1015,6 @@
         width: 200px;
         line-height: 32px;
     }
-
-    .el-dialog__wrapper >>> .el-table__body-wrapper {
-        overflow-x: auto;
-        overflow-y: auto;
-        min-height: 400px;
-        max-height: 700px;
-    }
-    .container >>> .el-table--scrollable-x >>> .el-table__body-wrapper {
-        width: 100%;
-        overflow: visible;
-    }
-    .container{
-        width: 1845px;
-    }
     .myInput{
         width: 75px;
         float: right;
@@ -1057,5 +1026,7 @@
     }
     .myCell{
         font-size: 18px;
+        text-align: center;
+        margin-top: 8px;
     }
 </style>
