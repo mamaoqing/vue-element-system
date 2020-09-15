@@ -590,6 +590,11 @@
                     this.form.isPayment = value;
                 }
             },
+            dataInitializationByByBillAlter(compId,commId){
+                this.query.compId = compId;
+                this.query.commId = commId;
+                this.query.state = '已支付';
+            }
         }
     }
 </script>
