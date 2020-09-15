@@ -206,7 +206,7 @@
                     <el-form-item label="物业类型" label-width="150px" prop="propertyType" :rules="[
                         { required: true, message: '请选择物业类型', trigger: 'blur' },
                     ]">
-                        <el-select v-model="form.propertyType" placeholder="请选择" style="width: 200px">
+                        <el-select v-model="form.propertyType" placeholder="请选择" style="width: 200px" @change="typeChange">
                             <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in wyTypes">
                                 {{types.name}}
                             </el-option>
@@ -633,7 +633,9 @@
 
             },
             selectOwner(value) {
+
                 this.payForm.ownerId = value;
+                this.$forceUpdate();
             },
             ownerlist() {
                 listOwner(this.query).then(res => {
@@ -1032,6 +1034,11 @@
                 this.title = '账单详情';
                 this.detailVisible = !this.detailVisible;
             },
+            typeChange(val){
+                if (val==="业主"){
+                    this.form.propertyName = this.form.ownerId
+                }
+            }
         }
     };
 </script>
