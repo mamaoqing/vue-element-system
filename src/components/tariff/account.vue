@@ -17,9 +17,14 @@
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in commList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.ownerName" placeholder="业主名称" class="handle-input mr10" ></el-input>
+            <el-select v-model="query.propertyType" placeholder="请选择" >
+                <el-option key="qxz" label="请选择物业类型" value=""></el-option>
+                <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
+            </el-select>
             <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" ></el-input>
             <el-input v-model="query.name" placeholder="账户名称" class="handle-input mr10" ></el-input>
             <el-input v-model="query.no" placeholder="预存账号编号" class="handle-input mr10" ></el-input>
+
             <div class="handle-box">
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" >搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd">预存</el-button>
@@ -263,7 +268,7 @@
                             :current-page="query4.pageNo"
                             :page-size="query4.size"
                             :total="pageTotal4"
-                            @current-change="handlePageChange"
+                            @current-change="handlePageChange4"
                     ></el-pagination>
                 </div>
             </div>
@@ -303,7 +308,7 @@
                             :current-page="query5.pageNo"
                             :page-size="query5.size"
                             :total="pageTotal5"
-                            @current-change="handlePageChange"
+                            @current-change="handlePageChange5"
                     ></el-pagination>
                 </div>
             </div>
@@ -321,6 +326,10 @@
                             <i class="el-icon-lx-cascades"></i> 点击选择业主
                         </el-breadcrumb-item>
                     </el-breadcrumb>
+                </div>
+                <el-input v-model="query2.name" placeholder="业主名称" class="handle-input mr10" ></el-input>
+                <div class="handle-box">
+                    <el-button type="primary" icon="el-icon-search" @click="handleSearch1" >搜索</el-button>
                 </div>
                 <el-table
                         :data="tableData2"
@@ -377,7 +386,7 @@
                             :current-page="query2.pageNo"
                             :page-size="query2.size"
                             :total="pageTotal2"
-                            @current-change="handlePageChange"
+                            @current-change="handlePageChange2"
                     ></el-pagination>
                 </div>
             </div>
@@ -414,7 +423,7 @@
                             background
                             layout="total, prev, pager, next"
                             :total="pageTotal3"
-                            @current-change="handlePageChange"
+                            @current-change="handlePageChange3"
                     ></el-pagination>
                 </div>
             </div>
@@ -618,6 +627,15 @@ export default {
                 size: 10
             },
             query2: {
+                compId: '',
+                commId: '',
+                roomId:'',
+                delIds:'',
+                name:'',
+                pageNo: 1,
+                size: 10
+            },
+            query3: {
                 compId: '',
                 commId: '',
                 roomId:'',
@@ -854,11 +872,20 @@ export default {
             let s = date.getSeconds();
             return new Date(yy, mm, dd, h, m,s);
         },
+        handleSearch1() {
+            this.query2.pageNo=1;
+            this.$set(this.query2, 'pageIndex', 1);
+            getOwenList(this.query2).then(res => {
+                this.tableData2 = res.data.data;
+                this.pageTotal2 = res.data.pageTotal || 0;
+            });
+        },
         selectOwner(){
             if(this.form.compId!=''&&this.form.compId!=undefined&&this.form.commId!=''&&this.form.commId!=undefined){
                 this.selectOwnerVis = true;
                 this.query2.compId = this.form.compId;
                 this.query2.commId = this.form.commId;
+                this.query2.name = '';
                 getOwenList(this.query2).then(res => {
                     this.tableData2 = res.data.data;
                     this.pageTotal2 = res.data.pageTotal || 0;
@@ -1031,6 +1058,34 @@ export default {
         handlePageChange(val) {
             this.$set(this.query, 'pageNo', val);
             this.getData();
+        },
+        handlePageChange2(val) {
+            debugger
+            this.$set(this.query2, 'pageNo', val);
+            getOwenList(this.query2).then(res => {
+                this.tableData2 = res.data.data;
+                this.pageTotal2 = res.data.pageTotal || 0;
+            });
+        },
+        handlePageChange3(val) {
+            this.$set(this.query3, 'pageNo', val);
+            this.getData();
+        },
+        handlePageChange4(val) {
+            this.$set(this.query4, 'pageNo', val);
+            listFinanceRecord(this.query4).then(res => {
+                this.tableData4 = res.data.records;
+                this.pageTotal4 = res.data.total || 0;
+            });
+
+        },
+        handlePageChange5(val) {
+            this.$set(this.query5, 'pageNo', val);
+            listFinanceBillRecord(this.query5).then(res => {
+                debugger
+                this.tableData5 = res.data.records;
+                this.pageTotal5 = res.data.total || 0;
+            });
         }
     }
 };
