@@ -138,6 +138,14 @@ export const listBills = query => {
         method: 'get',
     });
 };
+
+export const getAccountByOwnerId = ownerId => {
+    return request({
+        url: '/order/fAccount/getAccountByOwnerId/'+ownerId,
+        method: 'get',
+    });
+};
+
 //BillRecord
 export const billRecord = query => {
     return request({
