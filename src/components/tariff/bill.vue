@@ -43,7 +43,7 @@
                 <!--                <dist-util @child1="checkIn" :distId="dist.invoicePropId" :distName="dist.invoicePropName" :title="dist.invoiceProp"></dist-util>-->
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
                 <el-button type="primary" icon="el-icon-search" @click="add">添加账单</el-button>
-                <el-button type="primary" icon="el-icon-search" @click="resetAll">重新生成账单</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="resetAll"  :disabled="flag">{{content}}</el-button>
             </div>
             <el-table
                     :data="billData"
@@ -69,7 +69,7 @@
                 <el-table-column prop="overdueCost" label="逾期费用" align="center"></el-table-column>
                 <el-table-column prop="isInvoice" label="是否开发票" align="center"></el-table-column>
                 <el-table-column prop="isPrint" label="是否打印收据" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="350">
+                <el-table-column label="操作" width="" align="center" width="250">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
@@ -89,12 +89,12 @@
                                 @click.stop
                                 @click="reset(scope.row.id)">重新生成
                         </el-button>
-                        <el-button
+                        <!--<el-button
                                 type="text"
                                 icon="el-icon-edit"
                                 @click.stop
                                 @click="pay(scope.row)">现金付款
-                        </el-button>
+                        </el-button>-->
                     </template>
                 </el-table-column>
             </el-table>
@@ -120,7 +120,7 @@
                 <el-button type="primary" @click="payment()">确 定</el-button>
             </span>
         </el-dialog>
-        <el-dialog :title="title" :visible.sync="detailVisible" width="60%">
+        <el-dialog :title="title" :visible.sync="detailVisible" width="80%">
             <template>
                 <el-tabs v-model="activeName" @tab-click="handleClick">
                     <el-tab-pane label="费用标准" name="first">
@@ -172,11 +172,65 @@
                                              align="center"></el-table-column>
                         </el-table>
                     </el-tab-pane>
+                    <el-tab-pane label="账单信息" name="third">
+                        <el-form  :model="form" label-width="70px" disabled>
+                            <el-row>
+                                <el-col :span="8">
+                                    <el-form-item label="账单号" label-width="100px">
+                                        <el-input v-model="form.billNo"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="账单生成时间" label-width="100px">
+                                        <el-input v-model="form.billTime"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="账期" label-width="100px">
+                                        <el-input v-model="form.accountPeriod"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row>
 
-                    <el-tab-pane label="缴费信息" name="third">
 
+                            </el-row>
+                            <el-row>
+                                <el-col :span="8">
+                                    <el-form-item label="账单总金额" label-width="100px">
+                                        <el-input v-model="form.price"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="是否付款" label-width="100px">
+                                        <el-input v-model="form.isPayment" style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="付款金额" label-width="100px">
+                                        <el-input v-model="form.payPrice"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="8">
+                                    <el-form-item label="是否逾期" label-width="100px">
+                                        <el-input v-model="form.isOverdue"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="逾期费用" label-width="100px">
+                                        <el-input v-model="form.overdueCost"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="逾期计费方式" label-width="100px">
+                                        <el-input v-model="form.overdueRule"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form>
                     </el-tab-pane>
-
                     <el-tab-pane label="账单周期" name="four">
                         <el-table
                                 :data="billDateList"
@@ -189,6 +243,21 @@
                             <el-table-column prop="createBillDate" label="账单自动生成日期" min-width="125" min-height="55" align="center"></el-table-column>
                             <el-table-column prop="accountPeriod" label="账期" min-width="125" min-height="55" align="center"></el-table-column>
                             <el-table-column prop="endTime" label="账单结束日期" min-width="125" min-height="55" align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                    <el-tab-pane label="账单流水" name="five">
+                        <el-table
+                                :data="billRecordData"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="id" label="ID" min-width="125" v-if="false" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="no" label="流水单号" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="oper_type" label="操作类型" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="payment_method" label="支付方式" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="cost" label="流水金额" min-width="125" min-height="55" align="center"></el-table-column>
                         </el-table>
                     </el-tab-pane>
                 </el-tabs>
@@ -272,7 +341,7 @@
 </template>
 
 <script>
-    import {listBillss, resetBill, resetBillAll, fCostRule, listOwner, doPay, getOwnerList,insertBill} from '../../api/tariff/bill'
+    import {listBillss, resetBill, resetBillAll, fCostRule, listOwner, doPay, getOwnerList,insertBill,billRecord} from '../../api/tariff/bill'
     import compUtil from '../common/comp'
     import distUtil from "../common/distutil"
     import commUtil from '../common/commutil'
@@ -283,6 +352,7 @@
         },
         data() {
             return {
+                billRecordData:[],
                 billDateList:[],
                 ownersData: [],
                 ruleData: [],
@@ -341,7 +411,7 @@
                 addVisible: false,
                 pageTotal: 0,
                 title: '',
-                totalTime: 10,
+                totalTime: 3,
             }
         },
         created() {
@@ -358,6 +428,7 @@
 
             },
             openDetails(row) {
+                this.form = row;
                 getCostRule(row.costRuleId).then(res => {
                     this.ruleData = [];
                     this.ruleData.push(res.data);
@@ -368,9 +439,12 @@
                 });
 
                 listBills(row.costRuleId).then(res => {
-                    console.log(res);
                     this.billDateList = res.data;
                 });
+                billRecord(row.id).then(res=>{
+                    this.billRecordData = res.data;
+                });
+
                 this.title = '账单详情';
                 this.detailVisible = !this.detailVisible;
             },
@@ -381,7 +455,6 @@
                 this.query.owners = value;
             },
             submit() {
-                console.log(this.form);
                 insertBill(this.form).then(res=>{
                     if (res.code === 0 && res.data) {
                         this.$message.success(`账单添加成功`);
@@ -487,11 +560,12 @@
                                 if (this.totalTime < 0) {
                                     window.clearInterval(clock);
                                     this.content = "重新生成账单";
-                                    this.totalTime = 10;
+                                    this.totalTime = 3;
                                     this.flag = !this.flag;
                                 }
                             }, 1000);
                         } else {
+                            this.flag = !this.flag;
                             this.$message.error(res.msg);
                             this.init();
                         }

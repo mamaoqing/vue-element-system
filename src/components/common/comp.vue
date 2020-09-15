@@ -40,6 +40,8 @@
         methods: {
             getComp() {
                 getComp().then(res => {
+                    this.compValue = res.data[0].id;
+                    this.$emit("comp", res.data[0].id);
                     this.options = res.data;
                 });
             },

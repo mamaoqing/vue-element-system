@@ -128,3 +128,10 @@ export const listBills = query => {
         method: 'get',
     });
 };
+//BillRecord
+export const billRecord = query => {
+    return request({
+        url: '/order/fFinanceBillRecord/'+query,
+        method: 'get',
+    });
+};
