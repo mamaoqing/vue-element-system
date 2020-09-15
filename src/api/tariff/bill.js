@@ -7,6 +7,16 @@ export const listBillss = query => {
         params: query
     });
 };
+
+export const listBillNoPage = query => {
+    return request({
+        url: '/order/fBill/listBillNoPage',
+        method: 'get',
+        params: query
+    });
+};
+
+
 export const resetBillAll = query => {
     return request({
         url: '/order/fBill/resetBillAll',

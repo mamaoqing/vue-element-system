@@ -30,11 +30,8 @@
                     </el-option>
                 </el-select>
                 <el-select v-model="query.type" clearable placeholder="请选择物业类型">
-                    <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
+                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in wyTypes">
+                        {{types.name}}
                     </el-option>
                 </el-select>
 
@@ -43,9 +40,10 @@
                            :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName"
                            :title="dist.overdueProp"></dist-util>
-                <el-select v-model="query.state1" placeholder="请选择" style="width: 200px">
-                    <el-option key="wfk" label="未付款" value="未付款"></el-option>
-                    <el-option key="yfk" label="已付款" value="已付款"></el-option>
+                <el-select v-model="query.state" placeholder="请选择状态" style="width: 200px">
+                    <el-option :value="types.name" :key="types.id" :label="types.name" v-for="types in billStates">
+                        {{types.name}}
+                    </el-option>
                 </el-select>
                 <el-input v-model="query.billNo" placeholder="请输入账单号" style="width: 250px"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
@@ -54,8 +52,9 @@
             <el-table
                     :data="billData"
                     border
-                    class="table"
+                    class="table myTable"
                     ref="multipleTable"
+                    @row-click="openDetails"
                     header-cell-class-name="table-header"
                     @selection-change="handleSelectionChange"
             >
@@ -67,55 +66,25 @@
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="no" label="物业编号" width="95" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
-                <el-table-column prop="salePrice" label="减免金额" align="center"></el-table-column>
-                <el-table-column prop="overdueCost" label="违约金" align="center"></el-table-column>
                 <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
+                <el-table-column prop="salePrice" label="减免金额" align="center"></el-table-column>
+                <el-table-column prop="overdueCost" label="违约金" align="center"></el-table-column>
                 <el-table-column prop="billTime" label="账单生成时间" width="125" align="center"></el-table-column>
                 <el-table-column prop="payEndTime" label="逾期时间" width="125" align="center"></el-table-column>
                 <el-table-column prop="createName" label="生成人" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="250">
-                    <template slot-scope="scope">
-                        <el-button
-                                type="text"
-                                icon="el-icon-edit"
-                                @click.stop
-                                @click="print(scope.row.id)">打印发票
-                        </el-button>
-                        <el-button
-                                type="text"
-                                icon="el-icon-edit"
-                                @click.stop
-                                @click="push(scope.row.id)">推送微信
-                        </el-button>
-                        <el-button
-                                type="text"
-                                icon="el-icon-edit"
-                                @click.stop
-                                @click="reset(scope.row.id)">重新生成
-                        </el-button>
-                    </template>
-                </el-table-column>
+                <el-table-column prop="state" label="状态" align="center"></el-table-column>
+
             </el-table>
-            <div class="pagination">
-                <el-pagination
-                        background
-                        layout="total, prev, pager, next"
-                        :current-page="query.pageNo"
-                        :page-size="query.size"
-                        :total="pageTotal"
-                        @current-change="handlePageChange"
-                ></el-pagination>
-            </div>
             <div>
                 <div class="myTitle">收款</div>
                 <el-divider></el-divider>
-                <el-form ref="payForm" :model="payForm" label-width="125px" :inline="true">
+                <el-form ref="payForm" :model="payForm" label-width="125px" style="width: 800px;margin: 0 auto;" :inline="true">
                     <el-form-item label="业主ID" v-show="false">
                         <el-input v-model="payForm.ownerId"></el-input>
                     </el-form-item>
                     <el-form-item label="应付合计" >
-                        <el-input v-model="payForm.ssje" :disabled="true"></el-input>
+                        <el-input v-model="payForm.cost" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="付款金额" prop="fukuan"
                                   :rules="[
@@ -123,12 +92,12 @@
                     ]">
                         <el-input v-model="payForm.fukuan" @input="subtract"></el-input>
                     </el-form-item>
-                    <el-form-item label="实收金额" prop="cost"
-                                  :rules="[
-                        { required: true, message: '请输入实收金额', trigger: 'blur' },
-                    ]">
-                        <el-input v-model="payForm.cost" @input="subtract"></el-input>
-                    </el-form-item>
+<!--                    <el-form-item label="实收金额" prop="cost"-->
+<!--                                  :rules="[-->
+<!--                        { required: true, message: '请输入实收金额', trigger: 'blur' },-->
+<!--                    ]">-->
+<!--                        <el-input v-model="payForm.cost" @input="subtract"></el-input>-->
+<!--                    </el-form-item>-->
                     <el-form-item label="支付方式" prop="paymentMethod"
                                   :rules="[
                         { required: true, message: '请选择支付方式', trigger: 'blur' },
@@ -160,7 +129,7 @@
                                   :rules="[
                         { required: true, message: '请输入预存金额', trigger: 'blur' },
                     ]">
-                        <el-input v-model="payForm.subMoney" @input="subtract"></el-input>
+                        <el-input v-model="payForm.ycje" @input="subtract2"></el-input>
                     </el-form-item>
                     <el-form-item label="备注">
                         <el-input v-model="payForm.remark"></el-input>
@@ -457,6 +426,80 @@
                                  align="center"></el-table-column>
             </el-table>
         </el-dialog>
+        <el-dialog :title="title" :visible.sync="detailVisible" width="60%">
+            <template>
+                <el-tabs v-model="activeName">
+                    <el-tab-pane label="费用标准" name="first">
+                        <el-table
+                                :data="ruleData"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="name" label="标准名称" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billingMethod" label="计费方式" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="price" label="价格" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="priceUnit" label="价格单位" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="beginDate" label="开始时间" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="endDate" label="结束时间" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="isLiquidatedDamages" label="是否有违约金" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="liquidatedDamagesMethod" label="违约金计算方式" min-width="125"
+                                             min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billCycle" label="账单周期" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="billDay" label="出账天" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="payTime" label="付款天" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                    <el-tab-pane label="业主信息" name="second">
+                        <el-table
+                                :data="ownersData"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="name" label="业主名称" min-width="90" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="ownerAddr" label="业主地址" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                            <el-table-column prop="tel" label="电话" min-width="125" min-height="55"
+                                             align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+
+                    <el-tab-pane label="缴费信息" name="third">
+
+                    </el-tab-pane>
+
+                    <el-tab-pane label="账单周期" name="four">
+                        <el-table
+                                :data="billDateList"
+                                border
+                                class="table"
+                                ref="multipleTable"
+                                header-cell-class-name="table-header"
+                        >
+                            <el-table-column prop="id" label="ID" min-width="125" v-if="false" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="createBillDate" label="账单自动生成日期" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="accountPeriod" label="账期" min-width="125" min-height="55" align="center"></el-table-column>
+                            <el-table-column prop="endTime" label="账单结束日期" min-width="125" min-height="55" align="center"></el-table-column>
+                        </el-table>
+                    </el-tab-pane>
+                </el-tabs>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -468,7 +511,7 @@
         fCostRule,
         listOwner,
         getOwnerByName,
-        getOwnerPropId, addBill, payPrice, listBillss, getAccountByOwnerId
+        getOwnerPropId, addBill, payPrice, listBillss, getAccountByOwnerId, listBillNoPage, getOwnerList
     } from '../../api/tariff/bill';
     import compUtil from '../common/comp';
     import distUtil from '../common/distutil';
@@ -480,6 +523,7 @@
     import { listCompAll } from '../../api/role';
     import { getParkByOwnerId, getRoomByOwnerId } from '../../api/owner';
     import { getComp } from '../../api/unit';
+    import { getCostRule } from '../../api/tariff/costrule';
 
     export default {
         components: {
@@ -489,23 +533,7 @@
             return {
                 ruleList: [],
                 ownerData: [],
-                options: [{
-                    value: '房产',
-                    label: '房产'
-                }, {
-                    value: '停车位',
-                    label: '停车位'
-                }, {
-                    value: '水表',
-                    label: '水表'
-                }, {
-                    value: '电表',
-                    label: '电表'
-                }, {
-                    value: '燃气表',
-                    label: '燃气表'
-                }
-                ],
+                options: [],
                 queryRule: { pageNo: 1, size: 100 },
                 compId: 0,
                 billData: [],
@@ -526,6 +554,7 @@
                     invoicePropId: '51'
                 },
                 query: {
+                    isJf:"true",
                     pageNo: 1,
                     size: 10
                 },
@@ -541,7 +570,7 @@
                 payForm: {
                     cost:0,
                     fukuan:0,
-                    ssje: 0,
+                    ycje:0,
                     subMoney:0,
                 },
                 isAdmin: false,
@@ -552,18 +581,24 @@
                 compList: [],
                 commList: [],
                 wyTypes: [],
+                billStates: [],
                 accounts: [],
+                ruleData: [],
+                ownersData: [],
+                billDateList: [],
                 multipleSelection: [],
                 payPriceVis: false,
                 ownerVisible: false,
                 accountVis: false,
+                detailVisible: false,
                 price:0,
                 payprice: 0,
-
+                activeName: 'first',
                 ownerBillTitle: '',
                 compName: '',
                 createName: '',
                 pageTotal: 0,
+                subM: 0,
 
                 pageTotal2: 0,
                 title: ''
@@ -589,6 +624,9 @@
             getDictItemByDictId(45).then(res => {
                 this.wyTypes = res.data;
             });
+            getDictItemByDictId(57).then(res => {
+                this.billStates = res.data;
+            });
         },
         methods: {
             clearOwner() {
@@ -603,11 +641,16 @@
                 });
             },
             init() {
-                listBillss(this.query).then(res => {
-                    console.log(res);
-                    this.billData = res.data.records;
-                    this.pageTotal = res.data.total;
-                });
+                if(this.query.ownersId==""||this.query.ownersId==null){
+                    this.$message.info('请先根据公司和社区选择业主！');
+                }else{
+
+                    listBillNoPage(this.query).then(res => {
+                        console.log(res);
+                        this.billData = res.data;
+                    });
+                }
+
                 getDictItemByDictId(45).then(res => {
                     this.wyTypes = res.data;
                 });
@@ -813,19 +856,50 @@
                 this.multipleSelection = val;
                 this.payForm.payIds = '';
                 this.price = 0;
+                this.payForm.cost = 0;
+                console.log(val)
+
                 const length = this.multipleSelection.length;
                 for (let i = 0; i < length; i++) {
+                    if(this.multipleSelection[i].salePrice==undefined){
+                        this.multipleSelection[i].salePrice=0
+                    }
+                    if(this.multipleSelection[i].overdueCost==undefined){
+                        this.multipleSelection[i].overdueCost=0
+                    }
+
                     if (i === length - 1) {
                         this.payForm.payIds += this.multipleSelection[i].id;
                     } else {
                         this.payForm.payIds += this.multipleSelection[i].id + ',';
                     }
 
-                    this.price += this.multipleSelection[i].price-this.multipleSelection[i].payPrice;
+                    this.price += this.multipleSelection[i].price-this.multipleSelection[i].payPrice-this.multipleSelection[i].salePrice+this.multipleSelection[i].overdueCost;
                 }
-                this.payForm.ssje = JSON.parse(JSON.stringify(this.price));
+                this.payForm.cost = JSON.parse(JSON.stringify(this.price));
             },
             payPrice() {
+
+                const length = this.multipleSelection.length;
+                for (let i = 0; i < length; i++) {
+                    if(this.multipleSelection[i].salePrice==undefined){
+                        this.multipleSelection[i].salePrice=0
+                    }
+                    if(this.multipleSelection[i].overdueCost==undefined){
+                        this.multipleSelection[i].overdueCost=0
+                    }
+
+                    let price = this.multipleSelection[i].price-this.multipleSelection[i].payPrice-this.multipleSelection[i].salePrice+this.multipleSelection[i].overdueCost;
+                    if(price===0){
+                        this.$message({
+                            type: 'info',
+                            message: '您选择的账单中有已经结算完成的账单'
+                        });
+                        return false
+                    }
+                }
+
+
                 if (this.price===0){
                     this.$message({
                         type: 'info',
@@ -861,64 +935,20 @@
                     });
                     return false
                 }
-                if(this.payForm.cost<this.price){
-                    this.$confirm('支付的金额不够账单总金额，系统会自动分配金额结算账单，是否确定？', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.payPriceVis = false
-                        this.$refs['payForm'].validate((valid) => {
-                            if (valid) {
-                                payPrice(this.payForm).then(res => {
-                                    this.editVisible = false;
-                                    this.$message.success(`缴费成功`);
-                                    this.init();
-                                });
-                            }
+                this.payPriceVis = false
+                this.$refs['payForm'].validate((valid) => {
+                    if (valid) {
+                        payPrice(this.payForm).then(res => {
+                            this.editVisible = false;
+                            this.payForm.fukuan = 0
+                            this.$message.success(`缴费成功`);
+                            this.init();
                         });
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消'
-                        });
-                    });
-                }else if(this.payForm.cost>this.price){
-                    this.$confirm('将多余的金额存入预存账户，是否确定？', '提示', {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    }).then(() => {
-                        this.payPriceVis = false
-                        this.$refs['payForm'].validate((valid) => {
-                            if (valid) {
-                                payPrice(this.payForm).then(res => {
-                                    this.editVisible = false;
-                                    this.$message.success(`缴费成功`);
-                                    this.init();
-                                });
-                            }
-                        });
-                    }).catch(() => {
-                        this.$message({
-                            type: 'info',
-                            message: '已取消'
-                        });
-                    });
-                }else{
-                    this.payPriceVis = false
-                    this.$refs['payForm'].validate((valid) => {
-                        if (valid) {
-                            payPrice(this.payForm).then(res => {
-                                this.editVisible = false;
-                                this.$message.success(`缴费成功`);
-                                this.init();
-                            });
-                        }
-                    });
-                }
+                    }
+                });
+                this.subM = 0
             },
-            subtract(){
+            subtract(v1,v2){
                 var re1, re2, m, n;
                 try {
                     re1 = this.payForm.fukuan.toString().split(".")[1].length;
@@ -933,6 +963,22 @@
                 m = Math.pow(10, Math.max(re1, re2));
                 n = (re1 >= re2) ? re1 : re2;
                 this.payForm.subMoney = ((this.payForm.fukuan * m - this.payForm.cost * m) / m).toFixed(n);
+            },
+            subtract2(val){
+                var re1, re2, m, n;
+                try {
+                    re1 = this.subM.split(".")[1].length;
+                } catch (e) {
+                    re1 = 0;
+                }
+                try {
+                    re2 = val.toString().split(".")[1].length;
+                } catch (e) {
+                    re2 = 0;
+                }
+                m = Math.pow(10, Math.max(re1, re2));
+                n = (re1 >= re2) ? re1 : re2;
+                this.payForm.subMoney = ((this.subM * m - val * m) / m).toFixed(n);
             },
             chooseRoomDetails(val){
                 this.roomVisible = false;
@@ -951,6 +997,10 @@
                         console.log(res);
                         if (res.data.size!=0){
                             this.accounts = res.data
+                            this.payForm.ycje = this.payForm.subMoney
+                            this.subM = this.payForm.subMoney
+                            this.payForm.subMoney=0
+
                         }else{
                             this.$message({
                                 type: 'info',
@@ -964,7 +1014,24 @@
             },
             closeDialog(){
                 this.payForm= {}
-            }
+            },
+            openDetails(row) {
+                getCostRule(row.costRuleId).then(res => {
+                    this.ruleData = [];
+                    this.ruleData.push(res.data);
+                });
+
+                getOwnerList({propertyId: row.propertyId, propertyType: row.propertyType}).then(res => {
+                    this.ownersData = res.data;
+                });
+
+                listBills(row.costRuleId).then(res => {
+                    console.log(res);
+                    this.billDateList = res.data;
+                });
+                this.title = '账单详情';
+                this.detailVisible = !this.detailVisible;
+            },
         }
     };
 </script>
@@ -1028,5 +1095,12 @@
         font-size: 18px;
         text-align: center;
         margin-top: 8px;
+    }
+    .myTable{
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+    .el-table::before {
+        z-index: inherit;
     }
 </style>

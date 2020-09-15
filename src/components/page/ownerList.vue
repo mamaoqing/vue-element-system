@@ -16,8 +16,7 @@
                         @click="delAllSelection"
                 >批量删除
                 </el-button>
-                <el-select v-model="query.compId" placeholder="请选择" @change="compChange">
-                    <el-option key="qxz" label="请选择物业公司" value=""></el-option>
+                <el-select v-model="query.compId" placeholder="请选择公司" @change="compChange">
                     <el-option :value="types.id" :key="types.id" :label="types.name" v-for="types in compList">
                         {{types.name}}
                     </el-option>
@@ -29,9 +28,9 @@
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch" style="margin-top: 5px;">搜索
                 </el-button>
-                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增业主
-                </el-button>
                 <el-button type="primary" icon="el-icon-lx-refresh" @click="handleRefresh" style="margin-top: 5px;">重置
+                </el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="handleAdd" style="margin-top: 5px;">新增业主
                 </el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="upload">导入</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="exportXls">导出</el-button>
@@ -428,6 +427,9 @@
                     </el-form>
                 </el-tab-pane>
                 <el-tab-pane label="房间信息列表" name="second">
+                    <div class="handle-box">
+                        <el-button type="primary" icon="el-icon-lx-add" @click="handleAddProp">新增</el-button>
+                    </div>
                     <el-table
                             :data="tableRoom"
                             border
@@ -530,11 +532,96 @@
         <el-dialog :visible.sync="cmpVisible" append-to-body>
             <menu1 v-if="cmpVisible" ref="menu1"></menu1>
         </el-dialog>
+        <!--新增-->
+        <el-dialog :title="title" :visible.sync="editPropVisible" width="50%" append-to-body>
+            <el-form ref="form" :model="form" label-width="70px">
+                <el-form-item label="ID" v-show="false">
+                    <el-input v-model="form.id"></el-input>
+                </el-form-item>
+                <el-form-item label="业主ID" v-show="false">
+                    <el-input v-model="query.ownerId" ></el-input>
+                </el-form-item>
+                <el-form-item class="item" label="公司名称"  label-width="150px">
+                    <el-input v-model="compName" disabled></el-input>
+                </el-form-item>
+                <el-form-item class="item" v-show="false" label-width="150px">
+                    <el-input v-model="form.compId" disabled></el-input>
+                </el-form-item>
+                <el-form-item class="item" label="社区名称" v-if="editshow" label-width="150px" prop="commId" :rules="[
+                        { required: true, message: '请输入单元名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model="form.commId" placeholder="请选择" @change="handleGetComm">
+                        <el-option v-for="item in commArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item class="item" label="分区名称" v-if="editshow" prop="name" label-width="150px"
+                              :rules="[
+                        { required: true, message: '请输入分区名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model.number="form.commAreaId" placeholder="请选择" @change="handleGetArea" ref="areaselect">
+                        <el-option v-for="item in areaArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item class="item" label="建筑名称" v-if="editshow" prop="name" label-width="150px"
+                              :rules="[
+                        { required: true, message: '请输入建筑名称', trigger: 'blur' },
+                    ]">
+                    <el-select v-model.number="form.buildingId" placeholder="请选择" ref="buildselect"
+                               @change="handleGetBuild">
+                        <el-option v-for="item in buidlArr" :key="item.id" :label="item.name"
+                                   :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="物业类型" label-width="150px">
+                    <el-input v-model="form.propertyType"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" label-width="150px">
+                    <el-input v-model="form.remark"></el-input>
+                </el-form-item>
+                <el-form-item label="备注" label-width="150px">
+                    <el-input v-model="form.remark"></el-input>
+                </el-form-item>
+
+                <el-form-item label="录入人" label-width="150px">
+                    <el-input v-model="form.createdName"></el-input>
+                </el-form-item>
+                <el-form-item label="录入时间" prop="establishmentDate" label-width="150px">
+                    <el-date-picker
+                            v-model="form.createdAt"
+                            type="datetime"
+                            placeholder="选择日期时间"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            default-time="00:00:00"
+                    />
+                </el-form-item>
+                <el-form-item label="修改人" label-width="150px">
+                    <el-input v-model="form.modifiedName"></el-input>
+                </el-form-item>
+                <el-form-item label="修改时间" prop="establishmentDate" label-width="150px">
+                    <el-date-picker
+                            v-model="form.modifiedAt"
+                            type="datetime"
+                            placeholder="选择日期时间"
+                            format="yyyy-MM-dd HH:mm:ss"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            default-time="00:00:00"
+                    />
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editPropVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveEditOrAdd(title)">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script scoped>
     import {
+        getArea, getBuild,
 
         getComp
 
@@ -600,11 +687,14 @@
                 compList: [],
                 roomOwnerId: null,
                 chakan: false,
+                editshow:true,
+                editPropVisible:false,
                 commList: [],
                 modelArr: [],
                 tableRoom: [],
                 tablePark: [],
                 tableInvo: [],
+                buidlArr: [],
                 row: {},
                 id: -1,
 
@@ -700,6 +790,14 @@
                 }
             }
             ,
+            //新增操作
+            handleAddProp() {
+                this.editPropVisible = true;
+                this.title = '新增房间对应信息';
+                this.form = {};
+                this.editshow=true;
+                this.form.ownerId = this.query.ownerId;
+            },
             handleChange(val) {
                 this.form.nativePlace = val.join('/');
             },
@@ -1048,6 +1146,29 @@
                         window.URL.revokeObjectURL(href); //释放掉blob对象
                     }
                 });
+            },
+            handleGetComm(val) {
+                getArea(val).then(res => {
+                    this.areaArr = [];
+                    this.buidlArr = [];
+                    this.form.commAreaId = '';
+                    this.form.buildingId = '';
+                    this.query.commAreaId = '';
+                    this.query.buildingId = '';
+                    this.areaArr = res.data;
+                });
+            },
+            handleGetArea(val) {
+
+                getBuild(val).then(res => {
+                    this.buidlArr = [];
+                    this.form.buildingId = '';
+                    this.query.buildingId = '';
+                    this.buidlArr = res.data;
+                });
+            },
+            handleGetBuild(val) {
+                this.$forceUpdate();
             }
 
         }
