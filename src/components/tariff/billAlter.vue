@@ -1035,12 +1035,12 @@ export default {
         },
         billSearch(){
             if(this.form.compId!=''&&this.form.compId!=undefined&&this.form.commId!=''&&this.form.commId!=undefined){
-                this.billDetail(this.form.compId,this.form.commId,this.form.commAreaId);
+                this.billDetail1(this.form.compId,this.form.commId);
             }else{
                 this.$message.info("请先选择物业公司、社区，再进行选择");
             }
         },
-        billDetail(compId, commId){
+        billDetail1(compId, commId){
             this.billVisible = true;
             this.$nextTick(()=>{
                 this.$refs.billVisible.dataInitializationByByBillAlter(compId,commId);
@@ -1057,7 +1057,7 @@ export default {
             this.status = 2;
             listBills({id:row.billId,pageNo: 1, size: 10}).then(res => {
                 debugger
-                this.billDetail = res.data.records[0];
+                this.billDetail= res.data.records[0];
             });
         },
         format(val){
