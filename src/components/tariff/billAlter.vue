@@ -21,11 +21,14 @@
                 <el-option :value="types.id" :key="types.name"  :label="types.name" v-for="types in ruleList" >{{types.name}}</el-option>
             </el-select>
             <el-input v-model="query.accountPeriod" placeholder="账期" class="handle-input mr10" ></el-input>
-            <el-select v-model="query.propertyType" placeholder="请选择" >
+            <el-select v-model="query.propertyType" placeholder="请选择" @change="typeChange">
                 <el-option key="qxz" label="请选择物业类型" value=""></el-option>
                 <el-option :value="types.name" :key="types.name" :label="types.name" v-for="types in propertyTypeList" >{{types.name}}</el-option>
             </el-select>
-            <el-input v-model="query.propertyName" placeholder="物业编号" class="handle-input mr10" ></el-input>
+            <el-select v-model="query.propertyName" placeholder="请选择物业编号" >
+                <el-option key="qxz" label="请选择物业编号" value=""></el-option>
+                <el-option :value="types.id" :key="types.propertyName" :label="types.propertyName" v-for="types in typeNameList" >{{types.propertyName}}</el-option>
+            </el-select>
             <el-date-picker
                     v-model="query.alterTimeBegin"
                     placeholder="调整时间开始日期"
@@ -80,7 +83,7 @@
                 <el-table-column prop="propertyName" label="物业编号"></el-table-column>
 
                 <el-table-column prop="costRuleName" label="费用标准"></el-table-column>
-                <el-table-column prop="accountPeriod" label="账期"></el-table-column>
+                <el-table-column prop="accountPeriod" label="账期" width="330"></el-table-column>
                 <el-table-column prop="price" label="费用金额"></el-table-column>
                 <el-table-column prop="billState" label="账单状态"></el-table-column>
                 <el-table-column prop="state" label="调整状态"></el-table-column>
@@ -169,7 +172,7 @@
                     <el-form-item label="调整金额" prop="alterFee">
                         <el-input v-model="form.alterFee"></el-input>
                     </el-form-item>
-                    <el-form-item label="调整原因" prop="alterFee">
+                    <el-form-item label="调整原因" prop="alterReason">
                         <el-input v-model="form.alterReason"></el-input>
                     </el-form-item>
                     <el-form-item label="调整人" prop="alterBy">
@@ -310,11 +313,11 @@
                 <el-form-item label="调整金额" prop="alterFee">
                     <el-input v-model="form.alterFee" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="调整原因" prop="alterFee">
+                <el-form-item label="调整原因" prop="alterReason">
                     <el-input v-model="form.alterReason" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="调整人" prop="alterBy">
-                    <el-input v-model="form.alterBy" :disabled="true"></el-input>
+                    <el-input v-model="form.alterByName" :disabled="true"></el-input>
                 </el-form-item>
                 <el-form-item label="调整时间" prop="alterTime">
                     <el-input v-model="form.alterTime" :disabled="true" style="width: 205px;"></el-input>
@@ -423,14 +426,32 @@
                             <el-input :value="billDetail.salePrice" :disabled="true" style="width: 50px;"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6" style="width: 155px;">
-                        <el-form-item label="账期" label-width="45px">
-                            <el-input :value="billDetail.accountPeriod" :disabled="true" style="width: 100px;"></el-input>
+
+                    <el-col :span="6" style="width: 150px;">
+                        <el-form-item label="是否打印收据" label-width="100px">
+                            <el-input :value="billDetail.isPrint" :disabled="true" style="width: 50px;"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="6" style="width: 110px;">
                         <el-form-item label="是否开发票" label-width="90px">
                             <el-input :value="billDetail.isInvoice" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="6" style="width: 555px;">
+                        <el-form-item label="账期" label-width="55px">
+                            <el-input :value="billDetail.accountPeriod" :disabled="true" style="width: 500px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 160px;">
+                        <el-form-item label="起始刻度" label-width="120px">
+                            <el-input :value="billDetail.beginScale" :disabled="true" style="width: 50px;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="6" style="width: 170px;">
+                        <el-form-item label="结束刻度" label-width="120px">
+                            <el-input :value="billDetail.endScale" :disabled="true" style="width: 50px;"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -455,21 +476,8 @@
                             <el-input :value="billDetail.overdueCost" :disabled="true" style="width: 50px;"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="6" style="width: 125px;">
-                        <el-form-item label="起始刻度" label-width="80px">
-                            <el-input :value="billDetail.beginScale" :disabled="true" style="width: 50px;"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" style="width: 125px;">
-                        <el-form-item label="结束刻度" label-width="75px">
-                            <el-input :value="billDetail.endScale" :disabled="true" style="width: 50px;"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :span="6" style="width: 150px;">
-                        <el-form-item label="是否打印收据" label-width="100px">
-                            <el-input :value="billDetail.isPrint" :disabled="true" style="width: 50px;"></el-input>
-                        </el-form-item>
-                    </el-col>
+
+
                 </el-row>
             </el-form>
             <el-form ref="form" :model="form"  :rules="rules" :disabled="disable">
@@ -547,8 +555,9 @@
 import { getUserComm, getDictItemByDictId, getCommArea } from '../../api/building';
 import { listCompAll } from '../../api/role';
 import { insertBillAlter,deleteBillAlter,updateBillAlter,listBillAlter,getRuleList,getAuditorList,getPropertyName,getCostRuleName,exportXlsByT} from '../../api/tariff/billAlter';
-import { listBills } from '../../api/tariff/bill';
-import billVisible from './bill';
+import { listBillss } from '../../api/tariff/bill';
+import billVisible from './billChoose';
+import { getTypeName } from '../../api/tariff/account';
 export default {
     name:"roomlistpage",
     props:{
@@ -682,9 +691,11 @@ export default {
             edit:false,
             otherComp:false,
             pageTotal:0,
+            compId:'',
             disable:false,
             compList:[],
             commList:[],
+            typeNameList:[],
             billVisible:false,
             propertyTypeList:[],//物业类型
             ruleList:[],//费用标准
@@ -793,7 +804,21 @@ export default {
                         this.auditorList = res.data;
                     }
                 });
+                if(this.query.propertyType!=''&&this.query.propertyType!=undefined&&this.query.commId!=''&&this.query.commId!=undefined){
+                    getTypeName(this.query).then(res => {
+                        if(res.data){
+                            this.typeNameList = res.data;
+                        }
+                    });
+                }
             }
+        },
+        typeChange(){
+            getTypeName(this.query).then(res => {
+                if(res.data){
+                    this.typeNameList = res.data;
+                }
+            });
         },
         exportXls(){
             exportXlsByT(this.query).then(res => {
@@ -855,6 +880,7 @@ export default {
                 if(res.data.records.length==1){
                     this.otherComp = true;
                     this.query.compId=res.data.records[0].id;
+                    this.compId=res.data.records[0].id;
                     getUserComm(res.data.records[0].id).then(res => {
                         if(res.data){
                             this.form.commId=undefined;
@@ -942,6 +968,9 @@ export default {
         handleAdd() {
             debugger
             this.form = {};
+            if(this.compId!=''&&this.compId!=undefined){
+                this.form.compId = this.compId;
+            }
             this.editVisible = true;
             this.title="新增费用调整";
             this.disable=false;
@@ -1018,8 +1047,8 @@ export default {
                 this.title="审核费用调整";
                 this.$set(this.form, "auditTime", this.nowTime());
                 this.$refs.form.clearValidate();
-            }else if(row.state=='不同意'){
-                this.$message.info(`该费用调整状态为不同意，不可审核`);
+            }else if(row.state=='不同意'||row.state=='同意'){
+                this.$message.info(`该费用调整已审核`);
             }else{
                 this.$message.info(`您没有审核权限，不可审核`);
             }
@@ -1035,12 +1064,12 @@ export default {
         },
         billSearch(){
             if(this.form.compId!=''&&this.form.compId!=undefined&&this.form.commId!=''&&this.form.commId!=undefined){
-                this.billDetail(this.form.compId,this.form.commId,this.form.commAreaId);
+                this.billDetail1(this.form.compId,this.form.commId);
             }else{
                 this.$message.info("请先选择物业公司、社区，再进行选择");
             }
         },
-        billDetail(compId, commId){
+        billDetail1(compId, commId){
             this.billVisible = true;
             this.$nextTick(()=>{
                 this.$refs.billVisible.dataInitializationByByBillAlter(compId,commId);
@@ -1055,9 +1084,11 @@ export default {
             this.detailVisible = true;
             this.title="查看费用调整";
             this.status = 2;
-            listBills({id:row.billId,pageNo: 1, size: 10}).then(res => {
+            debugger
+            listBillss({id:row.billId,pageNo: 1, size: 10}).then(res => {
                 debugger
-                this.billDetail = res.data.records[0];
+                this.billDetail= res.data.records[0];
+                console.log(this.billDetail);
             });
         },
         format(val){

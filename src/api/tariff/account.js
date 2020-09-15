@@ -53,3 +53,11 @@ export const listFinanceBillRecord = query => {
         params: query
     });
 };
+
+export const getTypeName = query => {
+    return request({
+        url: '/order/fAccount/getType',
+        method: 'get',
+        params: query
+    });
+};

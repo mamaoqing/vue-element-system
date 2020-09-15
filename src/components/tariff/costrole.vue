@@ -449,8 +449,8 @@
         </el-dialog>
         <el-dialog :title="title" :visible.sync="addParkVisible" width="80%">
             <div class="handle-box">
-                <el-button type="primary" icon="el-icon-lx-add" @click="addParks">新增</el-button>
-                <el-button type="primary" icon="el-icon-lx-delete" @click="deleteParksAll">批量删除</el-button>
+                <el-button type="primary" icon="el-icon-lx-add" @click="addParks">选择车位</el-button>
+                <el-button type="primary" icon="el-icon-lx-delete" @click="deleteParksAll">批量移除</el-button>
             </div>
             <!--            <parkingSpace v-if="addParkVisible" @park="park" :shows="false" ref="parkingSpace" :change="[1,10]"></parkingSpace>-->
             <el-table
@@ -476,13 +476,13 @@
                 <el-table-column prop="usable_time" label="可用时间" align="center"></el-table-column>
                 <el-table-column prop="occupy_state" label="占用状态" align="center"></el-table-column>
                 <el-table-column prop="in_mode" label="入位方式" align="center"></el-table-column>
-                <el-table-column label="操作" width="" align="center" width="325">
+                <el-table-column label="操作" width="" align="center" width="125">
                     <template slot-scope="scope">
                         <el-button
                                 type="text"
                                 icon="el-icon-delete"
                                 @click.stop
-                                @click="deletpark(scope.row.ids)">删除
+                                @click="deletpark(scope.row.ids)">移除
                         </el-button>
                     </template>
                 </el-table-column>
