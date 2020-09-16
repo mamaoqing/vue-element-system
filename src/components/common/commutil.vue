@@ -50,6 +50,7 @@
             getCommInit() {
                 if (this.compId && !(isNaN(this.compId))) {
                     listComm(this.compId).then(res => {
+                        this.compValue = res.data[0].id;
                         this.options = res.data;
                     });
                 }

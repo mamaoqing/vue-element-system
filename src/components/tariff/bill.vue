@@ -415,7 +415,7 @@
                     label: '燃气表',
                 }
                 ],
-                queryRule:{pageNo:1,size:100},
+                queryRule:{pageNo:1,size:100,commId:''},
                 compId:0,
                 billData:[],
                 form: {},
@@ -565,7 +565,11 @@
                 }
             },
             formCommValue(value) {
+                this.queryRule.commId = value;
                 this.query.commId = value;
+                fCostRule(this.queryRule).then(res => {
+                    this.ruleList = res.data.records;
+                });
             },
             formCommValue1(value) {
                 this.form.commId = value;
@@ -609,9 +613,7 @@
                 }
             },
             costRuleSelect() {
-                fCostRule(this.queryRule).then(res => {
-                    this.ruleList = res.data.records;
-                });
+
             },
             checkForm(value, name){
                 if(name === 'print'){
