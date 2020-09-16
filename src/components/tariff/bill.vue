@@ -27,6 +27,7 @@
                             :value="item.value">
                     </el-option>
                 </el-select>
+                <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
                 <el-select v-model="query.owners" @clear="clearOwner" clearable filterable placeholder="请选择业主姓名"
                            @change="selectOwner">
                     <el-option
@@ -36,7 +37,6 @@
                             :value="item.name">
                     </el-option>
                 </el-select>
-                <el-input v-model="query.no" placeholder="请输入房间号" style="width: 250px"></el-input>
                 <dist-util @child1="checkIn" :distId="dist.paymentPropId" :distName="dist.paymentPropName" :title="dist.paymentProp"></dist-util>
                 <dist-util @child1="checkIn" :distId="dist.overduePropId" :distName="dist.overduePropName" :title="dist.overdueProp"></dist-util>
                 <!--                <dist-util @child1="checkIn" :distId="dist.printPropId" :distName="dist.printPropName" :title="dist.printProp"></dist-util>-->
@@ -58,17 +58,17 @@
                 <el-table-column prop="ruleName" label="费用标准" align="center"></el-table-column>
                 <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="no" label="物业编号" align="center"></el-table-column>
+                <el-table-column prop="accountPeriod" label="账期" align="center"  width="150"></el-table-column>
                 <el-table-column prop="billNo" label="账单号" align="center"  width="150"></el-table-column>
-                <el-table-column prop="propertyType" label="物业类型" align="center"></el-table-column>
                 <el-table-column prop="billTime" label="账单生成时间" align="center" width="150"></el-table-column>
-                <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="price" label="账单总金额" align="center"></el-table-column>
-                <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
-                <el-table-column prop="payEndTime" label="付款结束时间" align="center" width="150"></el-table-column>
-                <el-table-column prop="isOverdue" label="是否逾期" align="center"></el-table-column>
                 <el-table-column prop="overdueCost" label="逾期费用" align="center"></el-table-column>
+                <el-table-column prop="salePrice" label="调整金额" align="center"></el-table-column>
+                <el-table-column prop="payPrice" label="付款金额" align="center"></el-table-column>
+                <el-table-column prop="isPayment" label="是否付款" align="center"></el-table-column>
                 <el-table-column prop="isInvoice" label="是否开发票" align="center"></el-table-column>
                 <el-table-column prop="isPrint" label="是否打印收据" align="center"></el-table-column>
+                <el-table-column prop="payEndTime" label="付款结束时间" align="center" width="150"></el-table-column>
                 <el-table-column label="操作" width="" align="center" width="250">
                     <template slot-scope="scope">
                         <el-button
@@ -176,6 +176,23 @@
                         <el-form  :model="form" label-width="70px" disabled>
                             <el-row>
                                 <el-col :span="8">
+                                    <el-form-item label="费用标准" label-width="100px">
+                                        <el-input v-model="form.ruleName"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="物业类型" label-width="100px">
+                                        <el-input v-model="form.propertyType"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="物业编号" label-width="100px">
+                                        <el-input v-model="form.no"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="8">
                                     <el-form-item label="账单号" label-width="100px">
                                         <el-input v-model="form.billNo"  style="width: 250px;"></el-input>
                                     </el-form-item>
@@ -226,6 +243,23 @@
                                 <el-col :span="8">
                                     <el-form-item label="逾期计费方式" label-width="100px">
                                         <el-input v-model="form.overdueRule"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="8">
+                                    <el-form-item label="调整费用" label-width="100px">
+                                        <el-input v-model="form.salePrice"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="状支付态" label-width="100px">
+                                        <el-input v-model="form.isPayment"  style="width: 250px;"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="付款结束时间" label-width="100px">
+                                        <el-input v-model="form.payEndTime"  style="width: 250px;"></el-input>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
